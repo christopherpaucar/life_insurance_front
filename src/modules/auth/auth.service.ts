@@ -4,24 +4,25 @@ import { useAuthStore } from "./auth.store";
 import { toast } from "sonner";
 
 export const useAuthService = () => {
-  const { login, register, logout, clearError } = useAuthStore();
+  const { login, register, logout, clearError, user } = useAuthStore();
 
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginDto) => login(credentials),
     onError: (error) => {
       toast.error(error.message);
-      console.error("Login error:", error);
     },
     onSuccess: () => {
-      toast.success("Inicio de sesión exitoso from lenin");
+      toast.success("Inicio de sesión exitoso");
     },
   });
 
   const registerMutation = useMutation({
     mutationFn: (userData: RegisterDto) => register(userData),
     onError: (error) => {
-      toast.error("Error en registro");
-      console.error("Registration error:", error);
+      toast.error(error.message || "Error en registro");
+    },
+    onSuccess: () => {
+      toast.success("Registro exitoso");
     },
   });
 
@@ -43,5 +44,7 @@ export const useAuthService = () => {
     isLoggingOut: logoutMutation.isPending,
 
     clearError,
+
+    user,
   };
 };

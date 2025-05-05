@@ -5,8 +5,7 @@ export interface IAuthResponse {
 
 export interface IUser {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   role: string;
 }
@@ -16,9 +15,17 @@ export interface LoginDto {
   password: string;
 }
 
+export enum RoleType {
+  SUPER_ADMIN = "SUPER_ADMIN",
+  ADMIN = "ADMINISTRADOR",
+  REVIEWER = "REVISOR",
+  CLIENT = "CLIENTE",
+  AGENT = "AGENTE",
+}
+
 export interface RegisterDto {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
+  role: RoleType | string; // Allow string to be more flexible
 }

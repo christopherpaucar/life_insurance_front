@@ -1,12 +1,8 @@
 'use client';
 
 import Link from 'next/link'
-import { usePublicRoute } from '../hooks/usePublicRoute';
 
 export default function Page() {
-  // Marcar esta ruta como pública
-  usePublicRoute();
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold mb-6">Seguros Sur</h1>

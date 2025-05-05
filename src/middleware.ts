@@ -14,7 +14,13 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
 
   // Allow access to public routes regardless of authentication
+  // But redirect authenticated users away from login/register pages
   if (isCurrentRoutePublic) {
+    // If user is authenticated and trying to access login or register pages
+    if (token && (pathname === "/login" || pathname === "/register")) {
+      // Redirect to dashboard instead
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
     return NextResponse.next();
   }
 

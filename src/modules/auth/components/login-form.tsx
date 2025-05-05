@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { useAuthService } from "../auth.service";
 import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -16,11 +18,15 @@ export function LoginForm({
   const { login, isLoggingIn } = useAuthService();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ email, password });
+    login({ email, password }, {
+      onSuccess: () => {
+        router.push("/dashboard");
+      },
+    });
   };
 
   return (
@@ -69,9 +75,9 @@ export function LoginForm({
               </Button>
               <div className="text-center text-sm">
                 No tienes una cuenta?{" "}
-                <a href="#" className="underline underline-offset-4">
+                <Link href="/register" className="underline underline-offset-4">
                   Regístrate
-                </a>
+                </Link>
               </div>
             </div>
           </form>
