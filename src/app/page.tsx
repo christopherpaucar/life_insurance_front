@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import Link from 'next/link'
 
@@ -8,10 +8,7 @@ export default function Page() {
       <h1 className="text-4xl font-bold mb-6">Seguros Sur</h1>
       <p className="text-xl mb-8">Bienvenido a nuestro sitio web</p>
       <div className="flex gap-4">
-        <Link
-          href="/login"
-          className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
+        <Link href="/login" className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
           Iniciar sesión
         </Link>
         <Link
