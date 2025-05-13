@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/modules/auth/auth.store'
 import { RoleType } from '@/modules/auth/auth.interfaces'
+import { useAuthRouting } from '@/hooks/useAuthRouting'
 
 interface RoleGuardProps {
   allowedRoles: RoleType[]
@@ -11,16 +11,19 @@ interface RoleGuardProps {
 }
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
-  const { user, isAuthenticated } = useAuthStore()
+  const { userRoles, isAuthenticated, hydrated } = useAuthRouting()
   const router = useRouter()
 
   useEffect(() => {
-    const hasAllowedRole = user?.roles?.some((role) => allowedRoles.includes(role.name as RoleType))
+    // Wait until auth state is hydrated
+    if (!hydrated) return
+
+    const hasAllowedRole = userRoles.some((role) => allowedRoles.includes(role))
 
     if (!isAuthenticated || !hasAllowedRole) {
       router.replace('/login')
     }
-  }, [user, isAuthenticated, router, allowedRoles])
+  }, [userRoles, isAuthenticated, router, allowedRoles, hydrated])
 
   return <>{children}</>
 }

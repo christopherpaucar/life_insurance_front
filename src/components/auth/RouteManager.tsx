@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useAuthStore } from '../../modules/auth/auth.store'
+import { useAuthRouting } from '../../hooks/useAuthRouting'
 import { RouteGuard } from './RouteGuard'
 
 interface RouteManagerProps {
@@ -9,14 +9,14 @@ interface RouteManagerProps {
 }
 
 export function RouteManager({ children }: RouteManagerProps) {
-  const { user } = useAuthStore()
+  const { userRole } = useAuthRouting()
 
   useEffect(() => {
     // Log for debugging purposes
-    if (user?.roles[0]?.name) {
-      console.log(`User authenticated with role: ${user.roles[0].name}`)
+    if (userRole) {
+      console.log(`User authenticated with role: ${userRole}`)
     }
-  }, [user])
+  }, [userRole])
 
   // Wrap all children with the RouteGuard to handle all authorization logic
   return <RouteGuard>{children}</RouteGuard>
