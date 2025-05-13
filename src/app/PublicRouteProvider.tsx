@@ -17,7 +17,7 @@ export function PublicRouteProvider({ children }: PublicRouteProviderProps) {
 
   useEffect(() => {
     // Define routes that should always be public here
-    const globalPublicRoutes = ['/', '/login', '/register', '/about', '/forgot-password', '/terms', '/privacy']
+    const globalPublicRoutes = ['/login', '/register', '/about', '/forgot-password', '/terms', '/privacy']
 
     // Register all global public routes
     globalPublicRoutes.forEach((route) => {

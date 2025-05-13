@@ -1,42 +1,28 @@
 'use client'
 
 import * as React from 'react'
-import { type Icon } from '@tabler/icons-react'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { NavItem } from '@/modules/auth/auth.interfaces'
 
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+interface NavSecondaryProps extends React.ComponentProps<typeof SidebarMenu> {
+  items: NavItem[]
+}
 
-export function NavSecondary({
-  items,
-  ...props
-}: {
-  items: {
-    title: string
-    url: string
-    icon: Icon
-  }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+export function NavSecondary({ className, items, ...props }: NavSecondaryProps) {
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <SidebarMenu className={cn('border-sidebar-border p-2', className)} {...props}>
+      {items?.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={item.url}>
+              {item.icon && <item.icon className="mr-2 size-4" />}
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
   )
 }

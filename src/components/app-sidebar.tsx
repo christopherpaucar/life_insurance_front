@@ -1,25 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from '@tabler/icons-react'
+import { IconInnerShadowTop } from '@tabler/icons-react'
 
-import { NavDocuments } from '@/components/nav-documents'
 import { NavMain } from '@/components/nav-main'
 import { NavSecondary } from '@/components/nav-secondary'
 import { NavUser } from '@/components/nav-user'
@@ -29,126 +12,16 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar'
 import { useAuthService } from '../modules/auth/auth.service'
 import { useRouter } from 'next/navigation'
-
-const data = {
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '#',
-      icon: IconDashboard,
-    },
-    {
-      title: 'Lifecycle',
-      url: '#',
-      icon: IconListDetails,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: IconChartBar,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: IconFolder,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: IconCamera,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: IconFileDescription,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: IconFileAi,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: IconSettings,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: 'Data Library',
-      url: '#',
-      icon: IconDatabase,
-    },
-    {
-      name: 'Reports',
-      url: '#',
-      icon: IconReport,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: IconFileWord,
-    },
-  ],
-}
+import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data'
+import { Permission, RoleType } from '@/modules/auth/auth.interfaces'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { logout, user } = useAuthService()
+  const { logout, user, hasPermission } = useAuthService()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -159,6 +32,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     })
   }
 
+  // Determine which navigation items to show based on user role
+  const getNavigationItems = () => {
+    if (!user) return []
+
+    // Map role name to corresponding navigation items
+    const roleName = user.roles[0].name as RoleType
+
+    // Check permissions for each role type
+    if (roleName === RoleType.SUPER_ADMIN || roleName === RoleType.ADMIN) {
+      return adminNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
+    } else if (roleName === RoleType.AGENT) {
+      return agentNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
+    } else if (roleName === RoleType.CLIENT) {
+      return clientNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
+    } else if (roleName === RoleType.REVIEWER) {
+      // Revisor role might have similar access as agent but more limited
+      return agentNavItems
+        .filter((item) => item.permissions?.includes(Permission.REVIEW_REIMBURSEMENTS))
+        .filter((item) => !item.permissions || hasPermission(item.permissions))
+    }
+
+    return []
+  }
+
+  const navItems = getNavigationItems()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -167,16 +66,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Seguros Sur</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={navItems} />
+        <NavSecondary items={secondaryNavItems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} logout={handleLogout} />

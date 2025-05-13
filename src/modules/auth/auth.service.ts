@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { LoginDto, RegisterDto } from './auth.interfaces'
+import { LoginDto, RegisterDto, Permission } from './auth.interfaces'
 import { useAuthStore } from './auth.store'
 import { toast } from 'sonner'
 
@@ -33,6 +33,18 @@ export const useAuthService = () => {
     },
   })
 
+  const hasPermission = (permission: Permission | Permission[]): boolean => {
+    if (!user) return false
+
+    const userPermissions = user.roles[0].permissions || []
+
+    if (Array.isArray(permission)) {
+      return permission.some((p) => userPermissions.includes(p))
+    }
+
+    return userPermissions.includes(permission)
+  }
+
   return {
     login: loginMutation.mutate,
     isLoggingIn: loginMutation.isPending,
@@ -44,7 +56,7 @@ export const useAuthService = () => {
     isLoggingOut: logoutMutation.isPending,
 
     clearError,
-
+    hasPermission,
     user,
   }
 }

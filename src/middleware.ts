@@ -9,16 +9,15 @@ export function middleware(request: NextRequest) {
   // Check if the current route is public using our configuration
   const isCurrentRoutePublic = isPublicRoute(pathname)
 
-  // Since middleware runs on the server, we can't access localStorage directly
-  // We need to check the token from cookies instead
+  // Get auth token from cookies
   const token = request.cookies.get('token')?.value
 
   // Allow access to public routes regardless of authentication
-  // But redirect authenticated users away from login/register pages
+  console.log('isCurrentRoutePublic', isCurrentRoutePublic)
   if (isCurrentRoutePublic) {
     // If user is authenticated and trying to access login or register pages
     if (token && (pathname === '/login' || pathname === '/register')) {
-      // Redirect to dashboard instead
+      // Redirect to dashboard instead - client-side routing will handle specific role redirection
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     return NextResponse.next()
@@ -27,12 +26,11 @@ export function middleware(request: NextRequest) {
   // If it's a private route and user is not authenticated, redirect to login
   if (!token) {
     const loginUrl = new URL('/login', request.url)
-    // Add the original URL as a parameter to redirect back after login
-    loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
   // User is authenticated, allow access to private route
+  // Role-based access control will be handled by the client-side RouteGuard
   return NextResponse.next()
 }
 
