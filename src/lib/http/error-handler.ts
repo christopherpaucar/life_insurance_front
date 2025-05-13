@@ -39,7 +39,7 @@ export const handleHttpError = (error: unknown): HttpError => {
     }
   }
 
-  return httpError
+  return httpError as Error
 }
 
 /**

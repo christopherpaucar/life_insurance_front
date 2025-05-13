@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useAuthService } from '../../../../src/modules/auth/auth.service'
+import { useAuthService } from '../../../../src/modules/auth/useAuth'
 import { useAuthStore } from '../../../../src/modules/auth/auth.store'
 import { QueryProvider } from '../../../../src/lib/providers/query-provider'
 

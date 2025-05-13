@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuthService } from '@/modules/auth/auth.service'
+import { useAuthService } from '@/modules/auth/useAuth'
 import { Permission, RoleType } from '@/modules/auth/auth.interfaces'
 
 interface PermissionWrapperProps {

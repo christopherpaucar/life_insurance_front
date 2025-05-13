@@ -1,11 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { HttpClient } from '../../lib/http/http-client'
 import { IAuthResponse, IUser, LoginDto, RegisterDto } from './auth.interfaces'
 import { mapPermissions } from './permission-mapper'
-
-const API_URL = '/auth'
-const httpClient = new HttpClient()
+import { authServices } from './auth.service'
 
 interface AuthState {
   user: IUser | null
@@ -38,7 +35,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const { token, user } = get()
 
         if (token && user) {
-          httpClient.setAuthToken(token)
           set({ isAuthenticated: true, hydrated: true })
         } else {
           set({ hydrated: true })
@@ -48,12 +44,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       login: async (credentials) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await httpClient.post<{ data: IAuthResponse }>(`${API_URL}/login`, credentials)
+          const response = await authServices.login(credentials.email, credentials.password)
 
-          const { data } = response
-          const { token, user } = data.data
-
-          httpClient.setAuthToken(token)
+          const { data } = response as { data: IAuthResponse }
+          const { token, user } = data
 
           // Map the backend permissions to frontend permissions
           if (user.roles && user.roles[0].permissions) {
@@ -79,11 +73,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       register: async (userData) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await httpClient.post<{ data: IAuthResponse }>(`${API_URL}/register`, userData)
-          const { data } = response
-          const { token, user } = data.data
-
-          httpClient.setAuthToken(token)
+          const response = await authServices.register(userData)
+          const { data } = response as { data: IAuthResponse }
+          const { token, user } = data
 
           if (user.roles && user.roles[0].permissions) {
             const mappedPermissions = mapPermissions(user.roles[0].permissions)
@@ -105,8 +97,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
 
       logout: () => {
-        httpClient.removeAuthToken()
-
         set({
           user: null,
           token: null,

@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar'
-import { useAuthService } from '../modules/auth/auth.service'
+import { useAuthService } from '../modules/auth/useAuth'
 import { useRouter } from 'next/navigation'
 import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data'
 import { Permission, RoleType } from '@/modules/auth/auth.interfaces'

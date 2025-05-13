@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { handleHttpError } from './error-handler'
 import { HttpClientConfig, HttpResponse, IHttpClient } from './types'
+import { useAuthStore } from '../../modules/auth/auth.store'
 
 /**
  * Default HTTP client configuration
@@ -44,7 +45,7 @@ export class HttpClient implements IHttpClient {
         // Add rate limiting logic here if needed
         return config
       },
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error as Error),
     )
 
     // Response interceptor for global error handling
@@ -55,7 +56,30 @@ export class HttpClient implements IHttpClient {
         if (this.config.retries && this.config.retries > 0) {
           // Retry logic would go here
         }
-        return Promise.reject(error)
+        return Promise.reject(error as Error)
+      },
+    )
+
+    // Add request interceptor for authentication
+    this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      const token = useAuthStore.getState().token
+      if (token) {
+        config.headers = config.headers || {}
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      return config
+    })
+
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          if (!window.location.pathname.includes('/login')) {
+            useAuthStore.getState().logout()
+            window.location.href = '/login'
+          }
+        }
+        return Promise.reject(error as Error)
       },
     )
   }
@@ -79,7 +103,7 @@ export class HttpClient implements IHttpClient {
       const response = await requestFn()
       return this.transformResponse<T>(response)
     } catch (error) {
-      throw handleHttpError(error)
+      throw handleHttpError(error as Error)
     }
   }
 
