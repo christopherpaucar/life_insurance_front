@@ -6,14 +6,12 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useAuthService } from '@/modules/auth/useAuth'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthStore } from '@/modules/auth/auth.store'
 import { toast } from 'sonner'
 
 export default function ProfilePage() {
   const { user } = useAuthStore()
-  const { hasPermission } = useAuthService()
 
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({

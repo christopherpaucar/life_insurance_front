@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CreateInsuranceDto, InsuranceQueryParams, UpdateInsuranceDto } from './insurances.interfaces'
+import {
+  CreateInsuranceDto,
+  InsuranceQueryParams,
+  InsuranceType,
+  PaymentFrequency,
+  UpdateInsuranceDto,
+} from './insurances.interfaces'
 import { insurancesService } from './insurances.service'
 import { toast } from 'sonner'
 
@@ -62,7 +68,16 @@ export const useInsurances = (params?: InsuranceQueryParams) => {
     refetch: getInsurancesQuery.refetch,
 
     createInsurance: (data: CreateInsuranceDto, options?: { onSuccess?: () => void }) => {
-      return createInsuranceMutation.mutate(data, options)
+      return createInsuranceMutation.mutate(
+        {
+          ...data,
+          type: data.type.toLowerCase() as InsuranceType,
+          availablePaymentFrequencies: data.availablePaymentFrequencies?.map(
+            (frequency) => frequency.toLowerCase() as PaymentFrequency,
+          ),
+        },
+        options,
+      )
     },
     isCreating: createInsuranceMutation.isPending,
 

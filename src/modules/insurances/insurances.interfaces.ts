@@ -1,14 +1,40 @@
+export enum InsuranceType {
+  LIFE = 'LIFE',
+  HEALTH = 'HEALTH',
+}
+
+export enum PaymentFrequency {
+  MONTHLY = 'MONTHLY',
+  QUARTERLY = 'QUARTERLY',
+  ANNUAL = 'ANNUAL',
+}
+
+const enumLabels = {
+  [InsuranceType.LIFE]: 'Vida',
+  [InsuranceType.HEALTH]: 'Salud',
+  [PaymentFrequency.MONTHLY]: 'Mensual',
+  [PaymentFrequency.QUARTERLY]: 'Trimestral',
+  [PaymentFrequency.ANNUAL]: 'Anual',
+}
+
+export const getEnumLabel = (enumValue: string) => {
+  return enumLabels[enumValue.toUpperCase() as keyof typeof enumLabels]
+}
+
 export interface Insurance {
   id: string
   name: string
   description: string
-  price: number
+  basePrice: number
   duration: number
   isActive: boolean
   coverages?: Coverage[]
   benefits?: Benefit[]
   createdAt: string
   updatedAt: string
+  type: InsuranceType
+  requirements?: string[]
+  availablePaymentFrequencies?: PaymentFrequency[]
 }
 
 export interface Coverage {
@@ -29,17 +55,21 @@ export interface Benefit {
 export interface CreateInsuranceDto {
   name: string
   description: string
-  price: number
-  duration: number
+  type: InsuranceType
+  basePrice: number
   isActive?: boolean
+  requirements?: string[]
+  availablePaymentFrequencies?: PaymentFrequency[]
 }
 
 export interface UpdateInsuranceDto {
   name?: string
   description?: string
-  price?: number
-  duration?: number
+  type?: InsuranceType
+  basePrice?: number
   isActive?: boolean
+  requirements?: string[]
+  availablePaymentFrequencies?: PaymentFrequency[]
 }
 
 export interface InsuranceQueryParams {
