@@ -6,21 +6,21 @@ import { useAuthStore } from '@/modules/auth/auth.store'
 import { RoleType } from '@/modules/auth/auth.interfaces'
 
 interface RoleGuardProps {
-	allowedRoles: RoleType[]
-	children: React.ReactNode
+  allowedRoles: RoleType[]
+  children: React.ReactNode
 }
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
-	const { user, isAuthenticated } = useAuthStore()
-	const router = useRouter()
+  const { user, isAuthenticated } = useAuthStore()
+  const router = useRouter()
 
-	useEffect(() => {
-		const hasAllowedRole = user?.roles?.some((role) => allowedRoles.includes(role.name as RoleType))
+  useEffect(() => {
+    const hasAllowedRole = user?.roles?.some((role) => allowedRoles.includes(role.name as RoleType))
 
-		if (!isAuthenticated || !hasAllowedRole) {
-			router.replace('/login')
-		}
-	}, [user, isAuthenticated, router, allowedRoles])
+    if (!isAuthenticated || !hasAllowedRole) {
+      router.replace('/login')
+    }
+  }, [user, isAuthenticated, router, allowedRoles])
 
-	return <>{children}</>
+  return <>{children}</>
 }

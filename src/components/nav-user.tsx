@@ -14,9 +14,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { IUser } from '../modules/auth/auth.interfaces'
+import { useRouter } from 'next/navigation'
 
 export function NavUser({ user, logout }: { logout: () => void; user: IUser | null }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -56,23 +58,23 @@ export function NavUser({ user, logout }: { logout: () => void; user: IUser | nu
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}>
                 <IconUserCircle />
-                Account
+                Mi Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings')}>
                 <IconCreditCard />
-                Billing
+                Configuración
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/help')}>
                 <IconNotification />
-                Notifications
+                Ayuda
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <IconLogout />
-              Log out
+              Cerrar Sesión
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

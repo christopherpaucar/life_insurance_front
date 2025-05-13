@@ -10,6 +10,7 @@ import {
   IconClipboardList,
   IconWallet,
   IconReportMedical,
+  IconUser,
 } from '@tabler/icons-react'
 import { NavItem, Permission } from '@/modules/auth/auth.interfaces'
 
@@ -162,6 +163,11 @@ export const clientNavItems: NavItem[] = [
 
 // Common secondary navigation
 export const secondaryNavItems: NavItem[] = [
+  {
+    title: 'Mi Perfil',
+    url: '/profile',
+    icon: IconUser,
+  },
   {
     title: 'Configuración',
     url: '/settings',
