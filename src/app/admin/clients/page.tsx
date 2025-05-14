@@ -74,8 +74,8 @@ export default function AdminClientsPage() {
   }
 
   const handleEditClient = (client: Client) => {
-    setModalMode('edit')
     setSelectedClient(client)
+    setModalMode('edit')
     setModalOpen(true)
   }
 
@@ -94,11 +94,7 @@ export default function AdminClientsPage() {
 
   const handleCloseModal = () => {
     setModalOpen(false)
-    setTimeout(() => {
-      if (modalMode === 'edit') {
-        setSelectedClient(null)
-      }
-    }, 300)
+    setSelectedClient(null)
   }
 
   const columns: ColumnDef<Client>[] = [
@@ -175,7 +171,6 @@ export default function AdminClientsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Ver detalles</DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleEditClient(client)}>Editar</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleDeleteConfirmation(client)} className="text-red-600">

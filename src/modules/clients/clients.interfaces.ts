@@ -21,9 +21,7 @@ export interface CreateClientDto {
   email: string
   phone: string
   address: string
-  documentType: string
   identificationNumber: string
-  identificationDocumentUrl: string
   birthDate: string
 }
 
