@@ -6,9 +6,10 @@ export interface Client {
   phone: string
   address: string
   documentType: string
-  documentNumber: string
+  identificationNumber: string
+  identificationDocumentUrl: string
   birthDate: string
-  isActive: boolean
+  deletedAt: string
   userId?: string
   createdAt: string
   updatedAt: string
@@ -21,9 +22,9 @@ export interface CreateClientDto {
   phone: string
   address: string
   documentType: string
-  documentNumber: string
+  identificationNumber: string
+  identificationDocumentUrl: string
   birthDate: string
-  isActive?: boolean
 }
 
 export interface UpdateClientDto {

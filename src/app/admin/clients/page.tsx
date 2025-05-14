@@ -122,6 +122,11 @@ export default function AdminClientsPage() {
       enableHiding: false,
     },
     {
+      accessorKey: 'identificationNumber',
+      header: 'Número de Documento',
+      cell: ({ row }) => <div>{row.getValue('identificationNumber')}</div>,
+    },
+    {
       accessorKey: 'firstName',
       header: 'Nombre',
       cell: ({ row }) => <div>{row.getValue('firstName')}</div>,
@@ -142,21 +147,17 @@ export default function AdminClientsPage() {
       cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     },
     {
-      accessorKey: 'documentType',
-      header: 'Tipo de Documento',
-      cell: ({ row }) => <div>{row.getValue('documentType')}</div>,
+      accessorKey: 'address',
+      header: 'Dirección',
+      cell: ({ row }) => <div>{row.getValue('address')}</div>,
     },
+
     {
-      accessorKey: 'documentNumber',
-      header: 'Número de Documento',
-      cell: ({ row }) => <div>{row.getValue('documentNumber')}</div>,
-    },
-    {
-      accessorKey: 'isActive',
+      accessorKey: 'deletedAt',
       header: 'Estado',
       cell: ({ row }) => (
-        <Badge variant={row.getValue('isActive') ? 'default' : 'destructive'}>
-          {row.getValue('isActive') ? 'Activo' : 'Inactivo'}
+        <Badge variant={row.getValue('deletedAt') ? 'destructive' : 'default'}>
+          {row.getValue('deletedAt') ? 'Inactivo' : 'Activo'}
         </Badge>
       ),
     },
