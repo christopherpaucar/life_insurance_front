@@ -103,7 +103,12 @@ export class HttpClient implements IHttpClient {
       const response = await requestFn()
       return this.transformResponse<T>(response)
     } catch (error) {
-      throw handleHttpError(error as Error)
+      handleHttpError(error as Error)
+      return {
+        data: null as T,
+        status: 500,
+        headers: {},
+      }
     }
   }
 

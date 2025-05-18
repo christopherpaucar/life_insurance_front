@@ -214,7 +214,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
               id="phone"
               name="phone"
               type="tel"
-              value={formData.phone}
+              value={formData.phone || ''}
               onChange={handleChange}
               className={errors.phone ? 'border-red-500' : ''}
             />
@@ -238,7 +238,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
             <Input
               id="identificationNumber"
               name="identificationNumber"
-              value={formData.identificationNumber}
+              value={formData.identificationNumber || ''}
               onChange={handleChange}
               className={errors.identificationNumber ? 'border-red-500' : ''}
             />
@@ -251,7 +251,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
               id="birthDate"
               name="birthDate"
               type="date"
-              value={formData.birthDate}
+              value={formData.birthDate || ''}
               onChange={handleChange}
               className={errors.birthDate ? 'border-red-500' : ''}
             />

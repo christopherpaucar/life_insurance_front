@@ -25,31 +25,37 @@ export interface Insurance {
   id: string
   name: string
   description: string
+  type: InsuranceType
   basePrice: number
-  duration: number
   isActive: boolean
-  coverages?: Coverage[]
-  benefits?: Benefit[]
+  requirements: string[]
+  availablePaymentFrequencies: PaymentFrequency[]
+  coverages: InsuranceCoverage[]
+  benefits: InsuranceBenefit[]
   createdAt: string
   updatedAt: string
-  type: InsuranceType
-  requirements?: string[]
-  availablePaymentFrequencies?: PaymentFrequency[]
+  deletedAt: string | null
 }
 
-export interface Coverage {
+export interface InsuranceCoverage {
   id: string
   name: string
   description: string
-  coverageLimit: number
-  isActive: boolean
+  coverageAmount: number
+  additionalCost: number
+  insurance: Insurance
+  createdAt: string
+  updatedAt: string
 }
 
-export interface Benefit {
+export interface InsuranceBenefit {
   id: string
   name: string
   description: string
-  isActive: boolean
+  additionalCost: number
+  insurance: Insurance
+  createdAt: string
+  updatedAt: string
 }
 
 export interface CreateInsuranceDto {
@@ -57,7 +63,6 @@ export interface CreateInsuranceDto {
   description: string
   type: InsuranceType
   basePrice: number
-  isActive?: boolean
   requirements?: string[]
   availablePaymentFrequencies?: PaymentFrequency[]
 }
@@ -72,15 +77,42 @@ export interface UpdateInsuranceDto {
   availablePaymentFrequencies?: PaymentFrequency[]
 }
 
+export interface CreateInsuranceCoverageDto {
+  name: string
+  description: string
+  coverageAmount: number
+  additionalCost: number
+}
+
+export interface UpdateInsuranceCoverageDto {
+  name?: string
+  description?: string
+  coverageAmount?: number
+  additionalCost?: number
+}
+
+export interface CreateInsuranceBenefitDto {
+  name: string
+  description: string
+  additionalCost: number
+}
+
+export interface UpdateInsuranceBenefitDto {
+  name?: string
+  description?: string
+  additionalCost?: number
+}
+
 export interface InsuranceQueryParams {
   page?: number
   limit?: number
   includeInactive?: boolean
 }
 
-export interface PaginatedResponse<T> {
-  data: T[]
-  meta: {
+export interface ApiResponse<T> {
+  success: boolean
+  data: T
+  meta?: {
     total: number
     page: number
     limit: number
