@@ -27,7 +27,6 @@ export interface Insurance {
   description: string
   type: InsuranceType
   basePrice: number
-  isActive: boolean
   requirements: string[]
   availablePaymentFrequencies: PaymentFrequency[]
   coverages: InsuranceCoverage[]
@@ -35,6 +34,7 @@ export interface Insurance {
   createdAt: string
   updatedAt: string
   deletedAt: string | null
+  rank: number
 }
 
 export interface InsuranceCoverage {
@@ -63,6 +63,7 @@ export interface CreateInsuranceDto {
   description: string
   type: InsuranceType
   basePrice: number
+  rank: number
   requirements?: string[]
   availablePaymentFrequencies?: PaymentFrequency[]
 }
@@ -72,8 +73,8 @@ export interface UpdateInsuranceDto {
   description?: string
   type?: InsuranceType
   basePrice?: number
-  isActive?: boolean
   requirements?: string[]
+  rank?: number
   availablePaymentFrequencies?: PaymentFrequency[]
 }
 

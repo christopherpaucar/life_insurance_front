@@ -1,7 +1,7 @@
-import { HttpClient } from '@/lib/http'
+import { getHttpClient } from '@/lib/http'
 import { CreateClientDto, ClientQueryParams, PaginatedResponse, Client, UpdateClientDto } from './clients.interfaces'
 
-const httpClient = new HttpClient()
+const httpClient = getHttpClient()
 
 export const clientsService = {
   getClients: async (params?: ClientQueryParams): Promise<PaginatedResponse<Client>> => {

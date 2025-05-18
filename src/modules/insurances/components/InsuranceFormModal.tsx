@@ -35,9 +35,9 @@ const formSchema = z.object({
     errorMap: () => ({ message: 'Por favor seleccione un tipo de seguro válido' }),
   }),
   basePrice: z.coerce.number().positive('El precio debe ser un número positivo'),
-  isActive: z.boolean().default(true),
   requirements: z.array(z.string()).default([]),
   availablePaymentFrequencies: z.array(z.nativeEnum(PaymentFrequency)).default([]),
+  rank: z.coerce.number().default(0),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -64,9 +64,9 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     description: '',
     type: InsuranceType.LIFE, // Default value
     basePrice: 0,
-    isActive: true,
     requirements: [],
     availablePaymentFrequencies: [],
+    rank: 0,
   })
 
   // New requirement input state
@@ -83,9 +83,9 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         description: insurance.description,
         type: insurance.type,
         basePrice: insurance.basePrice,
-        isActive: insurance.isActive,
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        rank: insurance.rank,
       })
     } else {
       setFormData({
@@ -93,9 +93,9 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         description: '',
         type: InsuranceType.LIFE,
         basePrice: 0,
-        isActive: true,
         requirements: [],
         availablePaymentFrequencies: [],
+        rank: 0,
       })
     }
     setNewRequirement('')
@@ -110,9 +110,9 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         description: insurance.description,
         type: insurance.type,
         basePrice: insurance.basePrice,
-        isActive: insurance.isActive,
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        rank: insurance.rank,
       })
     }
 
@@ -137,7 +137,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
   }
 
-  // Handle select changes
   const handleSelectChange = (name: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -145,15 +144,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }))
   }
 
-  // Handle checkbox change
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      isActive: checked,
-    }))
-  }
-
-  // Handle payment frequency selection
   const handleFrequencyToggle = (frequency: PaymentFrequency) => {
     setFormData((prev) => {
       const currentFrequencies = prev.availablePaymentFrequencies || []
@@ -217,7 +207,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         if (formData.description !== insurance.description) updateDto.description = formData.description
         if (formData.type !== insurance.type) updateDto.type = formData.type
         if (formData.basePrice !== insurance.basePrice) updateDto.basePrice = formData.basePrice
-        if (formData.isActive !== insurance.isActive) updateDto.isActive = formData.isActive
+        if (formData.rank !== insurance.rank) updateDto.rank = formData.rank
 
         // For arrays, we need to check if they've actually changed
         const reqChanged = JSON.stringify(formData.requirements) !== JSON.stringify(insurance.requirements || [])
@@ -259,6 +249,14 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         toast.error('Ha ocurrido un error inesperado')
       }
     }
+  }
+
+  const handleRankChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.min(Math.max(1, Number(e.target.value)), 10)
+    setFormData((prev) => ({
+      ...prev,
+      rank: value,
+    }))
   }
 
   return (
@@ -399,10 +397,18 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
               </div>
 
               <div className="flex items-start space-x-3 space-y-0">
-                <Checkbox id="isActive" checked={formData.isActive} onCheckedChange={handleCheckboxChange} />
+                <Input
+                  id="rank"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={formData.rank}
+                  onChange={handleRankChange}
+                  className="w-20"
+                />
                 <div className="space-y-1 leading-none">
-                  <Label htmlFor="isActive">Plan Activo</Label>
-                  <p className="text-muted-foreground text-sm">El plan estará disponible para su contratación</p>
+                  <Label htmlFor="rank">Rango del Plan</Label>
+                  <p className="text-muted-foreground text-sm">Valor del 1 al 10</p>
                 </div>
               </div>
             </div>

@@ -19,7 +19,7 @@ export default function AuthLayout({ children, params }: AuthLayoutProps) {
       case 'agent':
         return 'Panel de Agente'
       case 'client':
-        return 'Panel de Cliente'
+        return ''
       default:
         return 'Panel de Administración'
     }
