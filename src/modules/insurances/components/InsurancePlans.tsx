@@ -4,9 +4,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useRouter } from 'next/navigation'
 
-export const InsurancePlans = () => {
+interface InsurancePlansProps {
+  role: string
+}
+
+export const InsurancePlans = ({ role }: InsurancePlansProps) => {
   const { insurances, isLoading } = useInsurances()
+  const router = useRouter()
 
   if (isLoading) {
     return (
@@ -66,7 +72,9 @@ export const InsurancePlans = () => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full">Ver detalles</Button>
+            <Button className="w-full" onClick={() => router.push(`/${role}/insurances/${insurance.id}`)}>
+              Ver detalles
+            </Button>
           </CardFooter>
         </Card>
       ))}

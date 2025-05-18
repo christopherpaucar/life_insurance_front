@@ -21,7 +21,10 @@ export const insurancesService = {
   },
 
   getInsurance: async (id: string): Promise<ApiResponse<Insurance>> => {
+    console.log({ id })
     const response = await api.get<ApiResponse<Insurance>>(`/insurances/${id}`)
+    console.log(response.data)
+
     return response.data
   },
 
