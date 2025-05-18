@@ -12,7 +12,7 @@ import {
   IconReportMedical,
   IconUser,
 } from '@tabler/icons-react'
-import { NavItem, Permission } from '@/modules/auth/auth.interfaces'
+import { NavItem, PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
 
 // Admin navigation
 export const adminNavItems: NavItem[] = [
@@ -87,31 +87,31 @@ export const agentNavItems: NavItem[] = [
     title: 'Dashboard',
     url: '/agent/dashboard',
     icon: IconDashboard,
-    permissions: [Permission.MANAGE_CLIENTS, Permission.MANAGE_CONTRACTS],
+    permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
     title: 'Gestión de Clientes',
     url: '/agent/clients',
     icon: IconUsers,
-    permissions: [Permission.MANAGE_CLIENTS],
+    permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
     title: 'Contratación de Seguros',
     url: '/agent/contracts',
     icon: IconHeartHandshake,
-    permissions: [Permission.MANAGE_CONTRACTS],
+    permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
     title: 'Revisión de Reembolsos',
     url: '/agent/reimbursements',
     icon: IconClipboardList,
-    permissions: [Permission.REVIEW_REIMBURSEMENTS],
+    permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
     title: 'Reportes',
     url: '/agent/reports',
     icon: IconReport,
-    permissions: [Permission.VIEW_REPORTS],
+    permissions: PERMISSIONS[RoleType.AGENT],
     items: [
       {
         title: 'Seguros Impagos',
@@ -139,25 +139,31 @@ export const clientNavItems: NavItem[] = [
     title: 'Dashboard',
     url: '/client/dashboard',
     icon: IconDashboard,
-    permissions: [Permission.MANAGE_OWN_CONTRACTS, Permission.VIEW_PAYMENT_HISTORY],
+    permissions: PERMISSIONS[RoleType.CLIENT],
+  },
+  {
+    title: 'Planes de Seguro',
+    url: '/client/insurances',
+    icon: IconShieldCheck,
+    permissions: PERMISSIONS[RoleType.CLIENT],
   },
   {
     title: 'Mis Seguros',
     url: '/client/contracts',
     icon: IconHeartHandshake,
-    permissions: [Permission.MANAGE_OWN_CONTRACTS],
+    permissions: PERMISSIONS[RoleType.CLIENT],
   },
   {
     title: 'Historial de Pagos',
     url: '/client/payments',
     icon: IconWallet,
-    permissions: [Permission.VIEW_PAYMENT_HISTORY],
+    permissions: PERMISSIONS[RoleType.CLIENT],
   },
   {
     title: 'Solicitud de Reembolsos',
     url: '/client/reimbursements',
     icon: IconReportMedical,
-    permissions: [Permission.SUBMIT_REIMBURSEMENT],
+    permissions: PERMISSIONS[RoleType.CLIENT],
   },
 ]
 

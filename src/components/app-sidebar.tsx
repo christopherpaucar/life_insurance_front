@@ -18,10 +18,10 @@ import {
 import { useAuthService } from '../modules/auth/useAuth'
 import { useRouter } from 'next/navigation'
 import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data'
-import { Permission, RoleType } from '@/modules/auth/auth.interfaces'
+import { REIMBURSEMENT_PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { logout, user, hasPermission } = useAuthService()
+  const { logout, user } = useAuthService()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -41,16 +41,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     // Check permissions for each role type
     if (roleName === RoleType.SUPER_ADMIN || roleName === RoleType.ADMIN) {
-      return adminNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
-    } else if (roleName === RoleType.AGENT) {
-      return agentNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
-    } else if (roleName === RoleType.CLIENT) {
-      return clientNavItems.filter((item) => !item.permissions || hasPermission(item.permissions))
-    } else if (roleName === RoleType.REVIEWER) {
+      return adminNavItems
+    }
+
+    if (roleName === RoleType.AGENT) {
+      return agentNavItems
+    }
+
+    if (roleName === RoleType.CLIENT) {
+      return clientNavItems
+    }
+
+    if (roleName === RoleType.REVIEWER) {
       // Revisor role might have similar access as agent but more limited
       return agentNavItems
-        .filter((item) => item.permissions?.includes(Permission.REVIEW_REIMBURSEMENTS))
-        .filter((item) => !item.permissions || hasPermission(item.permissions))
+        .filter((item) => item.permissions?.includes(REIMBURSEMENT_PERMISSIONS.READ))
+        .filter((item) => !item.permissions)
     }
 
     return []

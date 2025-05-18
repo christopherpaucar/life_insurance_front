@@ -62,10 +62,9 @@ export class HttpClient implements IHttpClient {
 
     // Add request interceptor for authentication
     this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      const token = useAuthStore.getState().token
-      if (token) {
+      if (useAuthStore.getState().token) {
         config.headers = config.headers || {}
-        config.headers.Authorization = `Bearer ${token}`
+        config.headers.Authorization = `Bearer ${useAuthStore.getState().token}`
       }
       return config
     })
@@ -74,8 +73,7 @@ export class HttpClient implements IHttpClient {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          if (!window.location.pathname.includes('/login')) {
-            useAuthStore.getState().logout()
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
             window.location.href = '/login'
           }
         }
