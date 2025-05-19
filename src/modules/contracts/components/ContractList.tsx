@@ -1,4 +1,3 @@
-import { useContracts } from '../hooks/useContracts'
 import { ContractStatus } from '../types'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
@@ -21,6 +20,8 @@ import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from '@tabler/icons-react'
+import { ContractDetails, statusLabels, statusColors } from './ContractDetails'
+import { useContract } from '../hooks/useContract'
 
 interface Contract {
   id: string
@@ -35,22 +36,6 @@ interface Contract {
   }
 }
 
-const statusColors = {
-  [ContractStatus.ACTIVE]: 'bg-green-500',
-  [ContractStatus.PENDING_SIGNATURE]: 'bg-yellow-500',
-  [ContractStatus.EXPIRED]: 'bg-red-500',
-  [ContractStatus.CANCELLED]: 'bg-gray-500',
-  [ContractStatus.DRAFT]: 'bg-gray-500',
-}
-
-const statusLabels = {
-  [ContractStatus.ACTIVE]: 'Activo',
-  [ContractStatus.PENDING_SIGNATURE]: 'Pendiente de firma',
-  [ContractStatus.EXPIRED]: 'Vencido',
-  [ContractStatus.CANCELLED]: 'Cancelado',
-  [ContractStatus.DRAFT]: 'Borrador',
-}
-
 export function ContractList() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -58,8 +43,9 @@ export function ContractList() {
     pageIndex: 0,
     pageSize: 10,
   })
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
 
-  const { contracts, isLoading } = useContracts()
+  const { contracts, isLoading } = useContract()
 
   const columns: ColumnDef<Contract>[] = [
     {
@@ -95,9 +81,6 @@ export function ContractList() {
       header: 'Estado',
       cell: ({ row }) => {
         const status = row.getValue('status')
-
-        console.log(status)
-
         return (
           <Badge className={statusColors[status as keyof typeof statusColors]}>
             {statusLabels[status as keyof typeof statusLabels]}
@@ -112,7 +95,7 @@ export function ContractList() {
 
         return (
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setSelectedContractId(contract.id)}>
               <FileText className="h-4 w-4 mr-2" />
               Ver detalles
             </Button>
@@ -147,6 +130,17 @@ export function ContractList() {
 
   if (isLoading) {
     return <div>Loading...</div>
+  }
+
+  if (selectedContractId) {
+    return (
+      <div>
+        <Button variant="outline" onClick={() => setSelectedContractId(null)} className="mb-4">
+          Volver a la lista
+        </Button>
+        <ContractDetails contractId={selectedContractId} />
+      </div>
+    )
   }
 
   return (

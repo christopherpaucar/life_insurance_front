@@ -97,7 +97,7 @@ export const agentNavItems: NavItem[] = [
   },
   {
     title: 'Contratación de Seguros',
-    url: '/agent/contracts',
+    url: '/agent/insurance-review',
     icon: IconHeartHandshake,
     permissions: PERMISSIONS[RoleType.AGENT],
   },

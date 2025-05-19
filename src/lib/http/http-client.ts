@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { handleHttpError } from './error-handler'
 import { HttpClientConfig, HttpResponse, IHttpClient } from './types'
@@ -101,12 +103,7 @@ export class HttpClient implements IHttpClient {
       const response = await requestFn()
       return this.transformResponse<T>(response)
     } catch (error) {
-      handleHttpError(error as Error)
-      return {
-        data: null as T,
-        status: 500,
-        headers: {},
-      }
+      throw handleHttpError(error) as Error
     }
   }
 

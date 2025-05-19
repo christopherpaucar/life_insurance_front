@@ -5,13 +5,12 @@ import { Button } from '@/components/ui/button'
 import { ContractForm } from '../components/ContractForm'
 import { BeneficiariesForm } from '../components/BeneficiariesForm'
 import { ReviewForm } from '../components/ReviewForm'
-import { useCreateContract } from '../hooks/useCreateContract'
 import { ArrowLeft } from 'lucide-react'
-import { toast } from 'sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { useContract } from '../hooks/useContract'
 
-export function ContractPage() {
+export function InsuranceContractForm() {
   const searchParams = useSearchParams()
   const insuranceId = searchParams.get('insuranceId')
   const router = useRouter()
@@ -26,15 +25,7 @@ export function ContractPage() {
     notes: '',
   })
 
-  const { mutate: createContract, isPending } = useCreateContract({
-    onSuccess: () => {
-      toast.success('Contract created successfully')
-      router.push('/contracts')
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  const { createContract, isCreating } = useContract()
 
   const handleNext = () => {
     if (activeTab === 'contract') {
@@ -133,7 +124,7 @@ export function ContractPage() {
               />
             </TabsContent>
             <TabsContent value="review">
-              <ReviewForm formData={formData} onSubmit={handleSubmit} onBack={handleBack} isLoading={isPending} />
+              <ReviewForm formData={formData} onSubmit={handleSubmit} onBack={handleBack} isLoading={isCreating} />
             </TabsContent>
           </Tabs>
         </CardContent>

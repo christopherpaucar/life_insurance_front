@@ -198,7 +198,7 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
               <Button
                 className="w-full"
                 size="lg"
-                onClick={() => router.push(`/client/contracts?insuranceId=${insuranceId}`)}
+                onClick={() => router.push(`/client/contracts/create?insuranceId=${insuranceId}`)}
               >
                 Contratar ahora
                 <ArrowRight className="ml-2 h-4 w-4" />
