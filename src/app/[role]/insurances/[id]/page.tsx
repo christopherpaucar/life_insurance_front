@@ -6,6 +6,7 @@ import { InsuranceDetails } from '@/modules/insurances/components/InsuranceDetai
 interface InsuranceDetailsPageProps {
   params: {
     id: string
+    role: string
   }
 }
 

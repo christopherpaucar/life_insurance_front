@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Shield, CheckCircle2, Clock, DollarSign, Calendar, ArrowRight, Heart, Users } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
+import { useRouter } from 'next/navigation'
 
 interface InsuranceDetailsProps {
   insuranceId: string
@@ -14,6 +15,7 @@ interface InsuranceDetailsProps {
 
 export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
   const { insurance, isLoading } = useInsurance(insuranceId)
+  const router = useRouter()
 
   if (isLoading) {
     return (
@@ -193,7 +195,11 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                 </div>
               </div>
               <Separator />
-              <Button className="w-full" size="lg">
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => router.push(`/client/contracts?insuranceId=${insuranceId}`)}
+              >
                 Contratar ahora
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
