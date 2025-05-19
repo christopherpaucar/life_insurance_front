@@ -102,6 +102,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
                       onSelect={field.onChange}
                       disabled={(date) => date < new Date()}
                       initialFocus
+                      lang="es"
                     />
                   </PopoverContent>
                 </Popover>
@@ -149,6 +150,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
                       onSelect={field.onChange}
                       disabled={(date) => date < new Date()}
                       initialFocus
+                      lang="es"
                     />
                   </PopoverContent>
                 </Popover>
@@ -176,6 +178,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>

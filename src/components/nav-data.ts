@@ -149,7 +149,7 @@ export const clientNavItems: NavItem[] = [
   },
   {
     title: 'Mis Seguros',
-    url: '/client/contracts',
+    url: '/client/my-insurances',
     icon: IconHeartHandshake,
     permissions: PERMISSIONS[RoleType.CLIENT],
   },
