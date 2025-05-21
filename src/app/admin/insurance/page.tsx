@@ -183,11 +183,11 @@ export default function AdminInsurancePage() {
       },
     },
     {
-      accessorKey: 'isActive',
+      accessorKey: 'deletedAt',
       header: 'Estado',
       cell: ({ row }) => (
-        <Badge variant={row.getValue('isActive') ? 'default' : 'destructive'}>
-          {row.getValue('isActive') ? 'Activo' : 'Inactivo'}
+        <Badge variant={row.getValue('deletedAt') ? 'destructive' : 'default'}>
+          {row.getValue('deletedAt') ? 'Inactivo' : 'Activo'}
         </Badge>
       ),
     },
@@ -204,8 +204,8 @@ export default function AdminInsurancePage() {
                 <IconDotsVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Ver detalles</DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleEditInsurance(insurance)}>Editar</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleDeleteConfirmation(insurance)} className="text-red-600">

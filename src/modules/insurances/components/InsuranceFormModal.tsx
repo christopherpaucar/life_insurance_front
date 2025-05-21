@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -25,6 +25,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { X } from 'lucide-react'
+import { InsuranceDetailsForm } from './InsuranceDetailsForm'
 
 // Form validation schema
 const formSchema = z.object({
@@ -34,9 +35,9 @@ const formSchema = z.object({
     errorMap: () => ({ message: 'Por favor seleccione un tipo de seguro válido' }),
   }),
   basePrice: z.coerce.number().positive('El precio debe ser un número positivo'),
-  isActive: z.boolean().default(true),
   requirements: z.array(z.string()).default([]),
   availablePaymentFrequencies: z.array(z.nativeEnum(PaymentFrequency)).default([]),
+  rank: z.coerce.number().default(0),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -63,9 +64,9 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     description: '',
     type: InsuranceType.LIFE, // Default value
     basePrice: 0,
-    isActive: true,
     requirements: [],
     availablePaymentFrequencies: [],
+    rank: 0,
   })
 
   // New requirement input state
@@ -73,6 +74,33 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
 
   // Form errors
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Reset form when modal closes
+  const resetForm = useCallback(() => {
+    if (mode === 'edit' && insurance) {
+      setFormData({
+        name: insurance.name,
+        description: insurance.description,
+        type: insurance.type,
+        basePrice: insurance.basePrice,
+        requirements: insurance.requirements || [],
+        availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        rank: insurance.rank,
+      })
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        type: InsuranceType.LIFE,
+        basePrice: 0,
+        requirements: [],
+        availablePaymentFrequencies: [],
+        rank: 0,
+      })
+    }
+    setNewRequirement('')
+    setErrors({})
+  }, [mode, insurance])
 
   // Load insurance data when in edit mode
   useEffect(() => {
@@ -82,39 +110,16 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         description: insurance.description,
         type: insurance.type,
         basePrice: insurance.basePrice,
-        isActive: insurance.isActive,
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        rank: insurance.rank,
       })
     }
-  }, [insurance, isOpen, mode])
 
-  // Reset form when modal closes
-  const resetForm = () => {
-    if (mode === 'edit' && insurance) {
-      setFormData({
-        name: insurance.name,
-        description: insurance.description,
-        type: insurance.type,
-        basePrice: insurance.basePrice,
-        isActive: insurance.isActive,
-        requirements: insurance.requirements || [],
-        availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
-      })
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        type: InsuranceType.LIFE,
-        basePrice: 0,
-        isActive: true,
-        requirements: [],
-        availablePaymentFrequencies: [],
-      })
+    return () => {
+      resetForm()
     }
-    setNewRequirement('')
-    setErrors({})
-  }
+  }, [insurance, isOpen, mode, resetForm])
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -132,7 +137,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
   }
 
-  // Handle select changes
   const handleSelectChange = (name: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -140,15 +144,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }))
   }
 
-  // Handle checkbox change
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      isActive: checked,
-    }))
-  }
-
-  // Handle payment frequency selection
   const handleFrequencyToggle = (frequency: PaymentFrequency) => {
     setFormData((prev) => {
       const currentFrequencies = prev.availablePaymentFrequencies || []
@@ -212,7 +207,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         if (formData.description !== insurance.description) updateDto.description = formData.description
         if (formData.type !== insurance.type) updateDto.type = formData.type
         if (formData.basePrice !== insurance.basePrice) updateDto.basePrice = formData.basePrice
-        if (formData.isActive !== insurance.isActive) updateDto.isActive = formData.isActive
+        if (formData.rank !== insurance.rank) updateDto.rank = formData.rank
 
         // For arrays, we need to check if they've actually changed
         const reqChanged = JSON.stringify(formData.requirements) !== JSON.stringify(insurance.requirements || [])
@@ -256,6 +251,14 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
   }
 
+  const handleRankChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.min(Math.max(1, Number(e.target.value)), 10)
+    setFormData((prev) => ({
+      ...prev,
+      rank: value,
+    }))
+  }
+
   return (
     <Dialog
       open={isOpen}
@@ -267,7 +270,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
       }}
       modal={true}
     >
-      <DialogContent className="sm:max-w-[600px] pointer-events-auto">
+      <DialogContent className="sm:max-w-[800px] pointer-events-auto">
         <DialogHeader>
           <DialogTitle>{mode === 'create' ? 'Crear Plan de Seguro' : 'Editar Plan de Seguro'}</DialogTitle>
           <DialogDescription>
@@ -278,121 +281,144 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-3">
-            <Label htmlFor="name">Nombre del Plan</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Seguro de Vida Premium"
-              className={errors.name ? 'border-red-500' : ''}
-            />
-            {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Plan de seguro que ofrece cobertura completa..."
-              className={errors.description ? 'border-red-500' : ''}
-              rows={3}
-            />
-            {errors.description && <p className="text-destructive text-sm">{errors.description}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="type">Tipo de Seguro</Label>
-            <Select value={formData.type.toUpperCase()} onValueChange={(value) => handleSelectChange('type', value)}>
-              <SelectTrigger id="type" className={errors.type ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Seleccione un tipo de seguro" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(InsuranceType).map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {getEnumLabel(type)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.type && <p className="text-destructive text-sm">{errors.type}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="basePrice">Precio Base (USD)</Label>
-            <Input
-              id="basePrice"
-              name="basePrice"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.basePrice || ''}
-              onChange={handleChange}
-              placeholder="299.99"
-              className={errors.basePrice ? 'border-red-500' : ''}
-            />
-            {errors.basePrice && <p className="text-destructive text-sm">{errors.basePrice}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label>Requisitos</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newRequirement}
-                onChange={(e) => setNewRequirement(e.target.value)}
-                placeholder="Agregar requisito"
-              />
-              <Button type="button" onClick={addRequirement}>
-                Agregar
-              </Button>
-            </div>
-            {formData.requirements && formData.requirements.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.requirements.map((req, index) => (
-                  <div key={index} className="bg-secondary px-3 py-1 rounded-full flex items-center gap-1">
-                    <span className="text-sm">{req}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeRequirement(index)}
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-6">
+              <div className="grid gap-3">
+                <Label htmlFor="name">Nombre del Plan</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Seguro de Vida Premium"
+                  className={errors.name ? 'border-red-500' : ''}
+                />
+                {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
               </div>
-            )}
-          </div>
 
-          <div className="grid gap-3">
-            <Label>Frecuencias de Pago Disponibles</Label>
-            <div className="flex flex-wrap gap-3">
-              {Object.values(PaymentFrequency).map((frequency) => (
-                <div key={frequency} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`freq-${frequency}`}
-                    checked={(formData.availablePaymentFrequencies || []).includes(
-                      frequency.toLowerCase() as PaymentFrequency,
-                    )}
-                    onCheckedChange={() => handleFrequencyToggle(frequency)}
+              <div className="grid gap-3">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Plan de seguro que ofrece cobertura completa..."
+                  className={errors.description ? 'border-red-500' : ''}
+                  rows={3}
+                />
+                {errors.description && <p className="text-destructive text-sm">{errors.description}</p>}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="type">Tipo de Seguro</Label>
+                <Select
+                  value={formData.type.toUpperCase() as InsuranceType}
+                  onValueChange={(value) => handleSelectChange('type', value)}
+                >
+                  <SelectTrigger id="type" className={errors.type ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Seleccione un tipo de seguro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(InsuranceType).map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {getEnumLabel(type)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.type && <p className="text-destructive text-sm">{errors.type}</p>}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="basePrice">Precio Base (USD)</Label>
+                <Input
+                  id="basePrice"
+                  name="basePrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.basePrice || ''}
+                  onChange={handleChange}
+                  placeholder="299.99"
+                  className={errors.basePrice ? 'border-red-500' : ''}
+                />
+                {errors.basePrice && <p className="text-destructive text-sm">{errors.basePrice}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid gap-3">
+                <Label>Requisitos</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={newRequirement}
+                    onChange={(e) => setNewRequirement(e.target.value)}
+                    placeholder="Agregar requisito"
                   />
-                  <Label htmlFor={`freq-${frequency}`}>{getEnumLabel(frequency)}</Label>
+                  <Button type="button" onClick={addRequirement}>
+                    Agregar
+                  </Button>
                 </div>
-              ))}
+                {formData.requirements && formData.requirements.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.requirements.map((req, index) => (
+                      <div key={index} className="bg-secondary px-3 py-1 rounded-full flex items-center gap-1">
+                        <span className="text-sm">{req}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeRequirement(index)}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label>Frecuencias de Pago Disponibles</Label>
+                <div className="flex flex-wrap gap-3">
+                  {Object.values(PaymentFrequency).map((frequency) => (
+                    <div key={frequency} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`freq-${frequency}`}
+                        checked={(formData.availablePaymentFrequencies || []).includes(
+                          frequency.toLowerCase() as PaymentFrequency,
+                        )}
+                        onCheckedChange={() => handleFrequencyToggle(frequency)}
+                      />
+                      <Label htmlFor={`freq-${frequency}`}>{getEnumLabel(frequency)}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 space-y-0">
+                <Input
+                  id="rank"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={formData.rank}
+                  onChange={handleRankChange}
+                  className="w-20"
+                />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="rank">Rango del Plan</Label>
+                  <p className="text-muted-foreground text-sm">Valor del 1 al 10</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-start space-x-3 space-y-0">
-            <Checkbox id="isActive" checked={formData.isActive} onCheckedChange={handleCheckboxChange} />
-            <div className="space-y-1 leading-none">
-              <Label htmlFor="isActive">Plan Activo</Label>
-              <p className="text-muted-foreground text-sm">El plan estará disponible para su contratación</p>
+          {mode === 'edit' && insurance && (
+            <div className="pt-6 border-t">
+              <InsuranceDetailsForm insuranceId={insurance.id} />
             </div>
-          </div>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>

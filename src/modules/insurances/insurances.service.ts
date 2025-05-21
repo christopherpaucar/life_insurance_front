@@ -1,36 +1,109 @@
-import { HttpClient } from '@/lib/http'
+import { getHttpClient } from '@/lib/http'
 import {
   CreateInsuranceDto,
-  InsuranceQueryParams,
-  PaginatedResponse,
   Insurance,
   UpdateInsuranceDto,
+  ApiResponse,
+  InsuranceBenefit,
+  InsuranceCoverage,
+  CreateInsuranceCoverageDto,
+  UpdateInsuranceCoverageDto,
+  CreateInsuranceBenefitDto,
+  UpdateInsuranceBenefitDto,
 } from './insurances.interfaces'
 
-const httpClient = new HttpClient()
+const api = getHttpClient()
 
 export const insurancesService = {
-  getInsurances: async (params?: InsuranceQueryParams): Promise<PaginatedResponse<Insurance>> => {
-    const response = await httpClient.get<PaginatedResponse<Insurance>>('/insurances', { params })
+  getInsurances: async (params?: any): Promise<ApiResponse<Insurance[]>> => {
+    const response = await api.get<ApiResponse<Insurance[]>>('/insurances', { params })
     return response.data
   },
 
-  getInsurance: async (id: string): Promise<Insurance> => {
-    const response = await httpClient.get<{ data: Insurance }>(`/insurances/${id}`)
-    return response.data.data
+  getInsurance: async (id: string): Promise<ApiResponse<Insurance>> => {
+    console.log({ id })
+    const response = await api.get<ApiResponse<Insurance>>(`/insurances/${id}`)
+    console.log(response.data)
+
+    return response.data
   },
 
-  createInsurance: async (insurance: CreateInsuranceDto): Promise<Insurance> => {
-    const response = await httpClient.post<{ data: Insurance }>('/insurances', insurance)
-    return response.data.data
+  createInsurance: async (data: CreateInsuranceDto): Promise<ApiResponse<Insurance>> => {
+    const response = await api.post<ApiResponse<Insurance>>('/insurances', data)
+    return response.data
   },
 
-  updateInsurance: async (id: string, insurance: UpdateInsuranceDto): Promise<Insurance> => {
-    const response = await httpClient.put<{ data: Insurance }>(`/insurances/${id}`, insurance)
-    return response.data.data
+  updateInsurance: async (id: string, data: UpdateInsuranceDto): Promise<ApiResponse<Insurance>> => {
+    const response = await api.put<ApiResponse<Insurance>>(`/insurances/${id}`, data)
+    return response.data
   },
 
-  deleteInsurance: async (id: string): Promise<void> => {
-    await httpClient.delete(`/insurances/${id}`)
+  deleteInsurance: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await api.delete<ApiResponse<void>>(`/insurances/${id}`)
+    return response.data
+  },
+
+  getCoverages: async (insuranceId: string): Promise<ApiResponse<InsuranceCoverage[]>> => {
+    const response = await api.get<ApiResponse<InsuranceCoverage[]>>(`/insurances/${insuranceId}/coverages`)
+    return response.data
+  },
+
+  getCoverage: async (insuranceId: string, id: string): Promise<ApiResponse<InsuranceCoverage>> => {
+    const response = await api.get<ApiResponse<InsuranceCoverage>>(`/insurances/${insuranceId}/coverages/${id}`)
+    return response.data
+  },
+
+  createCoverage: async (
+    insuranceId: string,
+    data: CreateInsuranceCoverageDto,
+  ): Promise<ApiResponse<InsuranceCoverage>> => {
+    const response = await api.post<ApiResponse<InsuranceCoverage>>(`/insurances/${insuranceId}/coverages`, data)
+    return response.data
+  },
+
+  updateCoverage: async (
+    insuranceId: string,
+    id: string,
+    data: UpdateInsuranceCoverageDto,
+  ): Promise<ApiResponse<InsuranceCoverage>> => {
+    const response = await api.put<ApiResponse<InsuranceCoverage>>(`/insurances/${insuranceId}/coverages/${id}`, data)
+    return response.data
+  },
+
+  deleteCoverage: async (insuranceId: string, id: string): Promise<ApiResponse<void>> => {
+    const response = await api.delete<ApiResponse<void>>(`/insurances/${insuranceId}/coverages/${id}`)
+    return response.data
+  },
+
+  getBenefits: async (insuranceId: string): Promise<ApiResponse<InsuranceBenefit[]>> => {
+    const response = await api.get<ApiResponse<InsuranceBenefit[]>>(`/insurances/${insuranceId}/benefits`)
+    return response.data
+  },
+
+  getBenefit: async (insuranceId: string, id: string): Promise<ApiResponse<InsuranceBenefit>> => {
+    const response = await api.get<ApiResponse<InsuranceBenefit>>(`/insurances/${insuranceId}/benefits/${id}`)
+    return response.data
+  },
+
+  createBenefit: async (
+    insuranceId: string,
+    data: CreateInsuranceBenefitDto,
+  ): Promise<ApiResponse<InsuranceBenefit>> => {
+    const response = await api.post<ApiResponse<InsuranceBenefit>>(`/insurances/${insuranceId}/benefits`, data)
+    return response.data
+  },
+
+  updateBenefit: async (
+    insuranceId: string,
+    id: string,
+    data: UpdateInsuranceBenefitDto,
+  ): Promise<ApiResponse<InsuranceBenefit>> => {
+    const response = await api.put<ApiResponse<InsuranceBenefit>>(`/insurances/${insuranceId}/benefits/${id}`, data)
+    return response.data
+  },
+
+  deleteBenefit: async (insuranceId: string, id: string): Promise<ApiResponse<void>> => {
+    const response = await api.delete<ApiResponse<void>>(`/insurances/${insuranceId}/benefits/${id}`)
+    return response.data
   },
 }

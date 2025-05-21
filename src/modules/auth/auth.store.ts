@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { IAuthResponse, IUser, LoginDto, RegisterDto } from './auth.interfaces'
-import { mapPermissions } from './permission-mapper'
 import { authServices } from './auth.service'
 
 interface AuthState {
@@ -51,7 +50,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           // Map the backend permissions to frontend permissions
           if (user.roles && user.roles[0].permissions) {
-            const mappedPermissions = mapPermissions(user.roles[0].permissions)
+            const mappedPermissions = user.roles[0].permissions
             user.roles[0].permissions = mappedPermissions
           }
 
@@ -61,7 +60,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             isAuthenticated: true,
             isLoading: false,
           })
-          console.log('Login successful')
         } catch (error) {
           set({
             isLoading: false,
@@ -78,7 +76,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           const { token, user } = data
 
           if (user.roles && user.roles[0].permissions) {
-            const mappedPermissions = mapPermissions(user.roles[0].permissions)
+            const mappedPermissions = user.roles[0].permissions
             user.roles[0].permissions = mappedPermissions
           }
 

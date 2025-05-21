@@ -1,15 +1,13 @@
 'use client'
 
 import React from 'react'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
+import { ClientsTable } from '@/modules/clients/components/ClientsTable'
 
 export default function AdminClientsPage() {
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6">Gestión de Clientes</h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold mb-4">Directorio de Clientes</h2>
-        <p className="text-gray-600 mb-4">Administre información y perfiles de clientes</p>
-      </div>
-    </>
+    <DashboardLayout title="Gestión de Clientes" description="Administre la información de los clientes">
+      <ClientsTable title="Gestión de Clientes" description="Administre la información de los clientes" />
+    </DashboardLayout>
   )
 }
