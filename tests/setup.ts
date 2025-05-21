@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom'
+import { cleanup } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 // Mock localStorage
@@ -47,6 +49,7 @@ beforeAll(() => {
 // Cleanup after each test
 afterEach(() => {
   vi.clearAllMocks();
+  cleanup()
 });
 
 // Clean up after all tests
