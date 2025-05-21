@@ -16,12 +16,12 @@ export function RouteGuard({ children }: PropsWithChildren) {
 
   // Si no está hidratado, mostrar estado de carga
   if (!hydrated) {
-    return <div>Cargando...</div>
+    return <div>Cargando...</div>;
   }
 
   // Si handleRouteAccess retorna false, no renderizar nada
   if (handleRouteAccess() === false) {
-    return null
+    return null;
   }
 
   // Force null return for dashboard to prevent flash of content
