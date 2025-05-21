@@ -1,10 +1,10 @@
-import React from 'react'
-import Link from 'next/link'
+import React from 'react';
+import Link from 'next/link';
 
 interface ReportCardProps {
-  title: string
-  description: string
-  href: string
+  title: string;
+  description: string;
+  href: string;
 }
 
 export const ReportCard: React.FC<ReportCardProps> = ({ title, description, href }) => {
@@ -15,5 +15,5 @@ export const ReportCard: React.FC<ReportCardProps> = ({ title, description, href
         <p className="text-gray-600">{description}</p>
       </div>
     </Link>
-  )
-}
+  );
+};

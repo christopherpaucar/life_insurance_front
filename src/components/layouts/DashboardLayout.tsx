@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
-  title?: string
-  description?: string
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
 }
 
 export function DashboardLayout({
@@ -21,5 +21,5 @@ export function DashboardLayout({
       </div>
       <div>{children}</div>
     </div>
-  )
+  );
 }

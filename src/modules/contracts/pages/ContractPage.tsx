@@ -1,21 +1,21 @@
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ContractForm } from '../components/ContractForm'
-import { BeneficiariesForm } from '../components/BeneficiariesForm'
-import { ReviewForm } from '../components/ReviewForm'
-import { ArrowLeft } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { useContract } from '../hooks/useContract'
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ContractForm } from '../components/ContractForm';
+import { BeneficiariesForm } from '../components/BeneficiariesForm';
+import { ReviewForm } from '../components/ReviewForm';
+import { ArrowLeft } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { useContract } from '../hooks/useContract';
 
 export function InsuranceContractForm() {
-  const searchParams = useSearchParams()
-  const insuranceId = searchParams.get('insuranceId')
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState('contract')
-  const [completedSteps, setCompletedSteps] = useState<string[]>([])
+  const searchParams = useSearchParams();
+  const insuranceId = searchParams.get('insuranceId');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('contract');
+  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     insuranceId: insuranceId || '',
     startDate: '',
@@ -23,46 +23,46 @@ export function InsuranceContractForm() {
     paymentFrequency: 'monthly',
     beneficiaries: [],
     notes: '',
-  })
+  });
 
-  const { createContract, isCreating } = useContract()
+  const { createContract, isCreating } = useContract();
 
   const handleNext = () => {
     if (activeTab === 'contract') {
-      setCompletedSteps([...completedSteps, 'contract'])
-      setActiveTab('beneficiaries')
+      setCompletedSteps([...completedSteps, 'contract']);
+      setActiveTab('beneficiaries');
     } else if (activeTab === 'beneficiaries') {
-      setCompletedSteps([...completedSteps, 'beneficiaries'])
-      setActiveTab('review')
+      setCompletedSteps([...completedSteps, 'beneficiaries']);
+      setActiveTab('review');
     }
-  }
+  };
 
   const handleBack = () => {
     if (activeTab === 'beneficiaries') {
-      setActiveTab('contract')
+      setActiveTab('contract');
     } else if (activeTab === 'review') {
-      setActiveTab('beneficiaries')
+      setActiveTab('beneficiaries');
     }
-  }
+  };
 
   const handleSubmit = () => {
-    createContract(formData)
-  }
+    createContract(formData);
+  };
 
-  const isStepCompleted = (step: string) => completedSteps.includes(step)
+  const isStepCompleted = (step: string) => completedSteps.includes(step);
   const isStepEnabled = (step: string) => {
-    if (step === 'contract') return true
-    if (step === 'beneficiaries') return isStepCompleted('contract')
-    if (step === 'review') return isStepCompleted('beneficiaries')
-    return false
-  }
+    if (step === 'contract') return true;
+    if (step === 'beneficiaries') return isStepCompleted('contract');
+    if (step === 'review') return isStepCompleted('beneficiaries');
+    return false;
+  };
 
   const getStepStatus = (step: string) => {
-    if (activeTab === step) return 'current'
-    if (isStepCompleted(step)) return 'completed'
-    if (isStepEnabled(step)) return 'enabled'
-    return 'disabled'
-  }
+    if (activeTab === step) return 'current';
+    if (isStepCompleted(step)) return 'completed';
+    if (isStepEnabled(step)) return 'enabled';
+    return 'disabled';
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -80,7 +80,11 @@ export function InsuranceContractForm() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="contract" disabled={!isStepEnabled('contract')} className="relative">
+              <TabsTrigger
+                value="contract"
+                disabled={!isStepEnabled('contract')}
+                className="relative"
+              >
                 1. Detalles del Contrato
                 {getStepStatus('contract') === 'completed' && (
                   <Badge variant="secondary" className="absolute -top-2 -right-2">
@@ -88,7 +92,11 @@ export function InsuranceContractForm() {
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="beneficiaries" disabled={!isStepEnabled('beneficiaries')} className="relative">
+              <TabsTrigger
+                value="beneficiaries"
+                disabled={!isStepEnabled('beneficiaries')}
+                className="relative"
+              >
                 2. Beneficiarios
                 {getStepStatus('beneficiaries') === 'completed' && (
                   <Badge variant="secondary" className="absolute -top-2 -right-2">
@@ -124,11 +132,16 @@ export function InsuranceContractForm() {
               />
             </TabsContent>
             <TabsContent value="review">
-              <ReviewForm formData={formData} onSubmit={handleSubmit} onBack={handleBack} isLoading={isCreating} />
+              <ReviewForm
+                formData={formData}
+                onSubmit={handleSubmit}
+                onBack={handleBack}
+                isLoading={isCreating}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

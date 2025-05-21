@@ -1,12 +1,15 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { DashboardLayout } from '@/components/layouts/DashboardLayout'
-import { DashboardCard } from '@/components/dashboard/DashboardCard'
+import React from 'react';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { DashboardCard } from '@/components/dashboard/DashboardCard';
 
 export default function AgentDashboardPage() {
   return (
-    <DashboardLayout title="Panel del Agente" description="Gestione clientes, contratos y reembolsos">
+    <DashboardLayout
+      title="Panel del Agente"
+      description="Gestione clientes, contratos y reembolsos"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <DashboardCard
           title="Clientes"
@@ -30,5 +33,5 @@ export default function AgentDashboardPage() {
         />
       </div>
     </DashboardLayout>
-  )
+  );
 }

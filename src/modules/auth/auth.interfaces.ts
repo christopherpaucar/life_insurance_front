@@ -1,22 +1,22 @@
 export interface IAuthResponse {
-  user: IUser
-  token: string
+  user: IUser;
+  token: string;
 }
 
 export interface IUser {
-  id: string
-  name: string
-  email: string
+  id: string;
+  name: string;
+  email: string;
   roles: {
-    id: string
-    name: string
-    permissions: string[]
-  }[]
+    id: string;
+    name: string;
+    permissions: string[];
+  }[];
 }
 
 export interface LoginDto {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
 export enum RoleType {
@@ -28,18 +28,18 @@ export enum RoleType {
 }
 
 export interface RegisterDto {
-  name: string
-  email: string
-  password: string
-  role: RoleType | string // Allow string to be more flexible
+  name: string;
+  email: string;
+  password: string;
+  role: RoleType | string; // Allow string to be more flexible
 }
 
 export interface NavItem {
-  title: string
-  url: string
-  icon?: React.FC<any>
-  permissions?: string[]
-  items?: Omit<NavItem, 'icon' | 'items'>[]
+  title: string;
+  url: string;
+  icon?: React.FC<any>;
+  permissions?: string[];
+  items?: Omit<NavItem, 'icon' | 'items'>[];
 }
 
 export enum ALL_PERMISSIONS {
@@ -164,4 +164,4 @@ export const PERMISSIONS = {
     REIMBURSEMENT_PERMISSIONS.UPLOAD,
     INSURANCE_PERMISSIONS.READ,
   ],
-}
+};

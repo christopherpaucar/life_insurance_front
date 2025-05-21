@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 interface DashboardCardProps {
-  children?: React.ReactNode
-  actionLabel?: string
-  onAction?: () => void
+  children?: React.ReactNode;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 export function DashboardCard({ children, actionLabel, onAction }: DashboardCardProps) {
@@ -11,10 +11,13 @@ export function DashboardCard({ children, actionLabel, onAction }: DashboardCard
     <div>
       {children}
       {actionLabel && (
-        <button onClick={onAction} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <button
+          onClick={onAction}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
           {actionLabel}
         </button>
       )}
     </div>
-  )
+  );
 }

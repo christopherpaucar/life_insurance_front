@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { handleHttpError } from './error-handler'
-import { HttpClientConfig, HttpResponse, IHttpClient } from './types'
-import { useAuthStore } from '../../modules/auth/auth.store'
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
+import { handleHttpError } from './error-handler';
+import { HttpClientConfig, HttpResponse, IHttpClient } from './types';
+import { useAuthStore } from '../../modules/auth/auth.store';
 
 /**
  * Default HTTP client configuration
@@ -17,24 +22,24 @@ const DEFAULT_CONFIG: HttpClientConfig = {
   },
   retries: 3,
   rateLimit: 100,
-}
+};
 
 /**
  * HTTP client implementation using Axios
  */
 export class HttpClient implements IHttpClient {
-  private axiosInstance: AxiosInstance
-  private config: HttpClientConfig
+  private axiosInstance: AxiosInstance;
+  private config: HttpClientConfig;
 
   constructor(config: Partial<HttpClientConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config }
+    this.config = { ...DEFAULT_CONFIG, ...config };
     this.axiosInstance = axios.create({
       baseURL: this.config.baseURL,
       timeout: this.config.timeout,
       headers: this.config.headers,
-    })
+    });
 
-    this.setupInterceptors()
+    this.setupInterceptors();
   }
 
   /**
@@ -45,10 +50,10 @@ export class HttpClient implements IHttpClient {
     this.axiosInstance.interceptors.request.use(
       (config) => {
         // Add rate limiting logic here if needed
-        return config
+        return config;
       },
       (error) => Promise.reject(error as Error),
-    )
+    );
 
     // Response interceptor for global error handling
     this.axiosInstance.interceptors.response.use(
@@ -58,30 +63,30 @@ export class HttpClient implements IHttpClient {
         if (this.config.retries && this.config.retries > 0) {
           // Retry logic would go here
         }
-        return Promise.reject(error as Error)
+        return Promise.reject(error as Error);
       },
-    )
+    );
 
     // Add request interceptor for authentication
     this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       if (useAuthStore.getState().token) {
-        config.headers = config.headers || {}
-        config.headers.Authorization = `Bearer ${useAuthStore.getState().token}`
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${useAuthStore.getState().token}`;
       }
-      return config
-    })
+      return config;
+    });
 
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
           if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-            window.location.href = '/login'
+            window.location.href = '/login';
           }
         }
-        return Promise.reject(error as Error)
+        return Promise.reject(error as Error);
       },
-    )
+    );
   }
 
   /**
@@ -92,18 +97,20 @@ export class HttpClient implements IHttpClient {
       data: response.data,
       status: response.status,
       headers: response.headers as Record<string, string>,
-    }
+    };
   }
 
   /**
    * Execute HTTP request with error handling
    */
-  private async executeRequest<T>(requestFn: () => Promise<AxiosResponse>): Promise<HttpResponse<T>> {
+  private async executeRequest<T>(
+    requestFn: () => Promise<AxiosResponse>,
+  ): Promise<HttpResponse<T>> {
     try {
-      const response = await requestFn()
-      return this.transformResponse<T>(response)
+      const response = await requestFn();
+      return this.transformResponse<T>(response);
     } catch (error) {
-      throw handleHttpError(error) as Error
+      throw handleHttpError(error) as Error;
     }
   }
 
@@ -111,48 +118,60 @@ export class HttpClient implements IHttpClient {
    * Set authentication token
    */
   public setAuthToken(token: string): void {
-    this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
   /**
    * Remove authentication token
    */
   public removeAuthToken(): void {
-    delete this.axiosInstance.defaults.headers.common['Authorization']
+    delete this.axiosInstance.defaults.headers.common['Authorization'];
   }
 
   /**
    * HTTP GET method
    */
   public async get<T>(url: string, params?: Record<string, unknown>): Promise<HttpResponse<T>> {
-    return this.executeRequest<T>(() => this.axiosInstance.get(url, { params }))
+    return this.executeRequest<T>(() => this.axiosInstance.get(url, { params }));
   }
 
   /**
    * HTTP POST method
    */
-  public async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<HttpResponse<T>> {
-    return this.executeRequest<T>(() => this.axiosInstance.post(url, data, config))
+  public async post<T>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<HttpResponse<T>> {
+    return this.executeRequest<T>(() => this.axiosInstance.post(url, data, config));
   }
 
   /**
    * HTTP PUT method
    */
-  public async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<HttpResponse<T>> {
-    return this.executeRequest<T>(() => this.axiosInstance.put(url, data, config))
+  public async put<T>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<HttpResponse<T>> {
+    return this.executeRequest<T>(() => this.axiosInstance.put(url, data, config));
   }
 
   /**
    * HTTP PATCH method
    */
-  public async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<HttpResponse<T>> {
-    return this.executeRequest<T>(() => this.axiosInstance.patch(url, data, config))
+  public async patch<T>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<HttpResponse<T>> {
+    return this.executeRequest<T>(() => this.axiosInstance.patch(url, data, config));
   }
 
   /**
    * HTTP DELETE method
    */
   public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<HttpResponse<T>> {
-    return this.executeRequest<T>(() => this.axiosInstance.delete(url, config))
+    return this.executeRequest<T>(() => this.axiosInstance.delete(url, config));
   }
 }

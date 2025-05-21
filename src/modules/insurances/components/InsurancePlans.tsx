@@ -1,18 +1,25 @@
-import { useInsurances } from '../useInsurances'
-import { getEnumLabel } from '../insurances.interfaces'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useRouter } from 'next/navigation'
+import { useInsurances } from '../useInsurances';
+import { getEnumLabel } from '../insurances.interfaces';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 interface InsurancePlansProps {
-  role: string
+  role: string;
 }
 
 export const InsurancePlans = ({ role }: InsurancePlansProps) => {
-  const { insurances, isLoading } = useInsurances()
-  const router = useRouter()
+  const { insurances, isLoading } = useInsurances();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -40,22 +47,24 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
-  const firstActive = insurances.find((i) => !i.deletedAt)
+  const firstActive = insurances.find((i) => !i.deletedAt);
 
   return (
     <div className="flex flex-col items-center gap-8 p-2">
       <div className="w-full max-w-4xl text-center mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-primary mb-2">Nuestros Planes de Seguro</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-primary mb-2">
+          Nuestros Planes de Seguro
+        </h1>
         <p className="text-lg text-muted-foreground">
           Elige el plan que mejor se adapte a tus necesidades y protege tu futuro hoy mismo.
         </p>
       </div>
       <div className="flex flex-row flex-wrap gap-8 justify-center w-full">
         {insurances.map((insurance) => {
-          const isFeatured = firstActive && insurance.id === firstActive.id
+          const isFeatured = firstActive && insurance.id === firstActive.id;
           return (
             <Card
               key={insurance.id}
@@ -71,12 +80,19 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
                 <CardTitle className="text-2xl font-bold text-center group-hover:text-primary transition-colors mb-1">
                   {insurance.name}
                 </CardTitle>
-                <CardDescription className="text-sm text-center mb-2">{getEnumLabel(insurance.type)}</CardDescription>
-                <Badge variant={insurance.deletedAt ? 'secondary' : 'default'} className="mb-2 animate-pulse">
+                <CardDescription className="text-sm text-center mb-2">
+                  {getEnumLabel(insurance.type)}
+                </CardDescription>
+                <Badge
+                  variant={insurance.deletedAt ? 'secondary' : 'default'}
+                  className="mb-2 animate-pulse"
+                >
                   {insurance.deletedAt ? 'Inactivo' : 'Activo'}
                 </Badge>
                 <div className="flex items-end gap-1 mb-2">
-                  <span className="text-3xl font-extrabold text-primary">${insurance.basePrice}</span>
+                  <span className="text-3xl font-extrabold text-primary">
+                    ${insurance.basePrice}
+                  </span>
                   <span className="text-base text-muted-foreground">/mes</span>
                 </div>
               </CardHeader>
@@ -104,9 +120,9 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
                 </Button>
               </CardFooter>
             </Card>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};

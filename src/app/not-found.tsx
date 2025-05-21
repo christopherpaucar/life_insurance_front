@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
@@ -10,9 +10,12 @@ export default function NotFound() {
       <p className="text-gray-600 mb-8 max-w-md">
         Lo sentimos, la página que estás buscando no existe o ha sido movida.
       </p>
-      <Link href="/" className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+      <Link
+        href="/"
+        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+      >
         Volver al inicio
       </Link>
     </div>
-  )
+  );
 }

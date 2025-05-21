@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { useAuthRouting } from '../../hooks/useAuthRouting'
-import { RouteGuard } from './RouteGuard'
+import { useEffect } from 'react';
+import { useAuthRouting } from '../../hooks/useAuthRouting';
+import { RouteGuard } from './RouteGuard';
 
 interface RouteManagerProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 export function RouteManager({ children }: RouteManagerProps) {
-  const { userRole } = useAuthRouting()
+  const { userRole } = useAuthRouting();
 
   useEffect(() => {
     if (userRole) {
-      console.log(`User authenticated with role: ${userRole}`)
+      console.log(`User authenticated with role: ${userRole}`);
     }
-  }, [userRole])
+  }, [userRole]);
 
-  return <RouteGuard>{children}</RouteGuard>
+  return <RouteGuard>{children}</RouteGuard>;
 }

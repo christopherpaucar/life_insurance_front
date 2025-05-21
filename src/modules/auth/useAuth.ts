@@ -1,43 +1,43 @@
-import { useMutation } from '@tanstack/react-query'
-import { LoginDto, RegisterDto } from './auth.interfaces'
-import { useAuthStore } from './auth.store'
-import { toast } from 'sonner'
+import { useMutation } from '@tanstack/react-query';
+import { LoginDto, RegisterDto } from './auth.interfaces';
+import { useAuthStore } from './auth.store';
+import { toast } from 'sonner';
 
 export const useAuthService = () => {
-  const { login, register, logout, clearError, user } = useAuthStore()
+  const { login, register, logout, clearError, user } = useAuthStore();
 
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginDto) => login(credentials),
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
     onSuccess: () => {
-      toast.success('Inicio de sesión exitoso')
+      toast.success('Inicio de sesión exitoso');
     },
-  })
+  });
 
   const registerMutation = useMutation({
     mutationFn: (userData: RegisterDto) => register(userData),
     onError: (error) => {
-      toast.error(error.message || 'Error en registro')
+      toast.error(error.message || 'Error en registro');
     },
     onSuccess: () => {
-      toast.success('Registro exitoso')
+      toast.success('Registro exitoso');
     },
-  })
+  });
 
   const logoutMutation = useMutation({
     mutationFn: () => {
-      logout()
-      return Promise.resolve()
+      logout();
+      return Promise.resolve();
     },
-  })
+  });
 
   const hasPermission = (): boolean => {
-    if (!user) return false
+    if (!user) return false;
 
-    return true
-  }
+    return true;
+  };
 
   return {
     login: loginMutation.mutate,
@@ -52,5 +52,5 @@ export const useAuthService = () => {
     clearError,
     hasPermission,
     user,
-  }
-}
+  };
+};

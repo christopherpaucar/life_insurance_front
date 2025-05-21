@@ -1,10 +1,17 @@
-import { ContractStatus } from '../types'
-import { Badge } from '@/components/ui/badge'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { Button } from '@/components/ui/button'
-import { FileText, Download } from 'lucide-react'
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table'
+import { ContractStatus } from '../types';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import { FileText, Download } from 'lucide-react';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from '@/components/ui/table';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,37 +22,48 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { Input } from '@/components/ui/input'
-import { useState } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from '@tabler/icons-react'
-import { ContractDetails, statusLabels, statusColors } from './ContractDetails'
-import { useContract } from '../hooks/useContract'
+} from '@tanstack/react-table';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+} from '@tabler/icons-react';
+import { ContractDetails, statusLabels, statusColors } from './ContractDetails';
+import { useContract } from '../hooks/useContract';
 
 interface Contract {
-  id: string
-  contractNumber: string
-  startDate: string
-  endDate: string
-  paymentFrequency: string
-  status: ContractStatus
-  signatureUrl?: string
+  id: string;
+  contractNumber: string;
+  startDate: string;
+  endDate: string;
+  paymentFrequency: string;
+  status: ContractStatus;
+  signatureUrl?: string;
   insurance: {
-    name: string
-  }
+    name: string;
+  };
 }
 
 export function ContractList() {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
-  })
-  const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
+  });
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
 
-  const { contracts, isLoading } = useContract()
+  const { contracts, isLoading } = useContract();
 
   const columns: ColumnDef<Contract>[] = [
     {
@@ -80,18 +98,18 @@ export function ContractList() {
       accessorKey: 'status',
       header: 'Estado',
       cell: ({ row }) => {
-        const status = row.getValue('status')
+        const status = row.getValue('status');
         return (
           <Badge className={statusColors[status as keyof typeof statusColors]}>
             {statusLabels[status as keyof typeof statusLabels]}
           </Badge>
-        )
+        );
       },
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        const contract = row.original
+        const contract = row.original;
 
         return (
           <div className="flex gap-2">
@@ -106,10 +124,10 @@ export function ContractList() {
               </Button>
             )}
           </div>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data: contracts || [],
@@ -126,10 +144,10 @@ export function ContractList() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-  })
+  });
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (selectedContractId) {
@@ -140,7 +158,7 @@ export function ContractList() {
         </Button>
         <ContractDetails contractId={selectedContractId} />
       </div>
-    )
+    );
   }
 
   return (
@@ -149,7 +167,9 @@ export function ContractList() {
         <Input
           placeholder="Filtrar por número de contrato..."
           value={(table.getColumn('contractNumber')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('contractNumber')?.setFilterValue(event.target.value)}
+          onChange={(event) =>
+            table.getColumn('contractNumber')?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
         <div className="ml-4">
@@ -181,7 +201,9 @@ export function ContractList() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -192,7 +214,9 @@ export function ContractList() {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
@@ -228,7 +252,12 @@ export function ContractList() {
           >
             <IconChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
             <IconChevronRight className="h-4 w-4" />
           </Button>
           <Button
@@ -242,5 +271,5 @@ export function ContractList() {
         </div>
       </div>
     </div>
-  )
+  );
 }

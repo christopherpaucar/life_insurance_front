@@ -1,8 +1,14 @@
-'use client'
+'use client';
 
-import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from '@tabler/icons-react'
+import {
+  IconCreditCard,
+  IconDotsVertical,
+  IconLogout,
+  IconNotification,
+  IconUserCircle,
+} from '@tabler/icons-react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,14 +17,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
-import { IUser } from '../modules/auth/auth.interfaces'
-import { useRouter } from 'next/navigation'
+} from '@/components/ui/dropdown-menu';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { IUser } from '../modules/auth/auth.interfaces';
+import { useRouter } from 'next/navigation';
 
 export function NavUser({ user, logout }: { logout: () => void; user: IUser | null }) {
-  const { isMobile } = useSidebar()
-  const router = useRouter()
+  const { isMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -80,5 +91,5 @@ export function NavUser({ user, logout }: { logout: () => void; user: IUser | nu
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

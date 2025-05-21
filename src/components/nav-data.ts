@@ -11,8 +11,8 @@ import {
   IconWallet,
   IconReportMedical,
   IconUser,
-} from '@tabler/icons-react'
-import { NavItem, PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
+} from '@tabler/icons-react';
+import { NavItem, PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces';
 
 // Admin navigation
 export const adminNavItems: NavItem[] = [
@@ -79,7 +79,7 @@ export const adminNavItems: NavItem[] = [
       },
     ],
   },
-]
+];
 
 // Agent navigation
 export const agentNavItems: NavItem[] = [
@@ -131,7 +131,7 @@ export const agentNavItems: NavItem[] = [
       },
     ],
   },
-]
+];
 
 // Client navigation
 export const clientNavItems: NavItem[] = [
@@ -165,7 +165,7 @@ export const clientNavItems: NavItem[] = [
     icon: IconReportMedical,
     permissions: PERMISSIONS[RoleType.CLIENT],
   },
-]
+];
 
 // Common secondary navigation
 export const secondaryNavItems: NavItem[] = [
@@ -184,4 +184,4 @@ export const secondaryNavItems: NavItem[] = [
     url: '/help',
     icon: IconHelp,
   },
-]
+];

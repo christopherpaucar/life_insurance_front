@@ -1,1 +1,1 @@
-export default function ContractsPage() { }
+export default function ContractsPage() {}

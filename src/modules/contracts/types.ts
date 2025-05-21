@@ -24,37 +24,37 @@ export enum AttachmentType {
 }
 
 export interface Contract {
-  id: string
-  contractNumber: string
-  status: ContractStatus
-  startDate: string
-  endDate: string
-  totalAmount: number
-  paymentFrequency: PaymentFrequency
-  installmentAmount: number
-  signatureUrl?: string
-  signedAt?: string
+  id: string;
+  contractNumber: string;
+  status: ContractStatus;
+  startDate: string;
+  endDate: string;
+  totalAmount: number;
+  paymentFrequency: PaymentFrequency;
+  installmentAmount: number;
+  signatureUrl?: string;
+  signedAt?: string;
   attachments: {
-    fileName: string
-    fileUrl: string
-    type: AttachmentType
-    description?: string
-  }[]
-  notes?: string
+    fileName: string;
+    fileUrl: string;
+    type: AttachmentType;
+    description?: string;
+  }[];
+  notes?: string;
   insurance: {
-    id: string
-    name: string
-  }
+    id: string;
+    name: string;
+  };
   client: {
-    id: string
-    name: string
-  }
+    id: string;
+    name: string;
+  };
   beneficiaries: Array<{
-    id: string
-    firstName: string
-    lastName: string
-    percentage: number
-    contactInfo: string
-    relationship: string
-  }>
+    id: string;
+    firstName: string;
+    lastName: string;
+    percentage: number;
+    contactInfo: string;
+    relationship: string;
+  }>;
 }
