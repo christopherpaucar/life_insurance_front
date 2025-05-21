@@ -1,19 +1,19 @@
-import { RoleType } from '@/modules/auth/auth.interfaces'
+import { RoleType } from '@/modules/auth/auth.interfaces';
 
 export interface RouteConfig {
-  path: string
-  public: boolean
-  exact?: boolean
-  allowedRoles?: RoleType[]
-  defaultRedirect?: string
+  path: string;
+  public: boolean;
+  exact?: boolean;
+  allowedRoles?: RoleType[];
+  defaultRedirect?: string;
 }
 
 export interface RoleRouteMap {
-  [RoleType.SUPER_ADMIN]: string
-  [RoleType.ADMIN]: string
-  [RoleType.AGENT]: string
-  [RoleType.CLIENT]: string
-  [RoleType.REVIEWER]: string
+  [RoleType.SUPER_ADMIN]: string;
+  [RoleType.ADMIN]: string;
+  [RoleType.AGENT]: string;
+  [RoleType.CLIENT]: string;
+  [RoleType.REVIEWER]: string;
 }
 
 // Default landing pages for each role
@@ -23,14 +23,14 @@ export const roleDefaultRoutes: RoleRouteMap = {
   [RoleType.AGENT]: '/agent/dashboard',
   [RoleType.CLIENT]: '/client/dashboard',
   [RoleType.REVIEWER]: '/reviewer/dashboard',
-}
+};
 
 // Public routes that don't require authentication
 export const publicRoutes: RouteConfig[] = [
   { path: '/login', public: true },
   { path: '/register', public: true },
   { path: '/about', public: true },
-]
+];
 
 // Private routes with role-based access control
 export const privateRoutes: RouteConfig[] = [
@@ -81,7 +81,7 @@ export const privateRoutes: RouteConfig[] = [
   { path: '/reviewer/claims', public: false, allowedRoles: [RoleType.REVIEWER] },
   { path: '/reviewer/policies', public: false, allowedRoles: [RoleType.REVIEWER] },
   { path: '/reviewer/reports', public: false, allowedRoles: [RoleType.REVIEWER] },
-]
+];
 
 // Combine all routes for easier access
-export const allRoutes = [...publicRoutes, ...privateRoutes]
+export const allRoutes = [...publicRoutes, ...privateRoutes];

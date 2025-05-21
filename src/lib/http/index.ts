@@ -1,26 +1,26 @@
-import type { HttpClientConfig, IHttpClient } from './types'
-import { HttpClient } from './http-client'
+import type { HttpClientConfig, IHttpClient } from './types';
+import { HttpClient } from './http-client';
 
-let defaultClient: IHttpClient | null = null
+let defaultClient: IHttpClient | null = null;
 
 export const createHttpClient = (config?: Partial<HttpClientConfig>): IHttpClient => {
-  return new HttpClient(config)
-}
+  return new HttpClient(config);
+};
 
 export const getHttpClient = (): IHttpClient => {
   if (!defaultClient) {
-    defaultClient = createHttpClient()
+    defaultClient = createHttpClient();
   }
-  return defaultClient
-}
+  return defaultClient;
+};
 
 export const setAuthToken = (token: string): void => {
-  getHttpClient().setAuthToken(token)
-}
+  getHttpClient().setAuthToken(token);
+};
 
 export const removeAuthToken = (): void => {
-  getHttpClient().removeAuthToken()
-}
+  getHttpClient().removeAuthToken();
+};
 
-export * from './types'
-export * from './error-handler'
+export * from './types';
+export * from './error-handler';

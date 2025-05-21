@@ -1,16 +1,31 @@
-import { ContractStatus } from '../types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { Button } from '@/components/ui/button'
-import { Upload, FileText, Download, Calendar, User, DollarSign, Clock, AlertCircle } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useState } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useAuthService } from '../../auth/useAuth'
-import { useContract, AttachmentType } from '../hooks/useContract'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ContractStatus } from '../types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import {
+  Upload,
+  FileText,
+  Download,
+  Calendar,
+  User,
+  DollarSign,
+  Clock,
+  AlertCircle,
+} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useAuthService } from '../../auth/useAuth';
+import { useContract, AttachmentType } from '../hooks/useContract';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -18,11 +33,11 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+} from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ContractDetailsProps {
-  contractId: string
+  contractId: string;
 }
 
 export const statusColors = {
@@ -32,7 +47,7 @@ export const statusColors = {
   [ContractStatus.CANCELLED]: 'bg-gray-500',
   [ContractStatus.DRAFT]: 'bg-gray-500',
   [ContractStatus.PENDING_BASIC_DOCUMENTS]: 'bg-blue-500',
-}
+};
 
 export const statusLabels = {
   [ContractStatus.ACTIVE]: 'Activo',
@@ -41,24 +56,25 @@ export const statusLabels = {
   [ContractStatus.CANCELLED]: 'Cancelado',
   [ContractStatus.DRAFT]: 'Borrador',
   [ContractStatus.PENDING_BASIC_DOCUMENTS]: 'Pendiente de documentos básicos',
-}
+};
 
 export function ContractDetails({ contractId }: ContractDetailsProps) {
-  const { user } = useAuthService()
-  const { contract, isLoading, updateContract, uploadAttachment, signContract } = useContract(contractId)
-  const [activeTab, setActiveTab] = useState('details')
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [selectedStatus, setSelectedStatus] = useState<ContractStatus | null>(null)
-  const [selectedDocType, setSelectedDocType] = useState<AttachmentType | null>(null)
+  const { user } = useAuthService();
+  const { contract, isLoading, updateContract, uploadAttachment, signContract } =
+    useContract(contractId);
+  const [activeTab, setActiveTab] = useState('details');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<ContractStatus | null>(null);
+  const [selectedDocType, setSelectedDocType] = useState<AttachmentType | null>(null);
 
   const requiredDocuments = [
     { type: AttachmentType.IDENTIFICATION, label: 'Identificación' },
     { type: AttachmentType.MEDICAL_RECORD, label: 'Historial Médico' },
-  ]
+  ];
 
   const hasUploadedDocument = (type: AttachmentType) => {
-    return contract?.attachments?.some((attachment) => attachment.type === type)
-  }
+    return contract?.attachments?.some((attachment) => attachment.type === type);
+  };
 
   if (isLoading) {
     return (
@@ -76,47 +92,47 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (!contract) {
-    return <div>No se encontró el contrato</div>
+    return <div>No se encontró el contrato</div>;
   }
 
-  const isClient = user?.roles.some((role) => role.name === 'CLIENTE')
-  const isAgent = user?.roles.some((role) => role.name === 'AGENTE')
+  const isClient = user?.roles.some((role) => role.name === 'CLIENTE');
+  const isAgent = user?.roles.some((role) => role.name === 'AGENTE');
 
-  console.log({ isClient, isAgent })
+  console.log({ isClient, isAgent });
 
   const handleStatusChange = (status: ContractStatus) => {
-    setSelectedStatus(status)
-    setShowConfirmModal(true)
-  }
+    setSelectedStatus(status);
+    setShowConfirmModal(true);
+  };
 
   const confirmStatusChange = () => {
     if (selectedStatus) {
-      updateContract({ id: contractId, data: { status: selectedStatus } })
-      setShowConfirmModal(false)
-      setSelectedStatus(null)
+      updateContract({ id: contractId, data: { status: selectedStatus } });
+      setShowConfirmModal(false);
+      setSelectedStatus(null);
     }
-  }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file && selectedDocType) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('type', selectedDocType)
-      uploadAttachment({ contractId, file: formData })
-      setSelectedDocType(null)
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', selectedDocType);
+      uploadAttachment({ contractId, file: formData });
+      setSelectedDocType(null);
     }
-  }
+  };
 
   const handleSignContract = () => {
-    signContract({ contractId })
-  }
+    signContract({ contractId });
+  };
 
-  console.log(contract)
+  console.log(contract);
 
   return (
     <div className="space-y-6">
@@ -190,15 +206,23 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
                         <dd className="text-lg font-medium">{contract.insurance.name}</dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Fecha de inicio</dt>
-                        <dd className="text-lg">{format(new Date(contract.startDate), 'PPP', { locale: es })}</dd>
+                        <dt className="text-sm font-medium text-muted-foreground">
+                          Fecha de inicio
+                        </dt>
+                        <dd className="text-lg">
+                          {format(new Date(contract.startDate), 'PPP', { locale: es })}
+                        </dd>
                       </div>
                       <div>
                         <dt className="text-sm font-medium text-muted-foreground">Fecha de fin</dt>
-                        <dd className="text-lg">{format(new Date(contract.endDate), 'PPP', { locale: es })}</dd>
+                        <dd className="text-lg">
+                          {format(new Date(contract.endDate), 'PPP', { locale: es })}
+                        </dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Frecuencia de pago</dt>
+                        <dt className="text-sm font-medium text-muted-foreground">
+                          Frecuencia de pago
+                        </dt>
                         <dd className="text-lg capitalize">{contract.paymentFrequency}</dd>
                       </div>
                     </dl>
@@ -219,7 +243,9 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
                         <dd className="text-2xl font-bold text-primary">${contract.totalAmount}</dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Monto por cuota</dt>
+                        <dt className="text-sm font-medium text-muted-foreground">
+                          Monto por cuota
+                        </dt>
                         <dd className="text-lg">${contract.installmentAmount}</dd>
                       </div>
                     </dl>
@@ -283,13 +309,17 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
                       <Alert>
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
-                          Por favor, sube los siguientes documentos para continuar con el proceso de tu seguro.
+                          Por favor, sube los siguientes documentos para continuar con el proceso de
+                          tu seguro.
                         </AlertDescription>
                       </Alert>
 
                       <div className="grid gap-4">
                         {requiredDocuments.map((doc) => (
-                          <div key={doc.type} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div
+                            key={doc.type}
+                            className="flex items-center justify-between p-4 border rounded-lg"
+                          >
                             <div className="space-y-1">
                               <div className="font-medium">{doc.label}</div>
                               {hasUploadedDocument(doc.type) ? (
@@ -299,7 +329,11 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
                               )}
                             </div>
                             {!hasUploadedDocument(doc.type) && (
-                              <Button variant="outline" onClick={() => setSelectedDocType(doc.type)} asChild>
+                              <Button
+                                variant="outline"
+                                onClick={() => setSelectedDocType(doc.type)}
+                                asChild
+                              >
                                 <label>
                                   <Upload className="h-4 w-4 mr-2" />
                                   Subir
@@ -342,8 +376,8 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
                             <div>
                               <div className="font-medium">{attachment.fileName}</div>
                               <div className="text-sm text-muted-foreground">
-                                {requiredDocuments.find((doc) => doc.type === attachment.type)?.label ||
-                                  'Otro documento'}
+                                {requiredDocuments.find((doc) => doc.type === attachment.type)
+                                  ?.label || 'Otro documento'}
                               </div>
                             </div>
                           </div>
@@ -364,5 +398,5 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { z } from 'zod'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { useClients } from '../useClients'
-import { Client } from '../clients.interfaces'
+} from '@/components/ui/dialog';
+import { useClients } from '../useClients';
+import { Client } from '../clients.interfaces';
 
 const formSchema = z.object({
   firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -21,22 +21,29 @@ const formSchema = z.object({
   email: z.string().email('Email inválido'),
   phone: z.string().min(7, 'El teléfono debe tener al menos 7 caracteres'),
   address: z.string().min(5, 'La dirección debe tener al menos 5 caracteres'),
-  identificationNumber: z.string().min(5, 'El número de documento debe tener al menos 5 caracteres'),
+  identificationNumber: z
+    .string()
+    .min(5, 'El número de documento debe tener al menos 5 caracteres'),
   birthDate: z.string().min(1, 'Debe seleccionar una fecha de nacimiento'),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 interface ClientFormModalProps {
-  open: boolean
-  onClose: () => void
-  mode: 'create' | 'edit'
-  client: Client | null
+  open: boolean;
+  onClose: () => void;
+  mode: 'create' | 'edit';
+  client: Client | null;
 }
 
-export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose, mode, client }) => {
-  const { createClient, updateClient, isCreating, isUpdating } = useClients()
-  const isProcessing = isCreating || isUpdating
+export const ClientFormModal: React.FC<ClientFormModalProps> = ({
+  open,
+  onClose,
+  mode,
+  client,
+}) => {
+  const { createClient, updateClient, isCreating, isUpdating } = useClients();
+  const isProcessing = isCreating || isUpdating;
 
   const [formData, setFormData] = useState<FormValues>({
     firstName: '',
@@ -46,9 +53,9 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
     address: '',
     identificationNumber: '',
     birthDate: '',
-  })
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (mode === 'edit' && client && open) {
@@ -60,9 +67,9 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         address: client.address,
         identificationNumber: client.identificationNumber,
         birthDate: client.birthDate,
-      })
+      });
     }
-  }, [client, open, mode])
+  }, [client, open, mode]);
 
   const resetForm = () => {
     if (mode === 'edit' && client) {
@@ -74,7 +81,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         address: client.address,
         identificationNumber: client.identificationNumber,
         birthDate: client.birthDate,
-      })
+      });
     } else {
       setFormData({
         firstName: '',
@@ -84,78 +91,78 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         address: '',
         identificationNumber: '',
         birthDate: '',
-      })
+      });
     }
-    setErrors({})
-  }
+    setErrors({});
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      formSchema.parse(formData)
-      setErrors({})
+      formSchema.parse(formData);
+      setErrors({});
 
       if (mode === 'create') {
         createClient(formData, {
           onSuccess: () => {
-            resetForm()
-            onClose()
+            resetForm();
+            onClose();
           },
-        })
+        });
       } else if (mode === 'edit' && client) {
-        const updateDto: Partial<FormValues> = {}
+        const updateDto: Partial<FormValues> = {};
         Object.keys(formData).forEach((key) => {
           if (formData[key as keyof FormValues] !== client[key as keyof Client]) {
-            updateDto[key as keyof FormValues] = formData[key as keyof FormValues]
+            updateDto[key as keyof FormValues] = formData[key as keyof FormValues];
           }
-        })
+        });
 
         if (Object.keys(updateDto).length === 0) {
-          toast.info('No se detectaron cambios')
-          onClose()
-          return
+          toast.info('No se detectaron cambios');
+          onClose();
+          return;
         }
 
         updateClient(client.id, updateDto, {
           onSuccess: () => {
-            resetForm()
-            onClose()
+            resetForm();
+            onClose();
           },
-        })
+        });
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {}
+        const fieldErrors: Record<string, string> = {};
         err.errors.forEach((error) => {
           if (error.path.length > 0) {
-            fieldErrors[error.path[0].toString()] = error.message
+            fieldErrors[error.path[0].toString()] = error.message;
           }
-        })
-        setErrors(fieldErrors)
-        toast.error('Por favor, corrija los errores en el formulario')
+        });
+        setErrors(fieldErrors);
+        toast.error('Por favor, corrija los errores en el formulario');
       } else {
-        console.error('Error inesperado:', err)
-        toast.error('Ha ocurrido un error inesperado')
+        console.error('Error inesperado:', err);
+        toast.error('Ha ocurrido un error inesperado');
       }
     }
-  }
+  };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          resetForm()
-          onClose()
+          resetForm();
+          onClose();
         }
       }}
       modal={true}
@@ -242,7 +249,9 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
               onChange={handleChange}
               className={errors.identificationNumber ? 'border-red-500' : ''}
             />
-            {errors.identificationNumber && <p className="text-destructive text-sm">{errors.identificationNumber}</p>}
+            {errors.identificationNumber && (
+              <p className="text-destructive text-sm">{errors.identificationNumber}</p>
+            )}
           </div>
 
           <div className="grid gap-3">
@@ -269,5 +278,5 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

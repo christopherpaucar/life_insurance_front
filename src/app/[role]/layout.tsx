@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { AuthenticatedLayout } from '../../components/layouts/AuthenticatedLayout'
+import React from 'react';
+import { AuthenticatedLayout } from '../../components/layouts/AuthenticatedLayout';
 
 interface AuthLayoutProps {
-  children: React.ReactNode
-  params: Promise<{ role: string }> | { role: string }
+  children: React.ReactNode;
+  params: Promise<{ role: string }> | { role: string };
 }
 
 export default function AuthLayout({ children, params }: AuthLayoutProps) {
-  const unwrappedParams = params instanceof Promise ? React.use(params) : params
-  const role = unwrappedParams.role
+  const unwrappedParams = params instanceof Promise ? React.use(params) : params;
+  const role = unwrappedParams.role;
 
   const getLabelByRole = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'Panel de Administración'
+        return 'Panel de Administración';
       case 'agent':
-        return 'Panel de Agente'
+        return 'Panel de Agente';
       case 'client':
-        return ''
+        return '';
       default:
-        return 'Panel de Administración'
+        return 'Panel de Administración';
     }
-  }
+  };
 
   return (
     <AuthenticatedLayout>
@@ -34,5 +34,5 @@ export default function AuthLayout({ children, params }: AuthLayoutProps) {
         {children}
       </div>
     </AuthenticatedLayout>
-  )
+  );
 }

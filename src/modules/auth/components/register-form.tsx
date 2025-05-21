@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Image from 'next/image'
-import { useAuthService } from '../useAuth'
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Image from 'next/image';
+import { useAuthService } from '../useAuth';
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const router = useRouter()
+  const router = useRouter();
 
-  const { register, isRegistering } = useAuthService()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const { register, isRegistering } = useAuthService();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     register(
       {
         name,
@@ -30,11 +30,11 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
       },
       {
         onSuccess: () => {
-          router.push('/dashboard')
+          router.push('/dashboard');
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -44,7 +44,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Crear una cuenta</h1>
-                <p className="text-muted-foreground text-balance">Regístrate para acceder a Seguros Sur</p>
+                <p className="text-muted-foreground text-balance">
+                  Regístrate para acceder a Seguros Sur
+                </p>
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="name">Nombre completo</Label>
@@ -90,14 +92,20 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">
-            <Image src="/login.png" alt="Image" fill className="object-cover dark:brightness-[0.2] dark:grayscale" />
+            <Image
+              src="/login.png"
+              alt="Image"
+              fill
+              className="object-cover dark:brightness-[0.2] dark:grayscale"
+            />
           </div>
         </CardContent>
       </Card>
 
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Al registrarte, aceptas nuestros <a href="#">Términos de Servicio</a> y <a href="#">Política de Privacidad</a>.
+        Al registrarte, aceptas nuestros <a href="#">Términos de Servicio</a> y{' '}
+        <a href="#">Política de Privacidad</a>.
       </div>
     </div>
-  )
+  );
 }

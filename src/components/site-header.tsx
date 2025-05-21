@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import { IconUser } from '@tabler/icons-react'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import { useCallback } from 'react'
+import { IconUser } from '@tabler/icons-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useCallback } from 'react';
 
 export function SiteHeader() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const getPageTitle = useCallback(() => {
-    if (!pathname) return 'Dashboard'
+    if (!pathname) return 'Dashboard';
 
-    const segments = pathname.split('/')
-    const lastSegment = segments[segments.length - 1]
+    const segments = pathname.split('/');
+    const lastSegment = segments[segments.length - 1];
 
-    if (lastSegment === 'dashboard') return 'Dashboard'
-    if (lastSegment === 'profile') return 'Mi Perfil'
+    if (lastSegment === 'dashboard') return 'Dashboard';
+    if (lastSegment === 'profile') return 'Mi Perfil';
 
     return lastSegment
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }, [pathname])
+      .join(' ');
+  }, [pathname]);
 
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -42,5 +42,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

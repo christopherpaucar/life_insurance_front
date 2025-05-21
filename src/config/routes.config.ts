@@ -2,19 +2,19 @@
  * Route configuration for the application
  * Provides a central place to define which routes are public or private
  */
-import { RoleType } from '../modules/auth/auth.interfaces'
+import { RoleType } from '../modules/auth/auth.interfaces';
 
 export interface RouteConfig {
-  path: string
-  public: boolean
-  exact?: boolean // If true, only exact path matches; if false, also matches subpaths
-  allowedRoles?: RoleType[] // Roles that can access this route
-  redirectByRole?: { [key in RoleType]?: string } // Redirect paths by role
-  redirectTo?: string // Optional redirection path for non-public routes
+  path: string;
+  public: boolean;
+  exact?: boolean; // If true, only exact path matches; if false, also matches subpaths
+  allowedRoles?: RoleType[]; // Roles that can access this route
+  redirectByRole?: { [key in RoleType]?: string }; // Redirect paths by role
+  redirectTo?: string; // Optional redirection path for non-public routes
 }
 
 // Define explicitly public routes
-export const publicRoutes: string[] = ['/login', '/register', '/about']
+export const publicRoutes: string[] = ['/login', '/register', '/about'];
 
 // Define default role-based landing pages
 export const roleDefaultPaths: Record<RoleType, string> = {
@@ -23,7 +23,7 @@ export const roleDefaultPaths: Record<RoleType, string> = {
   [RoleType.AGENT]: '/agent/dashboard',
   [RoleType.CLIENT]: '/client/dashboard',
   [RoleType.REVIEWER]: '/reviewer/dashboard',
-}
+};
 
 // Route definitions
 export const routes: RouteConfig[] = [
@@ -91,16 +91,16 @@ export const routes: RouteConfig[] = [
   // User common routes
   { path: '/user/profile', public: false },
   { path: '/user/settings', public: false },
-]
+];
 
 // Private routes registry to be updated at runtime
-const dynamicRouteRegistry: { [path: string]: RouteConfig } = {}
+const dynamicRouteRegistry: { [path: string]: RouteConfig } = {};
 
 /**
  * Add a new route to the configuration or update an existing one
  */
 export function addRoute(routeConfig: RouteConfig): void {
-  dynamicRouteRegistry[routeConfig.path] = routeConfig
+  dynamicRouteRegistry[routeConfig.path] = routeConfig;
 }
 
 /**
@@ -109,64 +109,66 @@ export function addRoute(routeConfig: RouteConfig): void {
  */
 export function isPublicRoute(path: string): boolean {
   // First check in the explicit route configs
-  const explicitConfig = findRouteConfig(path)
+  const explicitConfig = findRouteConfig(path);
 
   if (explicitConfig) {
-    return explicitConfig.public
+    return explicitConfig.public;
   }
 
   // If no explicit config, check in the publicRoutes array
-  return publicRoutes.some((publicPath) => path === publicPath || path.startsWith(`${publicPath}/`))
+  return publicRoutes.some(
+    (publicPath) => path === publicPath || path.startsWith(`${publicPath}/`),
+  );
 }
 
 /**
  * Checks if a given path is a private route
  */
 export function isPrivateRoute(path: string): boolean {
-  return !isPublicRoute(path)
+  return !isPublicRoute(path);
 }
 
 /**
  * Get redirect path for a route if defined
  */
 export function getRedirectPath(path: string): string | undefined {
-  return findRouteConfig(path)?.redirectTo
+  return findRouteConfig(path)?.redirectTo;
 }
 
 /**
  * Get role-based redirect for a specific route and role
  */
 export function getRoleBasedRedirect(path: string, role: RoleType): string | undefined {
-  const config = findRouteConfig(path)
-  const roleSpecificRedirect = config?.redirectByRole?.[role]
+  const config = findRouteConfig(path);
+  const roleSpecificRedirect = config?.redirectByRole?.[role];
 
   // If route has specific redirect for this role, use it
   if (roleSpecificRedirect) {
-    return roleSpecificRedirect
+    return roleSpecificRedirect;
   }
 
   // Otherwise, return default landing page for this role
-  return roleDefaultPaths[role]
+  return roleDefaultPaths[role];
 }
 
 /**
  * Check if a user with given roles can access a specific route
  */
 export function canAccessRoute(path: string, userRoles: RoleType[]): boolean {
-  const config = findRouteConfig(path)
+  const config = findRouteConfig(path);
 
   // If route config doesn't exist, default to deny access
   if (!config) {
-    return false
+    return false;
   }
 
   // If no allowed roles specified, any authenticated user can access
   if (!config.allowedRoles || config.allowedRoles.length === 0) {
-    return true
+    return true;
   }
 
   // Check if any of the user's roles match the allowed roles
-  return userRoles.some((role) => config.allowedRoles?.includes(role))
+  return userRoles.some((role) => config.allowedRoles?.includes(role));
 }
 
 /**
@@ -176,14 +178,14 @@ export function findRouteConfig(path: string): RouteConfig | undefined {
   // First check dynamic registry
   const dynamicConfig = Object.values(dynamicRouteRegistry).find((route) =>
     route.exact ? route.path === path : path === route.path || path.startsWith(`${route.path}/`),
-  )
+  );
 
   if (dynamicConfig) {
-    return dynamicConfig
+    return dynamicConfig;
   }
 
   // Then check static routes
   return routes.find((route) =>
     route.exact ? route.path === path : path === route.path || path.startsWith(`${route.path}/`),
-  )
+  );
 }

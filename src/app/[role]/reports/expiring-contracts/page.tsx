@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { ReportCard } from '@/components/reports/ReportCard'
+import React from 'react';
+import { ReportCard } from '@/components/reports/ReportCard';
 
 interface ExpiringContractsPageProps {
   params: {
-    role: string
-  }
+    role: string;
+  };
 }
 
 export default function ExpiringContractsPage({ params }: ExpiringContractsPageProps) {
-  const role = params.role
+  const role = params.role;
 
   return (
     <div className="space-y-6">
@@ -33,5 +33,5 @@ export default function ExpiringContractsPage({ params }: ExpiringContractsPageP
         />
       </div>
     </div>
-  )
+  );
 }

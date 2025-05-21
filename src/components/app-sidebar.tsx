@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { IconInnerShadowTop } from '@tabler/icons-react'
+import * as React from 'react';
+import { IconInnerShadowTop } from '@tabler/icons-react';
 
-import { NavMain } from '@/components/nav-main'
-import { NavSecondary } from '@/components/nav-secondary'
-import { NavUser } from '@/components/nav-user'
+import { NavMain } from '@/components/nav-main';
+import { NavSecondary } from '@/components/nav-secondary';
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
@@ -14,55 +14,55 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from '@/components/ui/sidebar'
-import { useAuthService } from '../modules/auth/useAuth'
-import { useRouter } from 'next/navigation'
-import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data'
-import { REIMBURSEMENT_PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
+} from '@/components/ui/sidebar';
+import { useAuthService } from '../modules/auth/useAuth';
+import { useRouter } from 'next/navigation';
+import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data';
+import { REIMBURSEMENT_PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { logout, user } = useAuthService()
-  const router = useRouter()
+  const { logout, user } = useAuthService();
+  const router = useRouter();
 
   const handleLogout = () => {
     logout(void 0, {
       onSuccess: () => {
-        router.push('/login')
+        router.push('/login');
       },
-    })
-  }
+    });
+  };
 
   // Determine which navigation items to show based on user role
   const getNavigationItems = () => {
-    if (!user) return []
+    if (!user) return [];
 
     // Map role name to corresponding navigation items
-    const roleName = user.roles[0].name as RoleType
+    const roleName = user.roles[0].name as RoleType;
 
     // Check permissions for each role type
     if (roleName === RoleType.SUPER_ADMIN || roleName === RoleType.ADMIN) {
-      return adminNavItems
+      return adminNavItems;
     }
 
     if (roleName === RoleType.AGENT) {
-      return agentNavItems
+      return agentNavItems;
     }
 
     if (roleName === RoleType.CLIENT) {
-      return clientNavItems
+      return clientNavItems;
     }
 
     if (roleName === RoleType.REVIEWER) {
       // Revisor role might have similar access as agent but more limited
       return agentNavItems
         .filter((item) => item.permissions?.includes(REIMBURSEMENT_PERMISSIONS.READ))
-        .filter((item) => !item.permissions)
+        .filter((item) => !item.permissions);
     }
 
-    return []
-  }
+    return [];
+  };
 
-  const navItems = getNavigationItems()
+  const navItems = getNavigationItems();
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -86,5 +86,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={user} logout={handleLogout} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

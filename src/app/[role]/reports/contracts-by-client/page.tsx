@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { ReportCard } from '@/components/reports/ReportCard'
+import React from 'react';
+import { ReportCard } from '@/components/reports/ReportCard';
 
 interface ContractsByClientPageProps {
   params: {
-    role: string
-  }
+    role: string;
+  };
 }
 
 export default function ContractsByClientPage({ params }: ContractsByClientPageProps) {
-  const role = params.role
+  const role = params.role;
 
   return (
     <div className="space-y-6">
@@ -33,5 +33,5 @@ export default function ContractsByClientPage({ params }: ContractsByClientPageP
         />
       </div>
     </div>
-  )
+  );
 }

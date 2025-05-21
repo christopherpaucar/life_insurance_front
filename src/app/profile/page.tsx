@@ -1,43 +1,43 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { AuthenticatedLayout } from '@/components/layouts/AuthenticatedLayout'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useAuthStore } from '@/modules/auth/auth.store'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { AuthenticatedLayout } from '@/components/layouts/AuthenticatedLayout';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAuthStore } from '@/modules/auth/auth.store';
+import { toast } from 'sonner';
 
 export default function ProfilePage() {
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
 
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-  })
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Here you would implement the actual update logic with API call
     // For now we'll just simulate a successful update
     toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
       loading: 'Actualizando perfil...',
       success: 'Perfil actualizado con éxito',
       error: 'Error al actualizar el perfil',
-    })
-    setIsEditing(false)
-  }
+    });
+    setIsEditing(false);
+  };
 
   const getInitials = (name: string) => {
     return name
@@ -45,8 +45,8 @@ export default function ProfilePage() {
       .map((part) => part[0])
       .join('')
       .toUpperCase()
-      .substring(0, 2)
-  }
+      .substring(0, 2);
+  };
 
   if (!user) {
     return (
@@ -57,7 +57,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </AuthenticatedLayout>
-    )
+    );
   }
 
   return (
@@ -147,5 +147,5 @@ export default function ProfilePage() {
         </Card>
       </div>
     </AuthenticatedLayout>
-  )
+  );
 }

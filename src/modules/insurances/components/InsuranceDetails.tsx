@@ -1,21 +1,30 @@
-import { useInsurance } from '../useInsurances'
-import { getEnumLabel } from '../insurances.interfaces'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Shield, CheckCircle2, Clock, DollarSign, Calendar, ArrowRight, Heart, Users } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Separator } from '@/components/ui/separator'
-import { useRouter } from 'next/navigation'
+import { useInsurance } from '../useInsurances';
+import { getEnumLabel } from '../insurances.interfaces';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Shield,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Calendar,
+  ArrowRight,
+  Heart,
+  Users,
+} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/navigation';
 
 interface InsuranceDetailsProps {
-  insuranceId: string
+  insuranceId: string;
 }
 
 export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
-  const { insurance, isLoading } = useInsurance(insuranceId)
-  const router = useRouter()
+  const { insurance, isLoading } = useInsurance(insuranceId);
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -31,10 +40,10 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  if (!insurance) return null
+  if (!insurance) return null;
 
   return (
     <div className="space-y-8">
@@ -48,9 +57,14 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                   <div className="flex items-center gap-2">
                     <CardTitle className="text-3xl font-bold">{insurance.name}</CardTitle>
                   </div>
-                  <CardDescription className="text-lg">{getEnumLabel(insurance.type)}</CardDescription>
+                  <CardDescription className="text-lg">
+                    {getEnumLabel(insurance.type)}
+                  </CardDescription>
                 </div>
-                <Badge variant={insurance.deletedAt ? 'destructive' : 'default'} className="text-sm">
+                <Badge
+                  variant={insurance.deletedAt ? 'destructive' : 'default'}
+                  className="text-sm"
+                >
                   {insurance.deletedAt ? 'Inactivo' : 'Activo'}
                 </Badge>
               </div>
@@ -97,14 +111,18 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                             <p className="text-sm text-muted-foreground">Monto de Cobertura</p>
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="font-semibold text-lg">{coverage.coverageAmount}</span>
+                              <span className="font-semibold text-lg">
+                                {coverage.coverageAmount}
+                              </span>
                             </div>
                           </div>
                           <div className="space-y-1">
                             <p className="text-sm text-muted-foreground">Costo Adicional</p>
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="font-semibold text-lg">{coverage.additionalCost}</span>
+                              <span className="font-semibold text-lg">
+                                {coverage.additionalCost}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -139,7 +157,9 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                             <p className="text-sm text-muted-foreground">Costo del Beneficio</p>
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="font-semibold text-lg">{benefit.additionalCost}</span>
+                              <span className="font-semibold text-lg">
+                                {benefit.additionalCost}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -203,7 +223,9 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                 Contratar ahora
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <p className="text-sm text-center text-muted-foreground">Proceso de contratación en menos de 5 minutos</p>
+              <p className="text-sm text-center text-muted-foreground">
+                Proceso de contratación en menos de 5 minutos
+              </p>
             </CardContent>
           </Card>
 
@@ -218,7 +240,9 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                 </div>
                 <div>
                   <h4 className="font-medium">Protección completa</h4>
-                  <p className="text-sm text-muted-foreground">Cobertura integral para tu tranquilidad</p>
+                  <p className="text-sm text-muted-foreground">
+                    Cobertura integral para tu tranquilidad
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -227,7 +251,9 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
                 </div>
                 <div>
                   <h4 className="font-medium">Atención 24/7</h4>
-                  <p className="text-sm text-muted-foreground">Soporte disponible en cualquier momento</p>
+                  <p className="text-sm text-muted-foreground">
+                    Soporte disponible en cualquier momento
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -244,5 +270,5 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

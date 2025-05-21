@@ -1,29 +1,29 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import './globals.css'
-import { RouteManager } from '../components/auth/RouteManager'
-import { QueryProvider } from '../providers/QueryProvider'
-import { Toaster } from '../components/ui/sonner'
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { RouteManager } from '../components/auth/RouteManager';
+import { QueryProvider } from '../providers/QueryProvider';
+import { Toaster } from '../components/ui/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
-})
+});
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
-})
+});
 
 export const metadata: Metadata = {
   title: 'Seguros Sur',
   description: 'Seguros para tu vida',
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="es">
@@ -34,5 +34,5 @@ export default function RootLayout({
         <Toaster richColors closeButton position="top-right" />
       </body>
     </html>
-  )
+  );
 }

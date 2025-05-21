@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { useRouteConfig } from '../hooks/useRouteConfig'
+import { useEffect } from 'react';
+import { useRouteConfig } from '../hooks/useRouteConfig';
 
 interface PublicRouteProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -13,17 +13,24 @@ interface PublicRouteProviderProps {
  * regardless of user authentication status
  */
 export function PublicRouteProvider({ children }: PublicRouteProviderProps) {
-  const { setRouteAsPublic } = useRouteConfig()
+  const { setRouteAsPublic } = useRouteConfig();
 
   useEffect(() => {
     // Define routes that should always be public here
-    const globalPublicRoutes = ['/login', '/register', '/about', '/forgot-password', '/terms', '/privacy']
+    const globalPublicRoutes = [
+      '/login',
+      '/register',
+      '/about',
+      '/forgot-password',
+      '/terms',
+      '/privacy',
+    ];
 
     // Register all global public routes
     globalPublicRoutes.forEach((route) => {
-      setRouteAsPublic(route)
-    })
-  }, [setRouteAsPublic])
+      setRouteAsPublic(route);
+    });
+  }, [setRouteAsPublic]);
 
-  return <>{children}</>
+  return <>{children}</>;
 }

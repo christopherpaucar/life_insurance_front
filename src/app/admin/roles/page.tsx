@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 export default function AdminRolesPage() {
   return (
@@ -12,5 +12,5 @@ export default function AdminRolesPage() {
         {/* Role management interface would go here */}
       </div>
     </>
-  )
+  );
 }

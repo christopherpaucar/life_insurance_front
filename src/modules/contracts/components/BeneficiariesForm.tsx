@@ -1,36 +1,54 @@
-import { useForm, useFieldArray } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Plus, Trash2, HelpCircle } from 'lucide-react'
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Plus, Trash2, HelpCircle } from 'lucide-react';
 
 const beneficiarySchema = z.object({
   name: z.string().min(1, 'Name is required'),
   relationship: z.string().min(1, 'Relationship is required'),
   percentage: z.number().min(0).max(100, 'Percentage must be between 0 and 100'),
   contactInfo: z.string().optional(),
-})
+});
 
 const formSchema = z.object({
   beneficiaries: z.array(beneficiarySchema).min(1, 'At least one beneficiary is required'),
-})
+});
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof formSchema>;
 
 interface BeneficiariesFormProps {
-  formData: any
-  setFormData: (data: any) => void
-  onNext: () => void
-  onBack: () => void
+  formData: any;
+  setFormData: (data: any) => void;
+  onNext: () => void;
+  onBack: () => void;
 }
 
-const relationships = ['spouse', 'child', 'parent', 'sibling', 'other']
+const relationships = ['spouse', 'child', 'parent', 'sibling', 'other'];
 
-export function BeneficiariesForm({ formData, setFormData, onNext, onBack }: BeneficiariesFormProps) {
+export function BeneficiariesForm({
+  formData,
+  setFormData,
+  onNext,
+  onBack,
+}: BeneficiariesFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,27 +57,27 @@ export function BeneficiariesForm({ formData, setFormData, onNext, onBack }: Ben
           ? formData.beneficiaries
           : [{ name: '', relationship: '', percentage: 100, contactInfo: '' }],
     },
-  })
+  });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'beneficiaries',
-  })
+  });
 
   const onSubmit = (data: FormData) => {
     setFormData({
       ...formData,
       beneficiaries: data.beneficiaries,
-    })
-    onNext()
-  }
+    });
+    onNext();
+  };
 
   return (
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          e.preventDefault()
-          form.handleSubmit(onSubmit)(e)
+          e.preventDefault();
+          form.handleSubmit(onSubmit)(e);
         }}
         className="space-y-6"
       >
@@ -115,7 +133,9 @@ export function BeneficiariesForm({ formData, setFormData, onNext, onBack }: Ben
                               <HelpCircle className="h-4 w-4 text-muted-foreground" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Seleccione la relación del beneficiario con el titular del contrato.</p>
+                              <p>
+                                Seleccione la relación del beneficiario con el titular del contrato.
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -152,7 +172,10 @@ export function BeneficiariesForm({ formData, setFormData, onNext, onBack }: Ben
                               <HelpCircle className="h-4 w-4 text-muted-foreground" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Ingrese el porcentaje que recibirá el beneficiario. La suma total debe ser 100%.</p>
+                              <p>
+                                Ingrese el porcentaje que recibirá el beneficiario. La suma total
+                                debe ser 100%.
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -220,5 +243,5 @@ export function BeneficiariesForm({ formData, setFormData, onNext, onBack }: Ben
         </div>
       </form>
     </Form>
-  )
+  );
 }
