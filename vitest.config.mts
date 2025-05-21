@@ -7,23 +7,35 @@ export default defineConfig({
   test: {
     setupFiles: ['./tests/setup.ts'],
     globals: true,
-    environment: 'node',
-    include: ['test/**/*.test.ts'],
+    environment: 'jsdom',
+    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
+      reporter: ['text', 'lcov', 'json'],
+      reportsDirectory: './coverage',
+      all: true,
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'coverage/**',
         'dist/**',
-        '**/interfaces/**',
         '**/node_modules/**',
         '**/test/**',
         '**/types/**',
         '**/*.d.ts',
         '**/*.test.ts',
         '**/*.spec.ts',
-      ],
+        '**/vite.config.ts',
+        '**/vitest.config.ts',
+        'src/**/*.d.ts',
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.spec.{ts,tsx}',
+        'src/**/types.ts',
+        'src/**/index.ts',
+      ]
     },
+    deps: {
+      inline: [/@testing-library\/.*/]
+    }
   },
   resolve: {
     alias: {

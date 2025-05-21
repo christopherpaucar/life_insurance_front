@@ -47,6 +47,7 @@ const eslintConfig = [
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      'prettier/prettier':0
     },
   },
 ];
