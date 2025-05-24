@@ -69,7 +69,7 @@ export interface RegisterDto {
   name: string
   email: string
   password: string
-  role: RoleType | string // Allow string to be more flexible
+  role: RoleType
 }
 
 export interface NavItem {

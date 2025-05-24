@@ -10,6 +10,7 @@ import { useAuthService } from '../useAuth'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { RoleType } from '../auth.interfaces'
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter()
@@ -26,7 +27,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
         name,
         email,
         password,
-        role: 'CLIENTE',
+        role: RoleType.CLIENT,
       },
       {
         onSuccess: () => {

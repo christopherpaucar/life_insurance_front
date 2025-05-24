@@ -1,9 +1,9 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useClients } from '@/modules/clients/useClients'
-import { clientsService } from '@/modules/clients/clients.service'
-import { CreateClientDto, UpdateClientDto } from '@/modules/clients/clients.interfaces'
+import { useClients } from '@/modules/users/useUsers'
+import { clientsService } from '@/modules/users/users.service'
+import { CreateClientDto, UpdateClientDto } from '@/modules/users/users.interfaces'
 import { ReactNode } from 'react'
 
 // Mock del servicio de clientes
@@ -12,8 +12,8 @@ vi.mock('@/modules/clients/clients.service', () => ({
     getClients: vi.fn(),
     createClient: vi.fn(),
     updateClient: vi.fn(),
-    deleteClient: vi.fn()
-  }
+    deleteClient: vi.fn(),
+  },
 }))
 
 // Crear un QueryClient para las pruebas
@@ -28,11 +28,7 @@ const queryClient = new QueryClient({
 // Crear wrapper con QueryClientProvider
 const createWrapper = () => {
   return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    )
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   }
 }
 
@@ -58,14 +54,14 @@ describe('useClients', () => {
   })
 
   it('debe crear un cliente', async () => {
-    const newClient: CreateClientDto = { 
-      firstName: 'Nuevo', 
-      lastName: 'Cliente', 
-      email: 'nuevo@example.com', 
-      phone: '123456789', 
-      address: 'Dirección', 
-      identificationNumber: '12345', 
-      birthDate: '2000-01-01' 
+    const newClient: CreateClientDto = {
+      firstName: 'Nuevo',
+      lastName: 'Cliente',
+      email: 'nuevo@example.com',
+      phone: '123456789',
+      address: 'Dirección',
+      identificationNumber: '12345',
+      birthDate: '2000-01-01',
     }
     ;(clientsService.createClient as any).mockResolvedValue({ id: '1', ...newClient })
 

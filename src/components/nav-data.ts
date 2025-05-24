@@ -32,8 +32,8 @@ export const adminNavItems: NavItem[] = [
     icon: IconShieldCheck,
   },
   {
-    title: 'Gestión de Clientes',
-    url: '/admin/clients',
+    title: 'Gestión de Usuarios',
+    url: '/admin/users',
     icon: IconUsers,
   },
   {
@@ -81,18 +81,11 @@ export const adminNavItems: NavItem[] = [
   },
 ]
 
-// Agent navigation
 export const agentNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     url: '/agent/dashboard',
     icon: IconDashboard,
-    permissions: PERMISSIONS[RoleType.AGENT],
-  },
-  {
-    title: 'Gestión de Clientes',
-    url: '/agent/clients',
-    icon: IconUsers,
     permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
@@ -133,7 +126,6 @@ export const agentNavItems: NavItem[] = [
   },
 ]
 
-// Client navigation
 export const clientNavItems: NavItem[] = [
   {
     title: 'Dashboard',

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { clientsService } from '@/modules/clients/clients.service'
+import { clientsService } from '@/modules/users/users.service'
 import { getHttpClient } from '@/lib/http'
 
 // Mock del módulo http antes de cualquier otra cosa
@@ -10,10 +10,10 @@ vi.mock('@/lib/http', () => {
     put: vi.fn(),
     delete: vi.fn(),
     setAuthToken: vi.fn(),
-    removeAuthToken: vi.fn()
+    removeAuthToken: vi.fn(),
   }
   return {
-    getHttpClient: () => mockHttpClient
+    getHttpClient: () => mockHttpClient,
   }
 })
 
@@ -46,14 +46,14 @@ describe('clientsService', () => {
   })
 
   it('debe crear un cliente', async () => {
-    const newClient = { 
-      firstName: 'Nuevo', 
-      lastName: 'Cliente', 
+    const newClient = {
+      firstName: 'Nuevo',
+      lastName: 'Cliente',
       email: 'nuevo@example.com',
       phone: '123456789',
       address: 'Dirección',
       identificationNumber: '12345',
-      birthDate: '2000-01-01'
+      birthDate: '2000-01-01',
     }
     const mockResponse = { data: { data: { id: '1', ...newClient } } }
     mockHttpClient.post.mockResolvedValue(mockResponse)
@@ -81,4 +81,3 @@ describe('clientsService', () => {
     expect(mockHttpClient.delete).toHaveBeenCalledWith('/clients/1')
   })
 })
-  

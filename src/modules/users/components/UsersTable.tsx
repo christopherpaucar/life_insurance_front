@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useClients } from '@/modules/clients/useClients'
-import { Client } from '@/modules/clients/clients.interfaces'
+import { useUsers } from '@/modules/users/useUsers'
+import { IUser } from '@/modules/auth/auth.interfaces'
 import {
   Table,
   TableHeader,
@@ -39,7 +39,7 @@ import {
   IconDotsVertical,
   IconPlus,
 } from '@tabler/icons-react'
-import { ClientFormModal } from '@/modules/clients/components/ClientFormModal'
+import { ClientFormModal } from '@/modules/users/components/UsersFormModal'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,12 +51,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
-interface ClientsTableProps {
-  title: string
-  description: string
-}
-
-export function ClientsTable({ title, description }: ClientsTableProps) {
+export function UsersTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({
@@ -64,49 +59,49 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
     pageSize: 10,
   })
 
-  const { clients, deleteClient } = useClients({
+  const { users, deleteUser } = useUsers({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
   })
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null)
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
+  const [userToDelete, setUserToDelete] = useState<IUser | null>(null)
 
-  const handleCreateClient = () => {
+  const handleCreateUser = () => {
     setModalMode('create')
-    setSelectedClient(null)
+    setSelectedUser(null)
     setModalOpen(true)
   }
 
-  const handleEditClient = (client: Client) => {
-    setSelectedClient(client)
+  const handleEditUser = (user: IUser) => {
+    setSelectedUser(user)
     setModalMode('edit')
     setModalOpen(true)
   }
 
-  const handleDeleteConfirmation = (client: Client) => {
-    setClientToDelete(client)
+  const handleDeleteConfirmation = (user: IUser) => {
+    setUserToDelete(user)
     setDeleteModalOpen(true)
   }
 
   const confirmDelete = () => {
-    if (clientToDelete) {
-      deleteClient(clientToDelete.id)
+    if (userToDelete) {
+      deleteUser(userToDelete.id)
       setDeleteModalOpen(false)
-      setClientToDelete(null)
+      setUserToDelete(null)
     }
   }
 
   const handleCloseModal = () => {
     setModalOpen(false)
-    setSelectedClient(null)
+    setSelectedUser(null)
   }
 
-  const columns: ColumnDef<Client>[] = [
+  const columns: ColumnDef<IUser>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -127,34 +122,14 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
       enableHiding: false,
     },
     {
-      accessorKey: 'identificationNumber',
-      header: 'Número de Documento',
-      cell: ({ row }) => <div>{row.getValue('identificationNumber')}</div>,
-    },
-    {
-      accessorKey: 'firstName',
-      header: 'Nombre',
-      cell: ({ row }) => <div>{row.getValue('firstName')}</div>,
-    },
-    {
-      accessorKey: 'lastName',
-      header: 'Apellido',
-      cell: ({ row }) => <div>{row.getValue('lastName')}</div>,
-    },
-    {
       accessorKey: 'email',
       header: 'Email',
       cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
-      accessorKey: 'phone',
-      header: 'Teléfono',
-      cell: ({ row }) => <div>{row.getValue('phone')}</div>,
-    },
-    {
-      accessorKey: 'address',
-      header: 'Dirección',
-      cell: ({ row }) => <div>{row.getValue('address')}</div>,
+      accessorKey: 'role',
+      header: 'Rol',
+      cell: ({ row }) => <Badge variant="outline">{row.original.role.name}</Badge>,
     },
     {
       accessorKey: 'deletedAt',
@@ -168,7 +143,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const client = row.original
+        const user = row.original
 
         return (
           <DropdownMenu>
@@ -179,10 +154,10 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleEditClient(client)}>Editar</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleEditUser(user)}>Editar</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => handleDeleteConfirmation(client)}
+                onClick={() => handleDeleteConfirmation(user)}
                 className="text-red-600"
               >
                 Eliminar
@@ -195,7 +170,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
   ]
 
   const table = useReactTable({
-    data: clients,
+    data: users,
     columns,
     state: {
       sorting,
@@ -215,14 +190,14 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filtrar por nombre..."
-          value={(table.getColumn('firstName')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('firstName')?.setFilterValue(event.target.value)}
+          placeholder="Filtrar por email..."
+          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
-        <Button className="ml-auto" onClick={handleCreateClient}>
+        <Button className="ml-auto" onClick={handleCreateUser}>
           <IconPlus className="mr-2 h-4 w-4" />
-          Nuevo Cliente
+          Nuevo Usuario
         </Button>
       </div>
 
@@ -308,7 +283,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
         open={modalOpen}
         onClose={handleCloseModal}
         mode={modalMode}
-        client={selectedClient}
+        user={selectedUser}
       />
 
       <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
@@ -316,7 +291,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente el cliente y todos
+              Esta acción no se puede deshacer. Esto eliminará permanentemente el usuario y todos
               sus datos asociados.
             </AlertDialogDescription>
           </AlertDialogHeader>
