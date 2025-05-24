@@ -1,22 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IAuthResponse {
-  user: IUser;
-  token: string;
+  user: IUser
+  token: string
 }
 
 export interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  roles: {
-    id: string;
-    name: string;
-    permissions: string[];
-  }[];
+  id: string
+  name: string
+  email: string
+  role: {
+    id: string
+    name: string
+    permissions: string[]
+  }
+  onboardingCompleted: boolean
+  birthDate?: Date
+  booldType?: BloodType
+  gender?: string
+  height?: number
+  weight?: number
+  address?: string
+  phoneNumber?: string
+  emergencyContact?: string
+  emergencyPhone?: string
+  medicalHistory?: Record<string, any>
+  lifestyle?: Record<string, any>
+}
+
+export interface IOnboarding {
+  birthDate: Date
+  booldType: BloodType
+  gender: string
+  height: number
+  weight: number
+  address: string
+  phoneNumber: string
+  emergencyContact: string
+  emergencyPhone: string
+  medicalHistory?: Record<string, any>
+  lifestyle?: Record<string, any>
 }
 
 export interface LoginDto {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export enum RoleType {
@@ -27,19 +54,30 @@ export enum RoleType {
   AGENT = 'AGENTE',
 }
 
+export enum BloodType {
+  A_POSITIVE = 'A+',
+  A_NEGATIVE = 'A-',
+  B_POSITIVE = 'B+',
+  B_NEGATIVE = 'B-',
+  AB_POSITIVE = 'AB+',
+  AB_NEGATIVE = 'AB-',
+  O_POSITIVE = 'O+',
+  O_NEGATIVE = 'O-',
+}
+
 export interface RegisterDto {
-  name: string;
-  email: string;
-  password: string;
-  role: RoleType | string; // Allow string to be more flexible
+  name: string
+  email: string
+  password: string
+  role: RoleType | string // Allow string to be more flexible
 }
 
 export interface NavItem {
-  title: string;
-  url: string;
-  icon?: React.FC<any>;
-  permissions?: string[];
-  items?: Omit<NavItem, 'icon' | 'items'>[];
+  title: string
+  url: string
+  icon?: React.FC<any>
+  permissions?: string[]
+  items?: Omit<NavItem, 'icon' | 'items'>[]
 }
 
 export enum ALL_PERMISSIONS {
@@ -164,4 +202,4 @@ export const PERMISSIONS = {
     REIMBURSEMENT_PERMISSIONS.UPLOAD,
     INSURANCE_PERMISSIONS.READ,
   ],
-};
+}

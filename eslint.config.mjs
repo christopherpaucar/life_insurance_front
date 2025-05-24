@@ -48,6 +48,15 @@ const eslintConfig = [
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      'prettier/prettier': ['error', {
+        singleQuote: true,
+        semi: false,
+        tabWidth: 2,
+        trailingComma: 'es5',
+        printWidth: 100,
+        bracketSpacing: true,
+        arrowParens: 'always',
+      }],
     },
   },
 ];

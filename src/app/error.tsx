@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 interface ErrorProps {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Error & { digest?: string }
+  reset: () => void
 }
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
-  }, [error]);
+    console.error(error)
+  }, [error])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
@@ -26,5 +26,5 @@ export default function Error({ error, reset }: ErrorProps) {
         Intentar nuevamente
       </button>
     </div>
-  );
+  )
 }

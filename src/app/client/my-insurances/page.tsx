@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { ContractList } from '@/modules/contracts/components/ContractList';
+import { ContractList } from '@/modules/contracts/components/ContractList'
 
 export default function MyInsurancesPage() {
   return (
@@ -8,5 +8,5 @@ export default function MyInsurancesPage() {
       <h1 className="text-2xl font-bold">Mis Seguros</h1>
       <ContractList />
     </div>
-  );
+  )
 }

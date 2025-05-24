@@ -1,9 +1,9 @@
-import { useInsurance } from '../useInsurances';
-import { getEnumLabel } from '../insurances.interfaces';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useInsurance } from '../useInsurances'
+import { getEnumLabel } from '../insurances.interfaces'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Shield,
   CheckCircle2,
@@ -13,18 +13,18 @@ import {
   ArrowRight,
   Heart,
   Users,
-} from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { useRouter } from 'next/navigation';
+} from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
+import { useRouter } from 'next/navigation'
 
 interface InsuranceDetailsProps {
-  insuranceId: string;
+  insuranceId: string
 }
 
 export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
-  const { insurance, isLoading } = useInsurance(insuranceId);
-  const router = useRouter();
+  const { insurance, isLoading } = useInsurance(insuranceId)
+  const router = useRouter()
 
   if (isLoading) {
     return (
@@ -40,10 +40,10 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
-  if (!insurance) return null;
+  if (!insurance) return null
 
   return (
     <div className="space-y-8">
@@ -270,5 +270,5 @@ export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react'
-import { RouteGuard } from '@/components/auth/RouteGuard'
-import { describe, it, expect, vi } from 'vitest'
-import { useAuthRouting } from '@/hooks/useAuthRouting'
-import { RoleType } from '@/modules/auth/auth.interfaces'
+import { render, screen } from '@testing-library/react';
+import { RouteGuard } from '@/components/auth/RouteGuard';
+import { describe, it, expect, vi } from 'vitest';
+import { useAuthRouting } from '@/hooks/useAuthRouting';
+import { RoleType } from '@/modules/auth/auth.interfaces';
 
 // Mock del hook useAuthRouting
 vi.mock('@/hooks/useAuthRouting', () => ({
-  useAuthRouting: vi.fn()
-}))
+  useAuthRouting: vi.fn(),
+}));
 
 describe('RouteGuard Component', () => {
   const mockRoutingService = {
@@ -24,8 +24,8 @@ describe('RouteGuard Component', () => {
     getRoleDefaultRoute: vi.fn(),
     getRoleBasedRedirect: vi.fn(),
     needsRoleBasedRedirect: vi.fn(),
-    isAuthRoute: vi.fn()
-  }
+    isAuthRoute: vi.fn(),
+  };
 
   it('renders children when not on dashboard path', () => {
     vi.mocked(useAuthRouting).mockReturnValue({
@@ -36,16 +36,16 @@ describe('RouteGuard Component', () => {
       canAccessCurrentRoute: true,
       handleRouteAccess: vi.fn(),
       routingService: mockRoutingService,
-      pathname: '/other-path'
-    })
+      pathname: '/other-path',
+    });
 
     render(
       <RouteGuard>
         <div>Protected Content</div>
-      </RouteGuard>
-    )
-    expect(screen.getByText('Protected Content')).toBeInTheDocument()
-  })
+      </RouteGuard>,
+    );
+    expect(screen.getByText('Protected Content')).toBeInTheDocument();
+  });
 
   it('returns null when on dashboard path', () => {
     vi.mocked(useAuthRouting).mockReturnValue({
@@ -56,19 +56,19 @@ describe('RouteGuard Component', () => {
       canAccessCurrentRoute: true,
       handleRouteAccess: vi.fn(),
       routingService: mockRoutingService,
-      pathname: '/dashboard'
-    })
+      pathname: '/dashboard',
+    });
 
     const { container } = render(
       <RouteGuard>
         <div>Protected Content</div>
-      </RouteGuard>
-    )
-    expect(container).toBeEmptyDOMElement()
-  })
+      </RouteGuard>,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
 
   it('calls handleRouteAccess when hydrated', () => {
-    const mockHandleRouteAccess = vi.fn()
+    const mockHandleRouteAccess = vi.fn();
     vi.mocked(useAuthRouting).mockReturnValue({
       userRole: RoleType.ADMIN,
       userRoles: [RoleType.ADMIN],
@@ -77,15 +77,15 @@ describe('RouteGuard Component', () => {
       canAccessCurrentRoute: true,
       handleRouteAccess: mockHandleRouteAccess,
       routingService: mockRoutingService,
-      pathname: '/test'
-    })
+      pathname: '/test',
+    });
 
     render(
       <RouteGuard>
         <div>Protected Content</div>
-      </RouteGuard>
-    )
-    
-    expect(mockHandleRouteAccess).toHaveBeenCalled()
-  })
-}) 
+      </RouteGuard>,
+    );
+
+    expect(mockHandleRouteAccess).toHaveBeenCalled();
+  });
+});

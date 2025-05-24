@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { useInsurances } from '@/modules/insurances/useInsurances';
-import { Insurance, getEnumLabel } from '@/modules/insurances/insurances.interfaces';
+import React, { useState } from 'react'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
+import { useInsurances } from '@/modules/insurances/useInsurances'
+import { Insurance, getEnumLabel } from '@/modules/insurances/insurances.interfaces'
 import {
   Table,
   TableHeader,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from '@/components/ui/table';
+} from '@/components/ui/table'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -22,18 +22,18 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
+} from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu'
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -41,8 +41,8 @@ import {
   IconChevronsRight,
   IconDotsVertical,
   IconPlus,
-} from '@tabler/icons-react';
-import { InsuranceFormModal } from '@/modules/insurances/components/InsuranceFormModal';
+} from '@tabler/icons-react'
+import { InsuranceFormModal } from '@/modules/insurances/components/InsuranceFormModal'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,69 +52,69 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog'
 
 export default function AdminInsurancePage() {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
-  });
+  })
 
   const { insurances, isLoading, deleteInsurance } = useInsurances({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-  });
+  })
 
   // Modal states
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedInsurance, setSelectedInsurance] = useState<Insurance | null>(null);
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+  const [selectedInsurance, setSelectedInsurance] = useState<Insurance | null>(null)
 
   // Delete confirmation modal state
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [insuranceToDelete, setInsuranceToDelete] = useState<Insurance | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [insuranceToDelete, setInsuranceToDelete] = useState<Insurance | null>(null)
 
   // Open modal for creating new insurance
   const handleCreateInsurance = () => {
-    setModalMode('create');
-    setSelectedInsurance(null);
-    setModalOpen(true);
-  };
+    setModalMode('create')
+    setSelectedInsurance(null)
+    setModalOpen(true)
+  }
 
   // Open modal for editing insurance
   const handleEditInsurance = (insurance: Insurance) => {
-    setModalMode('edit');
-    setSelectedInsurance(insurance);
-    setModalOpen(true);
-  };
+    setModalMode('edit')
+    setSelectedInsurance(insurance)
+    setModalOpen(true)
+  }
 
   // Open modal for confirming deletion
   const handleDeleteConfirmation = (insurance: Insurance) => {
-    setInsuranceToDelete(insurance);
-    setDeleteModalOpen(true);
-  };
+    setInsuranceToDelete(insurance)
+    setDeleteModalOpen(true)
+  }
 
   // Confirm and execute deletion
   const confirmDelete = () => {
     if (insuranceToDelete) {
-      deleteInsurance(insuranceToDelete.id);
-      setDeleteModalOpen(false);
-      setInsuranceToDelete(null);
+      deleteInsurance(insuranceToDelete.id)
+      setDeleteModalOpen(false)
+      setInsuranceToDelete(null)
     }
-  };
+  }
 
   // Close modal and reset state
   const handleCloseModal = () => {
-    setModalOpen(false);
+    setModalOpen(false)
     // We'll reset the selectedInsurance after the modal animation completes
     setTimeout(() => {
       if (modalMode === 'edit') {
-        setSelectedInsurance(null);
+        setSelectedInsurance(null)
       }
-    }, 300);
-  };
+    }, 300)
+  }
 
   const columns: ColumnDef<Insurance>[] = [
     {
@@ -160,7 +160,7 @@ export default function AdminInsurancePage() {
       accessorKey: 'availablePaymentFrequencies',
       header: 'Frecuencias de Pago',
       cell: ({ row }) => {
-        const frequencies = row.original.availablePaymentFrequencies || [];
+        const frequencies = row.original.availablePaymentFrequencies || []
         return (
           <div className="flex flex-wrap gap-1">
             {frequencies.map((freq: string) => (
@@ -172,14 +172,14 @@ export default function AdminInsurancePage() {
               <span className="text-muted-foreground text-xs">No definido</span>
             )}
           </div>
-        );
+        )
       },
     },
     {
       accessorKey: 'requirements',
       header: 'Requisitos',
       cell: ({ row }) => {
-        const requirements = row.original.requirements || [];
+        const requirements = row.original.requirements || []
         return (
           <div>
             {requirements.length > 0 ? (
@@ -188,7 +188,7 @@ export default function AdminInsurancePage() {
               <span className="text-muted-foreground text-xs">Ninguno</span>
             )}
           </div>
-        );
+        )
       },
     },
     {
@@ -203,7 +203,7 @@ export default function AdminInsurancePage() {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const insurance = row.original;
+        const insurance = row.original
 
         return (
           <DropdownMenu>
@@ -227,10 +227,10 @@ export default function AdminInsurancePage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        );
+        )
       },
     },
-  ];
+  ]
 
   const table = useReactTable({
     data: insurances,
@@ -247,7 +247,7 @@ export default function AdminInsurancePage() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   return (
     <DashboardLayout
@@ -377,5 +377,5 @@ export default function AdminInsurancePage() {
         </AlertDialogContent>
       </AlertDialog>
     </DashboardLayout>
-  );
+  )
 }

@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { ReportCard } from '@/components/reports/ReportCard';
+import React from 'react'
+import { ReportCard } from '@/components/reports/ReportCard'
 
 interface ReportsPageProps {
   params: {
-    role: string;
-  };
+    role: string
+  }
 }
 
 export default function ReportsPage({ params }: ReportsPageProps) {
-  const unwrappedParams = params instanceof Promise ? React.use(params) : params;
-  const role = unwrappedParams.role;
+  const unwrappedParams = params instanceof Promise ? React.use(params) : params
+  const role = unwrappedParams.role
 
   const reports = [
     {
@@ -34,7 +34,7 @@ export default function ReportsPage({ params }: ReportsPageProps) {
       description: 'Ver contratos próximos a vencer',
       href: `/${role}/reports/expiring-contracts`,
     },
-  ];
+  ]
 
   return (
     <>
@@ -50,5 +50,5 @@ export default function ReportsPage({ params }: ReportsPageProps) {
         ))}
       </div>
     </>
-  );
+  )
 }

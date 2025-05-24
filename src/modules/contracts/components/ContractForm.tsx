@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -9,22 +9,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon, HelpCircle } from 'lucide-react';
-import { useAuthService } from '../../auth/useAuth';
+} from '@/components/ui/select'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { CalendarIcon, HelpCircle } from 'lucide-react'
+import { useAuthService } from '../../auth/useAuth'
 
 const formSchema = z.object({
   startDate: z.date({
@@ -35,18 +35,18 @@ const formSchema = z.object({
   }),
   paymentFrequency: z.enum(['monthly', 'quarterly', 'yearly']),
   notes: z.string().optional(),
-});
+})
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof formSchema>
 
 interface ContractFormProps {
-  formData: any;
-  setFormData: (data: any) => void;
-  onNext: () => void;
+  formData: any
+  setFormData: (data: any) => void
+  onNext: () => void
 }
 
 export function ContractForm({ formData, setFormData, onNext }: ContractFormProps) {
-  const { user } = useAuthService();
+  const { user } = useAuthService()
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,7 +55,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
       paymentFrequency: formData.paymentFrequency,
       notes: formData.notes,
     },
-  });
+  })
 
   const onSubmit = (data: FormData) => {
     setFormData({
@@ -64,16 +64,16 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
       startDate: data.startDate.toISOString(),
       endDate: data.endDate.toISOString(),
       clientId: user?.id,
-    });
-    onNext();
-  };
+    })
+    onNext()
+  }
 
   return (
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit(onSubmit)(e);
+          e.preventDefault()
+          form.handleSubmit(onSubmit)(e)
         }}
         className="space-y-6"
       >
@@ -106,7 +106,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
                         variant="outline"
                         className={cn(
                           'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground',
+                          !field.value && 'text-muted-foreground'
                         )}
                       >
                         {field.value ? format(field.value, 'PPP') : <span>Seleccionar fecha</span>}
@@ -158,7 +158,7 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
                         variant="outline"
                         className={cn(
                           'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground',
+                          !field.value && 'text-muted-foreground'
                         )}
                       >
                         {field.value ? format(field.value, 'PPP') : <span>Seleccionar fecha</span>}
@@ -250,5 +250,5 @@ export function ContractForm({ formData, setFormData, onNext }: ContractFormProp
         </div>
       </form>
     </Form>
-  );
+  )
 }

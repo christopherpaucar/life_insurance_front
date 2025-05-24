@@ -42,17 +42,26 @@ export const contractsService = {
 
   uploadAttachment: async (contractId: string, file: FormData): Promise<ApiResponse<void>> => {
     const api = getHttpClient()
-    const response = await api.post<ApiResponse<void>>(`/contracts/${contractId}/attachments`, file, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    const response = await api.post<ApiResponse<void>>(
+      `/contracts/${contractId}/attachments`,
+      file,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       }
-    })
+    )
     return response.data
   },
 
-  deleteAttachment: async (contractId: string, attachmentId: string): Promise<ApiResponse<void>> => {
+  deleteAttachment: async (
+    contractId: string,
+    attachmentId: string
+  ): Promise<ApiResponse<void>> => {
     const api = getHttpClient()
-    const response = await api.delete<ApiResponse<void>>(`/contracts/${contractId}/attachments/${attachmentId}`)
+    const response = await api.delete<ApiResponse<void>>(
+      `/contracts/${contractId}/attachments/${attachmentId}`
+    )
     return response.data
   },
 
@@ -78,19 +87,34 @@ export const contractsService = {
 
   addBeneficiary: async (contractId: string, data: any): Promise<ApiResponse<any>> => {
     const api = getHttpClient()
-    const response = await api.post<ApiResponse<any>>(`/contracts/${contractId}/beneficiaries`, data)
+    const response = await api.post<ApiResponse<any>>(
+      `/contracts/${contractId}/beneficiaries`,
+      data
+    )
     return response.data
   },
 
-  updateBeneficiary: async (contractId: string, beneficiaryId: string, data: any): Promise<ApiResponse<any>> => {
+  updateBeneficiary: async (
+    contractId: string,
+    beneficiaryId: string,
+    data: any
+  ): Promise<ApiResponse<any>> => {
     const api = getHttpClient()
-    const response = await api.put<ApiResponse<any>>(`/contracts/${contractId}/beneficiaries/${beneficiaryId}`, data)
+    const response = await api.put<ApiResponse<any>>(
+      `/contracts/${contractId}/beneficiaries/${beneficiaryId}`,
+      data
+    )
     return response.data
   },
 
-  deleteBeneficiary: async (contractId: string, beneficiaryId: string): Promise<ApiResponse<void>> => {
+  deleteBeneficiary: async (
+    contractId: string,
+    beneficiaryId: string
+  ): Promise<ApiResponse<void>> => {
     const api = getHttpClient()
-    const response = await api.delete<ApiResponse<void>>(`/contracts/${contractId}/beneficiaries/${beneficiaryId}`)
+    const response = await api.delete<ApiResponse<void>>(
+      `/contracts/${contractId}/beneficiaries/${beneficiaryId}`
+    )
     return response.data
-  }
-} 
+  },
+}

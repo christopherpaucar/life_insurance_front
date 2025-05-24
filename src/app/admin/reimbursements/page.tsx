@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React from 'react';
+import React from 'react'
 
 export default function AdminReimbursementsPage() {
   return (
@@ -11,5 +11,5 @@ export default function AdminReimbursementsPage() {
         <p className="text-gray-600 mb-4">Revise y apruebe solicitudes de reembolso de clientes</p>
       </div>
     </>
-  );
+  )
 }

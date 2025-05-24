@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import * as React from 'react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { NavItem } from '@/modules/auth/auth.interfaces';
+import * as React from 'react'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { NavItem } from '@/modules/auth/auth.interfaces'
 
 interface NavSecondaryProps extends React.ComponentProps<typeof SidebarMenu> {
-  items: NavItem[];
+  items: NavItem[]
 }
 
 export function NavSecondary({ className, items, ...props }: NavSecondaryProps) {
@@ -24,5 +24,5 @@ export function NavSecondary({ className, items, ...props }: NavSecondaryProps) 
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  );
+  )
 }

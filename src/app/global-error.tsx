@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 interface GlobalErrorProps {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Error & { digest?: string }
+  reset: () => void
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
-  }, [error]);
+    console.error(error)
+  }, [error])
 
   return (
     <html>
@@ -30,5 +30,5 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         </div>
       </body>
     </html>
-  );
+  )
 }

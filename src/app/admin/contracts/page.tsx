@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React from 'react';
+import React from 'react'
 
 export default function AdminContractsPage() {
   return (
@@ -11,5 +11,5 @@ export default function AdminContractsPage() {
         <p className="text-gray-600 mb-4">Administre contratos de seguro y pólizas</p>
       </div>
     </>
-  );
+  )
 }

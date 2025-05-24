@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Image from 'next/image';
-import { useAuthService } from '../useAuth';
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import Image from 'next/image'
+import { useAuthService } from '../useAuth'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const { register, isRegistering } = useAuthService();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, isRegistering, user } = useAuthService()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     register(
       {
         name,
@@ -30,11 +30,15 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
       },
       {
         onSuccess: () => {
-          router.push('/dashboard');
+          if (!user?.onboardingCompleted && user?.role.name === 'CLIENTE') {
+            router.push('/onboarding')
+          } else {
+            router.push('/dashboard')
+          }
         },
-      },
-    );
-  };
+      }
+    )
+  }
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -107,5 +111,5 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
         <a href="#">Política de Privacidad</a>.
       </div>
     </div>
-  );
+  )
 }

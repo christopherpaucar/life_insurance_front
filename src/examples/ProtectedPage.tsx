@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { RoleType } from '@/modules/auth/auth.interfaces';
-import { RoleGuard } from '@/components/layouts/RoleGuard';
+import { RoleType } from '@/modules/auth/auth.interfaces'
+import { RoleGuard } from '@/components/layouts/RoleGuard'
 
 export default function ProtectedAdminPage() {
   return (
@@ -11,5 +11,5 @@ export default function ProtectedAdminPage() {
         <p>This page is only accessible to users with Admin or Super Admin roles.</p>
       </div>
     </RoleGuard>
-  );
+  )
 }

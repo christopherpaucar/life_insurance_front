@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { RoleType } from '@/modules/auth/auth.interfaces';
-import { useAuthRouting } from '@/hooks/useAuthRouting';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { RoleType } from '@/modules/auth/auth.interfaces'
+import { useAuthRouting } from '@/hooks/useAuthRouting'
 
 interface RoleGuardProps {
-  allowedRoles: RoleType[];
-  children: React.ReactNode;
+  allowedRoles: RoleType[]
+  children: React.ReactNode
 }
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
-  const { userRoles, isAuthenticated, hydrated } = useAuthRouting();
-  const router = useRouter();
+  const { userRole, isAuthenticated, hydrated } = useAuthRouting()
+  const router = useRouter()
 
   useEffect(() => {
     // Wait until auth state is hydrated
-    if (!hydrated) return;
+    if (!hydrated) return
 
-    const hasAllowedRole = userRoles.some((role) => allowedRoles.includes(role));
+    const hasAllowedRole = allowedRoles.includes(userRole as RoleType)
 
     if (!isAuthenticated || !hasAllowedRole) {
-      router.replace('/login');
+      router.replace('/login')
     }
-  }, [userRoles, isAuthenticated, router, allowedRoles, hydrated]);
+  }, [userRole, isAuthenticated, router, allowedRoles, hydrated])
 
-  return <>{children}</>;
+  return <>{children}</>
 }

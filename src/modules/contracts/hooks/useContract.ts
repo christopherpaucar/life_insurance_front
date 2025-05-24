@@ -1,28 +1,28 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Contract, ContractStatus } from '../types';
-import { getHttpClient } from '../../../lib/http';
-import { ApiResponse } from '../../insurances/insurances.interfaces';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Contract, ContractStatus } from '../types'
+import { getHttpClient } from '../../../lib/http'
+import { ApiResponse } from '../../insurances/insurances.interfaces'
+import { toast } from 'sonner'
 
-const api = getHttpClient();
+const api = getHttpClient()
 
 interface UpdateContractData {
-  status?: ContractStatus;
-  notes?: string;
+  status?: ContractStatus
+  notes?: string
 }
 
 interface UpdateContractParams {
-  id: string;
-  data: UpdateContractData;
+  id: string
+  data: UpdateContractData
 }
 
 interface UploadAttachmentParams {
-  contractId: string;
-  file: FormData;
+  contractId: string
+  file: FormData
 }
 
 interface SignContractParams {
-  contractId: string;
+  contractId: string
 }
 
 export enum AttachmentType {
@@ -36,34 +36,34 @@ export enum AttachmentType {
 }
 
 export function useContract(id?: string) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const getContractQuery = useQuery<Contract>({
     queryKey: ['contracts', id],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<Contract>>(`/contracts/${id}`);
-      return data.data;
+      const { data } = await api.get<ApiResponse<Contract>>(`/contracts/${id}`)
+      return data.data
     },
     enabled: !!id,
-  });
+  })
 
   const getContractsQuery = useQuery<Contract[]>({
     queryKey: ['contracts'],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<Contract[]>>('/contracts');
-      return data.data;
+      const { data } = await api.get<ApiResponse<Contract[]>>('/contracts')
+      return data.data
     },
-  });
+  })
 
   const updateContractMutation = useMutation<ApiResponse<Contract>, Error, UpdateContractParams>({
     mutationFn: async ({ id, data }) => {
-      const response = await api.put<ApiResponse<Contract>>(`/contracts/${id}`, data);
-      return response.data;
+      const response = await api.put<ApiResponse<Contract>>(`/contracts/${id}`, data)
+      return response.data
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      void queryClient.invalidateQueries({ queryKey: ['contracts'] })
     },
-  });
+  })
 
   const uploadAttachmentMutation = useMutation<ApiResponse<void>, Error, UploadAttachmentParams>({
     mutationFn: async ({ contractId, file }) => {
@@ -74,34 +74,34 @@ export function useContract(id?: string) {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        },
-      );
-      return response.data;
+        }
+      )
+      return response.data
     },
     onSuccess: (_, { contractId }) => {
-      void queryClient.invalidateQueries({ queryKey: ['contracts', contractId] });
+      void queryClient.invalidateQueries({ queryKey: ['contracts', contractId] })
     },
-  });
+  })
 
   const signContractMutation = useMutation<ApiResponse<void>, Error, SignContractParams>({
     mutationFn: async ({ contractId }) => {
-      const response = await api.post<ApiResponse<void>>(`/contracts/${contractId}/sign`);
-      return response.data;
+      const response = await api.post<ApiResponse<void>>(`/contracts/${contractId}/sign`)
+      return response.data
     },
     onSuccess: (_, { contractId }) => {
-      void queryClient.invalidateQueries({ queryKey: ['contracts', contractId] });
+      void queryClient.invalidateQueries({ queryKey: ['contracts', contractId] })
     },
-  });
+  })
 
   const createContractMutation = useMutation<ApiResponse<Contract>, Error>({
     mutationFn: async (data) => {
-      const response = await api.post<ApiResponse<Contract>>('/contracts', data);
-      return response.data;
+      const response = await api.post<ApiResponse<Contract>>('/contracts', data)
+      return response.data
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      void queryClient.invalidateQueries({ queryKey: ['contracts'] })
     },
-  });
+  })
 
   return {
     contract: getContractQuery.data,
@@ -113,10 +113,10 @@ export function useContract(id?: string) {
     createContract: (data: any) =>
       createContractMutation.mutate(data, {
         onSuccess: () => {
-          toast.success('Estado del contrato actualizado');
+          toast.success('Estado del contrato actualizado')
         },
         onError: () => {
-          toast.error('Error al actualizar el estado del contrato');
+          toast.error('Error al actualizar el estado del contrato')
         },
       }),
     isCreating: createContractMutation.isPending,
@@ -124,10 +124,10 @@ export function useContract(id?: string) {
     updateContract: (params: UpdateContractParams) =>
       updateContractMutation.mutate(params, {
         onSuccess: () => {
-          toast.success('Estado del contrato actualizado');
+          toast.success('Estado del contrato actualizado')
         },
         onError: () => {
-          toast.error('Error al actualizar el estado del contrato');
+          toast.error('Error al actualizar el estado del contrato')
         },
       }),
     isUpdating: updateContractMutation.isPending,
@@ -135,10 +135,10 @@ export function useContract(id?: string) {
     uploadAttachment: (params: UploadAttachmentParams) =>
       uploadAttachmentMutation.mutate(params, {
         onSuccess: () => {
-          toast.success('Archivo subido exitosamente');
+          toast.success('Archivo subido exitosamente')
         },
         onError: () => {
-          toast.error('Error al subir el archivo');
+          toast.error('Error al subir el archivo')
         },
       }),
     isUploading: uploadAttachmentMutation.isPending,
@@ -146,12 +146,12 @@ export function useContract(id?: string) {
     signContract: (params: SignContractParams) =>
       signContractMutation.mutate(params, {
         onSuccess: () => {
-          toast.success('Contrato firmado exitosamente');
+          toast.success('Contrato firmado exitosamente')
         },
         onError: () => {
-          toast.error('Error al firmar el contrato');
+          toast.error('Error al firmar el contrato')
         },
       }),
     isSigning: signContractMutation.isPending,
-  };
+  }
 }

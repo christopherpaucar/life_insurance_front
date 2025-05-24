@@ -8,7 +8,11 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSubmit }: LoginFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginDto>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginDto>()
 
   return (
     <form onSubmit={handleSubmit(onSubmit || (() => {}))}>
@@ -33,4 +37,4 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
       </div>
     </form>
   )
-} 
+}

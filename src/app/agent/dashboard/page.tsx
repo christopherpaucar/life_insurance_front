@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { DashboardCard } from '@/components/dashboard/DashboardCard';
+import React from 'react'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
+import { DashboardCard } from '@/components/dashboard/DashboardCard'
 
 export default function AgentDashboardPage() {
   return (
@@ -33,5 +33,5 @@ export default function AgentDashboardPage() {
         />
       </div>
     </DashboardLayout>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { ClientsTable } from '@/modules/clients/components/ClientsTable';
+import React from 'react'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
+import { ClientsTable } from '@/modules/clients/components/ClientsTable'
 
 export default function AdminClientsPage() {
   return (
@@ -15,5 +15,5 @@ export default function AdminClientsPage() {
         description="Administre la información de los clientes"
       />
     </DashboardLayout>
-  );
+  )
 }

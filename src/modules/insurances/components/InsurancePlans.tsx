@@ -1,5 +1,5 @@
-import { useInsurances } from '../useInsurances';
-import { getEnumLabel } from '../insurances.interfaces';
+import { useInsurances } from '../useInsurances'
+import { getEnumLabel } from '../insurances.interfaces'
 import {
   Card,
   CardContent,
@@ -7,19 +7,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useRouter } from 'next/navigation';
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useRouter } from 'next/navigation'
 
 interface InsurancePlansProps {
-  role: string;
+  role: string
 }
 
 export const InsurancePlans = ({ role }: InsurancePlansProps) => {
-  const { insurances, isLoading } = useInsurances();
-  const router = useRouter();
+  const { insurances, isLoading } = useInsurances()
+  const router = useRouter()
 
   if (isLoading) {
     return (
@@ -47,10 +47,10 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
-  const firstActive = insurances.find((i) => !i.deletedAt);
+  const firstActive = insurances.find((i) => !i.deletedAt)
 
   return (
     <div className="flex flex-col items-center gap-8 p-2">
@@ -64,7 +64,7 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
       </div>
       <div className="flex flex-row flex-wrap gap-8 justify-center w-full">
         {insurances.map((insurance) => {
-          const isFeatured = firstActive && insurance.id === firstActive.id;
+          const isFeatured = firstActive && insurance.id === firstActive.id
           return (
             <Card
               key={insurance.id}
@@ -120,9 +120,9 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
                 </Button>
               </CardFooter>
             </Card>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,18 +1,18 @@
-import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { format } from 'date-fns'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface ReviewFormProps {
-  formData: any;
-  onSubmit: () => void;
-  onBack: () => void;
-  isLoading: boolean;
+  formData: any
+  onSubmit: () => void
+  onBack: () => void
+  isLoading: boolean
 }
 
 export function ReviewForm({ formData, onSubmit, onBack, isLoading }: ReviewFormProps) {
   const formatDate = (date: string) => {
-    return format(new Date(date), 'PPP');
-  };
+    return format(new Date(date), 'PPP')
+  }
 
   return (
     <div className="space-y-6">
@@ -94,5 +94,5 @@ export function ReviewForm({ formData, onSubmit, onBack, isLoading }: ReviewForm
         </Button>
       </div>
     </div>
-  );
+  )
 }

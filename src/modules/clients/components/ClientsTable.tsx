@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useClients } from '@/modules/clients/useClients';
-import { Client } from '@/modules/clients/clients.interfaces';
+import React, { useState } from 'react'
+import { useClients } from '@/modules/clients/useClients'
+import { Client } from '@/modules/clients/clients.interfaces'
 import {
   Table,
   TableHeader,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from '@/components/ui/table';
+} from '@/components/ui/table'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -19,18 +19,18 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
+} from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu'
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -38,8 +38,8 @@ import {
   IconChevronsRight,
   IconDotsVertical,
   IconPlus,
-} from '@tabler/icons-react';
-import { ClientFormModal } from '@/modules/clients/components/ClientFormModal';
+} from '@tabler/icons-react'
+import { ClientFormModal } from '@/modules/clients/components/ClientFormModal'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,62 +49,62 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog'
 
 interface ClientsTableProps {
-  title: string;
-  description: string;
+  title: string
+  description: string
 }
 
 export function ClientsTable({ title, description }: ClientsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
-  });
+  })
 
   const { clients, deleteClient } = useClients({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-  });
+  })
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
 
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
 
   const handleCreateClient = () => {
-    setModalMode('create');
-    setSelectedClient(null);
-    setModalOpen(true);
-  };
+    setModalMode('create')
+    setSelectedClient(null)
+    setModalOpen(true)
+  }
 
   const handleEditClient = (client: Client) => {
-    setSelectedClient(client);
-    setModalMode('edit');
-    setModalOpen(true);
-  };
+    setSelectedClient(client)
+    setModalMode('edit')
+    setModalOpen(true)
+  }
 
   const handleDeleteConfirmation = (client: Client) => {
-    setClientToDelete(client);
-    setDeleteModalOpen(true);
-  };
+    setClientToDelete(client)
+    setDeleteModalOpen(true)
+  }
 
   const confirmDelete = () => {
     if (clientToDelete) {
-      deleteClient(clientToDelete.id);
-      setDeleteModalOpen(false);
-      setClientToDelete(null);
+      deleteClient(clientToDelete.id)
+      setDeleteModalOpen(false)
+      setClientToDelete(null)
     }
-  };
+  }
 
   const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedClient(null);
-  };
+    setModalOpen(false)
+    setSelectedClient(null)
+  }
 
   const columns: ColumnDef<Client>[] = [
     {
@@ -168,7 +168,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const client = row.original;
+        const client = row.original
 
         return (
           <DropdownMenu>
@@ -189,10 +189,10 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        );
+        )
       },
     },
-  ];
+  ]
 
   const table = useReactTable({
     data: clients,
@@ -209,7 +209,7 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   return (
     <div>
@@ -329,5 +329,5 @@ export function ClientsTable({ title, description }: ClientsTableProps) {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )
 }

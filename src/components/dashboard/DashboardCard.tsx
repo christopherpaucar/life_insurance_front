@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface DashboardCardProps {
-  children?: React.ReactNode;
-  actionLabel?: string;
-  onAction?: () => void;
+  children?: React.ReactNode
+  actionLabel?: string
+  onAction?: () => void
 }
 
 export function DashboardCard({ children, actionLabel, onAction }: DashboardCardProps) {
@@ -19,5 +19,5 @@ export function DashboardCard({ children, actionLabel, onAction }: DashboardCard
         </button>
       )}
     </div>
-  );
+  )
 }

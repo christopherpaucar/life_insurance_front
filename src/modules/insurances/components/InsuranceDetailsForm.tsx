@@ -1,55 +1,55 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { CoverageFormModal } from './CoverageFormModal';
-import { BenefitFormModal } from './BenefitFormModal';
-import { useInsuranceCoverages, useInsuranceBenefits } from '../useInsurances';
-import { InsuranceCoverage, InsuranceBenefit } from '../insurances.interfaces';
-import { formatCurrency } from '@/lib/utils';
+import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { CoverageFormModal } from './CoverageFormModal'
+import { BenefitFormModal } from './BenefitFormModal'
+import { useInsuranceCoverages, useInsuranceBenefits } from '../useInsurances'
+import { InsuranceCoverage, InsuranceBenefit } from '../insurances.interfaces'
+import { formatCurrency } from '@/lib/utils'
 
 interface InsuranceDetailsFormProps {
-  insuranceId: string;
+  insuranceId: string
 }
 
 export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insuranceId }) => {
-  const [isCoverageModalOpen, setIsCoverageModalOpen] = useState(false);
-  const [isBenefitModalOpen, setIsBenefitModalOpen] = useState(false);
-  const [selectedCoverage, setSelectedCoverage] = useState<InsuranceCoverage | null>(null);
-  const [selectedBenefit, setSelectedBenefit] = useState<InsuranceBenefit | null>(null);
+  const [isCoverageModalOpen, setIsCoverageModalOpen] = useState(false)
+  const [isBenefitModalOpen, setIsBenefitModalOpen] = useState(false)
+  const [selectedCoverage, setSelectedCoverage] = useState<InsuranceCoverage | null>(null)
+  const [selectedBenefit, setSelectedBenefit] = useState<InsuranceBenefit | null>(null)
 
   const {
     coverages,
     deleteCoverage,
     isDeleting: isDeletingCoverage,
-  } = useInsuranceCoverages(insuranceId);
+  } = useInsuranceCoverages(insuranceId)
   const {
     benefits,
     deleteBenefit,
     isDeleting: isDeletingBenefit,
-  } = useInsuranceBenefits(insuranceId);
+  } = useInsuranceBenefits(insuranceId)
 
   const handleEditCoverage = (coverage: InsuranceCoverage) => {
-    setSelectedCoverage(coverage);
-    setIsCoverageModalOpen(true);
-  };
+    setSelectedCoverage(coverage)
+    setIsCoverageModalOpen(true)
+  }
 
   const handleEditBenefit = (benefit: InsuranceBenefit) => {
-    setSelectedBenefit(benefit);
-    setIsBenefitModalOpen(true);
-  };
+    setSelectedBenefit(benefit)
+    setIsBenefitModalOpen(true)
+  }
 
   const handleDeleteCoverage = (id: string) => {
     if (window.confirm('¿Está seguro de eliminar esta cobertura?')) {
-      deleteCoverage(id);
+      deleteCoverage(id)
     }
-  };
+  }
 
   const handleDeleteBenefit = (id: string) => {
     if (window.confirm('¿Está seguro de eliminar este beneficio?')) {
-      deleteBenefit(id);
+      deleteBenefit(id)
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -60,8 +60,8 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
             variant="outline"
             size="sm"
             onClick={() => {
-              setSelectedCoverage(null);
-              setIsCoverageModalOpen(true);
+              setSelectedCoverage(null)
+              setIsCoverageModalOpen(true)
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -126,8 +126,8 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
             size="sm"
             type="button"
             onClick={() => {
-              setSelectedBenefit(null);
-              setIsBenefitModalOpen(true);
+              setSelectedBenefit(null)
+              setIsBenefitModalOpen(true)
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -184,8 +184,8 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
       <CoverageFormModal
         isOpen={isCoverageModalOpen}
         onClose={() => {
-          setIsCoverageModalOpen(false);
-          setSelectedCoverage(null);
+          setIsCoverageModalOpen(false)
+          setSelectedCoverage(null)
         }}
         insuranceId={insuranceId}
         coverage={selectedCoverage}
@@ -195,13 +195,13 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
       <BenefitFormModal
         isOpen={isBenefitModalOpen}
         onClose={() => {
-          setIsBenefitModalOpen(false);
-          setSelectedBenefit(null);
+          setIsBenefitModalOpen(false)
+          setSelectedBenefit(null)
         }}
         insuranceId={insuranceId}
         benefit={selectedBenefit}
         mode={selectedBenefit ? 'edit' : 'create'}
       />
     </div>
-  );
-};
+  )
+}
