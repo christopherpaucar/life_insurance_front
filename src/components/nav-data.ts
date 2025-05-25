@@ -1,8 +1,6 @@
 import {
   IconDashboard,
-  IconHelp,
   IconReport,
-  IconSettings,
   IconUsers,
   IconKey,
   IconShieldCheck,
@@ -14,7 +12,6 @@ import {
 } from '@tabler/icons-react'
 import { NavItem, PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
 
-// Admin navigation
 export const adminNavItems: NavItem[] = [
   {
     title: 'Dashboard',
@@ -29,6 +26,16 @@ export const adminNavItems: NavItem[] = [
   {
     title: 'Gestión de Seguros',
     url: '/admin/insurance',
+    icon: IconShieldCheck,
+  },
+  {
+    title: 'Gestión de Coberturas',
+    url: '/admin/insurance/coverages',
+    icon: IconShieldCheck,
+  },
+  {
+    title: 'Gestión de Beneficios',
+    url: '/admin/insurance/benefits',
     icon: IconShieldCheck,
   },
   {
@@ -159,21 +166,10 @@ export const clientNavItems: NavItem[] = [
   },
 ]
 
-// Common secondary navigation
 export const secondaryNavItems: NavItem[] = [
   {
     title: 'Mi Perfil',
     url: '/profile',
     icon: IconUser,
-  },
-  {
-    title: 'Configuración',
-    url: '/settings',
-    icon: IconSettings,
-  },
-  {
-    title: 'Ayuda',
-    url: '/help',
-    icon: IconHelp,
   },
 ]

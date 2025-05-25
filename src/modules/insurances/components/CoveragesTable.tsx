@@ -1,9 +1,6 @@
-'use client'
-
 import React, { useState } from 'react'
-import { DashboardLayout } from '@/components/layouts/DashboardLayout'
-import { useInsurances } from '@/modules/insurances/useInsurances'
-import { IInsurance, getEnumLabel } from '@/modules/insurances/insurances.interfaces'
+import { useCoverages } from '../useCoverages'
+import { ICoverage } from '../insurances.interfaces'
 import {
   Table,
   TableHeader,
@@ -25,8 +22,6 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +37,6 @@ import {
   IconDotsVertical,
   IconPlus,
 } from '@tabler/icons-react'
-import { InsuranceFormModal } from '@/modules/insurances/components/InsuranceFormModal'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,8 +47,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { CoverageFormModal } from './CoverageFormModal'
 
-export default function AdminInsurancePage() {
+export function CoveragesTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({
@@ -62,148 +57,70 @@ export default function AdminInsurancePage() {
     pageSize: 10,
   })
 
-  const { insurances, isLoading, deleteInsurance } = useInsurances({
-    page: pagination.pageIndex + 1,
-    limit: pagination.pageSize,
-  })
+  const { coverages, deleteCoverage } = useCoverages()
 
-  // Modal states
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
-  const [selectedInsurance, setSelectedInsurance] = useState<IInsurance | null>(null)
+  const [selectedCoverage, setSelectedCoverage] = useState<ICoverage | null>(null)
 
-  // Delete confirmation modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [insuranceToDelete, setInsuranceToDelete] = useState<IInsurance | null>(null)
+  const [coverageToDelete, setCoverageToDelete] = useState<ICoverage | null>(null)
 
-  // Open modal for creating new insurance
-  const handleCreateInsurance = () => {
+  const handleCreateCoverage = () => {
     setModalMode('create')
-    setSelectedInsurance(null)
+    setSelectedCoverage(null)
     setModalOpen(true)
   }
 
-  // Open modal for editing insurance
-  const handleEditInsurance = (insurance: IInsurance) => {
+  const handleEditCoverage = (coverage: ICoverage) => {
+    setSelectedCoverage(coverage)
     setModalMode('edit')
-    setSelectedInsurance(insurance)
     setModalOpen(true)
   }
 
-  // Open modal for confirming deletion
-  const handleDeleteConfirmation = (insurance: IInsurance) => {
-    setInsuranceToDelete(insurance)
+  const handleDeleteConfirmation = (coverage: ICoverage) => {
+    setCoverageToDelete(coverage)
     setDeleteModalOpen(true)
   }
 
-  // Confirm and execute deletion
   const confirmDelete = () => {
-    if (insuranceToDelete) {
-      deleteInsurance(insuranceToDelete.id)
+    if (coverageToDelete) {
+      deleteCoverage(coverageToDelete.id)
       setDeleteModalOpen(false)
-      setInsuranceToDelete(null)
+      setCoverageToDelete(null)
     }
   }
 
-  // Close modal and reset state
   const handleCloseModal = () => {
     setModalOpen(false)
-    // We'll reset the selectedInsurance after the modal animation completes
-    setTimeout(() => {
-      if (modalMode === 'edit') {
-        setSelectedInsurance(null)
-      }
-    }, 300)
+    setSelectedCoverage(null)
   }
 
-  const columns: ColumnDef<IInsurance>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+  const columns: ColumnDef<ICoverage>[] = [
     {
       accessorKey: 'name',
       header: 'Nombre',
       cell: ({ row }) => <div>{row.getValue('name')}</div>,
     },
     {
-      accessorKey: 'type',
-      header: 'Tipo',
-      cell: ({ row }) => <div>{getEnumLabel(row.getValue('type'))}</div>,
-    },
-    {
       accessorKey: 'description',
       header: 'Descripción',
-      cell: ({ row }) => <div className="max-w-xs truncate">{row.getValue('description')}</div>,
+      cell: ({ row }) => <div>{row.getValue('description')}</div>,
     },
     {
-      accessorKey: 'basePrice',
-      header: () => <div className="text-right">Precio Base</div>,
-      cell: ({ row }) => <div className="text-right">${row.getValue('basePrice')}</div>,
+      accessorKey: 'coverageAmount',
+      header: 'Monto de Cobertura',
+      cell: ({ row }) => <div>${row.getValue('coverageAmount')}</div>,
     },
     {
-      accessorKey: 'availablePaymentFrequencies',
-      header: 'Frecuencias de Pago',
-      cell: ({ row }) => {
-        const frequencies = row.original.availablePaymentFrequencies || []
-        return (
-          <div className="flex flex-wrap gap-1">
-            {frequencies.map((freq: string) => (
-              <Badge key={freq} variant="outline" className="text-xs">
-                {getEnumLabel(freq)}
-              </Badge>
-            ))}
-            {frequencies.length === 0 && (
-              <span className="text-muted-foreground text-xs">No definido</span>
-            )}
-          </div>
-        )
-      },
-    },
-    {
-      accessorKey: 'requirements',
-      header: 'Requisitos',
-      cell: ({ row }) => {
-        const requirements = row.original.requirements || []
-        return (
-          <div>
-            {requirements.length > 0 ? (
-              <span className="text-xs">{requirements.length} requisito(s)</span>
-            ) : (
-              <span className="text-muted-foreground text-xs">Ninguno</span>
-            )}
-          </div>
-        )
-      },
-    },
-    {
-      accessorKey: 'deletedAt',
-      header: 'Estado',
-      cell: ({ row }) => (
-        <Badge variant={row.getValue('deletedAt') ? 'destructive' : 'default'}>
-          {row.getValue('deletedAt') ? 'Inactivo' : 'Activo'}
-        </Badge>
-      ),
+      accessorKey: 'additionalCost',
+      header: 'Costo Adicional',
+      cell: ({ row }) => <div>${row.getValue('additionalCost')}</div>,
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        const insurance = row.original
+        const coverage = row.original
 
         return (
           <DropdownMenu>
@@ -213,14 +130,13 @@ export default function AdminInsurancePage() {
                 <IconDotsVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleEditInsurance(insurance)}>
+              <DropdownMenuItem onClick={() => handleEditCoverage(coverage)}>
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => handleDeleteConfirmation(insurance)}
+                onClick={() => handleDeleteConfirmation(coverage)}
                 className="text-red-600"
               >
                 Eliminar
@@ -233,7 +149,7 @@ export default function AdminInsurancePage() {
   ]
 
   const table = useReactTable({
-    data: insurances,
+    data: coverages,
     columns,
     state: {
       sorting,
@@ -250,10 +166,7 @@ export default function AdminInsurancePage() {
   })
 
   return (
-    <DashboardLayout
-      title="Gestión de Seguros"
-      description="Administre planes, coberturas y primas"
-    >
+    <div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filtrar por nombre..."
@@ -261,11 +174,12 @@ export default function AdminInsurancePage() {
           onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
-        <Button className="ml-auto" onClick={handleCreateInsurance}>
+        <Button className="ml-auto" onClick={handleCreateCoverage}>
           <IconPlus className="mr-2 h-4 w-4" />
-          Nuevo Plan
+          Nueva Cobertura
         </Button>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -282,13 +196,7 @@ export default function AdminInsurancePage() {
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Cargando...
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
@@ -301,17 +209,18 @@ export default function AdminInsurancePage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No se encontraron resultados.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} de{' '}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+          {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
         </div>
         <div className="space-x-2">
           <Button
@@ -349,23 +258,19 @@ export default function AdminInsurancePage() {
         </div>
       </div>
 
-      {/* Insurance Modal - handles both create and edit */}
-      <InsuranceFormModal
-        isOpen={modalOpen}
+      <CoverageFormModal
+        open={modalOpen}
         onClose={handleCloseModal}
-        insurance={selectedInsurance}
         mode={modalMode}
+        coverage={selectedCoverage}
       />
 
-      {/* Delete Confirmation Modal */}
       <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará permanentemente el seguro{' '}
-              <span className="font-medium">{insuranceToDelete?.name}</span>. Esta acción no se
-              puede deshacer.
+              Esta acción no se puede deshacer. Esto eliminará permanentemente la cobertura.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -376,6 +281,6 @@ export default function AdminInsurancePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </DashboardLayout>
+    </div>
   )
 }

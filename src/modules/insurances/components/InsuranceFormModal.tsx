@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { useInsurances } from '../useInsurances'
 import {
-  Insurance,
+  IInsurance,
   CreateInsuranceDto,
   UpdateInsuranceDto,
   InsuranceType,
@@ -33,7 +33,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { X } from 'lucide-react'
 import { InsuranceDetailsForm } from './InsuranceDetailsForm'
 
-// Form validation schema
 const formSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
   description: z.string().min(10, 'La descripción debe tener al menos 10 caracteres'),
@@ -43,7 +42,7 @@ const formSchema = z.object({
   basePrice: z.coerce.number().positive('El precio debe ser un número positivo'),
   requirements: z.array(z.string()).default([]),
   availablePaymentFrequencies: z.array(z.nativeEnum(PaymentFrequency)).default([]),
-  rank: z.coerce.number().default(0),
+  order: z.coerce.number().default(0),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -51,7 +50,7 @@ type FormValues = z.infer<typeof formSchema>
 interface InsuranceFormModalProps {
   isOpen: boolean
   onClose: () => void
-  insurance?: Insurance | null // Optional for edit mode
+  insurance?: IInsurance | null // Optional for edit mode
   mode: 'create' | 'edit'
 }
 
@@ -72,7 +71,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     basePrice: 0,
     requirements: [],
     availablePaymentFrequencies: [],
-    rank: 0,
+    order: 0,
   })
 
   // New requirement input state
@@ -91,7 +90,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         basePrice: insurance.basePrice,
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
-        rank: insurance.rank,
+        order: insurance.order,
       })
     } else {
       setFormData({
@@ -101,7 +100,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         basePrice: 0,
         requirements: [],
         availablePaymentFrequencies: [],
-        rank: 0,
+        order: 0,
       })
     }
     setNewRequirement('')
@@ -118,7 +117,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         basePrice: insurance.basePrice,
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
-        rank: insurance.rank,
+        order: insurance.order,
       })
     }
 
@@ -216,7 +215,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
           updateDto.description = formData.description
         if (formData.type !== insurance.type) updateDto.type = formData.type
         if (formData.basePrice !== insurance.basePrice) updateDto.basePrice = formData.basePrice
-        if (formData.rank !== insurance.rank) updateDto.rank = formData.rank
+        if (formData.order !== insurance.order) updateDto.order = formData.order
 
         // For arrays, we need to check if they've actually changed
         const reqChanged =
@@ -262,7 +261,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
   }
 
-  const handleRankChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOrderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.min(Math.max(1, Number(e.target.value)), 10)
     setFormData((prev) => ({
       ...prev,
@@ -421,16 +420,16 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
 
               <div className="flex items-start space-x-3 space-y-0">
                 <Input
-                  id="rank"
+                  id="order"
                   type="number"
                   min="1"
                   max="10"
-                  value={formData.rank}
-                  onChange={handleRankChange}
+                  value={formData.order}
+                  onChange={handleOrderChange}
                   className="w-20"
                 />
                 <div className="space-y-1 leading-none">
-                  <Label htmlFor="rank">Rango del Plan</Label>
+                  <Label htmlFor="order">Orden del Plan</Label>
                   <p className="text-muted-foreground text-sm">Valor del 1 al 10</p>
                 </div>
               </div>
@@ -439,7 +438,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
 
           {mode === 'edit' && insurance && (
             <div className="pt-6 border-t">
-              <InsuranceDetailsForm insuranceId={insurance.id} />
+              <InsuranceDetailsForm />
             </div>
           )}
 

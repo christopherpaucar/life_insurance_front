@@ -4,37 +4,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { CoverageFormModal } from './CoverageFormModal'
 import { BenefitFormModal } from './BenefitFormModal'
-import { useInsuranceCoverages, useInsuranceBenefits } from '../useInsurances'
-import { InsuranceCoverage, InsuranceBenefit } from '../insurances.interfaces'
+import { useCoverages } from '../useCoverages'
+import { useBenefits } from '../useBenefits'
+import { Coverage, Benefit } from '../insurances.interfaces'
 import { formatCurrency } from '@/lib/utils'
 
-interface InsuranceDetailsFormProps {
-  insuranceId: string
-}
-
-export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insuranceId }) => {
+export const InsuranceDetailsForm: React.FC = () => {
   const [isCoverageModalOpen, setIsCoverageModalOpen] = useState(false)
   const [isBenefitModalOpen, setIsBenefitModalOpen] = useState(false)
-  const [selectedCoverage, setSelectedCoverage] = useState<InsuranceCoverage | null>(null)
-  const [selectedBenefit, setSelectedBenefit] = useState<InsuranceBenefit | null>(null)
+  const [selectedCoverage, setSelectedCoverage] = useState<Coverage | null>(null)
+  const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null)
 
-  const {
-    coverages,
-    deleteCoverage,
-    isDeleting: isDeletingCoverage,
-  } = useInsuranceCoverages(insuranceId)
-  const {
-    benefits,
-    deleteBenefit,
-    isDeleting: isDeletingBenefit,
-  } = useInsuranceBenefits(insuranceId)
+  const { coverages, deleteCoverage, isDeleting: isDeletingCoverage } = useCoverages()
+  const { benefits, deleteBenefit, isDeleting: isDeletingBenefit } = useBenefits()
 
-  const handleEditCoverage = (coverage: InsuranceCoverage) => {
+  const handleEditCoverage = (coverage: Coverage) => {
     setSelectedCoverage(coverage)
     setIsCoverageModalOpen(true)
   }
 
-  const handleEditBenefit = (benefit: InsuranceBenefit) => {
+  const handleEditBenefit = (benefit: Benefit) => {
     setSelectedBenefit(benefit)
     setIsBenefitModalOpen(true)
   }
@@ -187,7 +176,6 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
           setIsCoverageModalOpen(false)
           setSelectedCoverage(null)
         }}
-        insuranceId={insuranceId}
         coverage={selectedCoverage}
         mode={selectedCoverage ? 'edit' : 'create'}
       />
@@ -198,7 +186,6 @@ export const InsuranceDetailsForm: React.FC<InsuranceDetailsFormProps> = ({ insu
           setIsBenefitModalOpen(false)
           setSelectedBenefit(null)
         }}
-        insuranceId={insuranceId}
         benefit={selectedBenefit}
         mode={selectedBenefit ? 'edit' : 'create'}
       />

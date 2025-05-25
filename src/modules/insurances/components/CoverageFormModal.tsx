@@ -1,256 +1,142 @@
-import React, { useState, useEffect } from 'react'
-import { z } from 'zod'
-import { toast } from 'sonner'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useInsuranceCoverages } from '../useInsurances'
-import { CreateInsuranceCoverageDto, UpdateInsuranceCoverageDto } from '../insurances.interfaces'
+import { useCoverages } from '../useCoverages'
+import { ICoverage, CreateCoverageDto, UpdateCoverageDto } from '../insurances.interfaces'
 
 const formSchema = z.object({
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
-  description: z.string().min(10, 'La descripción debe tener al menos 10 caracteres'),
-  coverageAmount: z.coerce.number().positive('El monto de cobertura debe ser un número positivo'),
-  additionalCost: z.coerce.number().min(0, 'El costo adicional debe ser un número positivo'),
+  name: z.string().min(1, 'El nombre es requerido'),
+  description: z.string().min(1, 'La descripción es requerida'),
+  coverageAmount: z.number().min(0, 'El monto de cobertura debe ser mayor o igual a 0'),
+  additionalCost: z.number().min(0, 'El costo adicional debe ser mayor o igual a 0'),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
 interface CoverageFormModalProps {
-  isOpen: boolean
+  open: boolean
   onClose: () => void
-  insuranceId: string
-  coverage?: any
   mode: 'create' | 'edit'
+  coverage?: ICoverage | null
 }
 
-export const CoverageFormModal: React.FC<CoverageFormModalProps> = ({
-  isOpen,
-  onClose,
-  insuranceId,
-  coverage = null,
-  mode = 'create',
-}) => {
-  const { createCoverage, updateCoverage, isCreating, isUpdating } =
-    useInsuranceCoverages(insuranceId)
-  const isProcessing = isCreating || isUpdating
+export function CoverageFormModal({ open, onClose, mode, coverage }: CoverageFormModalProps) {
+  const { createCoverage, updateCoverage, isCreating, isUpdating } = useCoverages()
 
-  const [formData, setFormData] = useState<FormValues>({
-    name: '',
-    description: '',
-    coverageAmount: 0,
-    additionalCost: 0,
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: coverage?.name ?? '',
+      description: coverage?.description ?? '',
+      coverageAmount: coverage?.coverageAmount ?? 0,
+      additionalCost: coverage?.additionalCost ?? 0,
+    },
   })
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
-  useEffect(() => {
-    if (mode === 'edit' && coverage && isOpen) {
-      setFormData({
-        name: coverage.name,
-        description: coverage.description,
-        coverageAmount: coverage.coverageAmount,
-        additionalCost: coverage.additionalCost,
-      })
+  const onSubmit = (values: FormValues) => {
+    if (mode === 'create') {
+      createCoverage(values as CreateCoverageDto)
+    } else if (mode === 'edit' && coverage) {
+      updateCoverage(coverage.id, values as UpdateCoverageDto)
     }
-  }, [coverage, isOpen, mode])
-
-  const resetForm = () => {
-    if (mode === 'edit' && coverage) {
-      setFormData({
-        name: coverage.name,
-        description: coverage.description,
-        coverageAmount: coverage.coverageAmount,
-        additionalCost: coverage.additionalCost,
-      })
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        coverageAmount: 0,
-        additionalCost: 0,
-      })
-    }
-    setErrors({})
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement
-    if (type === 'number') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value ? Number(value) : 0,
-      }))
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }))
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    try {
-      formSchema.parse(formData)
-      setErrors({})
-
-      if (mode === 'create') {
-        createCoverage(formData as CreateInsuranceCoverageDto, {
-          onSuccess: () => {
-            resetForm()
-            onClose()
-          },
-        })
-      } else if (mode === 'edit' && coverage) {
-        const updateDto: UpdateInsuranceCoverageDto = {}
-
-        if (formData.name !== coverage.name) updateDto.name = formData.name
-        if (formData.description !== coverage.description)
-          updateDto.description = formData.description
-        if (formData.coverageAmount !== coverage.coverageAmount)
-          updateDto.coverageAmount = formData.coverageAmount
-        if (formData.additionalCost !== coverage.additionalCost)
-          updateDto.additionalCost = formData.additionalCost
-
-        if (Object.keys(updateDto).length === 0) {
-          toast.info('No se detectaron cambios')
-          onClose()
-          return
-        }
-
-        updateCoverage(coverage.id as string, updateDto, {
-          onSuccess: () => {
-            resetForm()
-            onClose()
-          },
-        })
-      }
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {}
-        err.errors.forEach((error) => {
-          if (error.path.length > 0) {
-            fieldErrors[error.path[0].toString()] = error.message
-          }
-        })
-        setErrors(fieldErrors)
-        toast.error('Por favor, corrija los errores en el formulario')
-      } else {
-        console.error('Error inesperado:', err)
-        toast.error('Ha ocurrido un error inesperado')
-      }
-    }
+    onClose()
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          resetForm()
-          onClose()
-        }
-      }}
-      modal={true}
-    >
-      <DialogContent className="sm:max-w-[600px] pointer-events-auto">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Crear Cobertura' : 'Editar Cobertura'}</DialogTitle>
-          <DialogDescription>
-            {mode === 'create'
-              ? 'Añadir una nueva cobertura al plan'
-              : 'Actualizar la información de la cobertura'}
-          </DialogDescription>
+          <DialogTitle>{mode === 'create' ? 'Nueva Cobertura' : 'Editar Cobertura'}</DialogTitle>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-3">
-            <Label htmlFor="name">Nombre de la Cobertura</Label>
-            <Input
-              id="name"
+        <Form {...form}>
+          <form onSubmit={(e) => void form.handleSubmit(onSubmit)(e)} className="space-y-4">
+            <FormField
+              control={form.control}
               name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Cobertura por Fallecimiento"
-              className={errors.name ? 'border-red-500' : ''}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
+            <FormField
+              control={form.control}
               name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Cobertura que protege a los beneficiarios en caso de fallecimiento..."
-              className={errors.description ? 'border-red-500' : ''}
-              rows={3}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.description && <p className="text-destructive text-sm">{errors.description}</p>}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="coverageAmount">Monto de Cobertura (USD)</Label>
-            <Input
-              id="coverageAmount"
+            <FormField
+              control={form.control}
               name="coverageAmount"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.coverageAmount || ''}
-              onChange={handleChange}
-              placeholder="100000"
-              className={errors.coverageAmount ? 'border-red-500' : ''}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Monto de Cobertura</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.coverageAmount && (
-              <p className="text-destructive text-sm">{errors.coverageAmount}</p>
-            )}
-          </div>
-
-          <div className="grid gap-3">
-            <Label htmlFor="additionalCost">Costo Adicional (USD)</Label>
-            <Input
-              id="additionalCost"
+            <FormField
+              control={form.control}
               name="additionalCost"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.additionalCost || ''}
-              onChange={handleChange}
-              placeholder="50"
-              className={errors.additionalCost ? 'border-red-500' : ''}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Costo Adicional</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.additionalCost && (
-              <p className="text-destructive text-sm">{errors.additionalCost}</p>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isProcessing}>
-              {isProcessing
-                ? 'Guardando...'
-                : mode === 'create'
-                  ? 'Guardar Cobertura'
-                  : 'Guardar Cambios'}
-            </Button>
-          </DialogFooter>
-        </form>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={onClose}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={!form.formState.isValid || isCreating || isUpdating}>
+                {isCreating || isUpdating
+                  ? 'Guardando...'
+                  : mode === 'create'
+                    ? 'Crear'
+                    : 'Guardar'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )

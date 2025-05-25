@@ -21,7 +21,7 @@ export const getEnumLabel = (enumValue: string) => {
   return enumLabels[enumValue as keyof typeof enumLabels]
 }
 
-export interface Insurance {
+export interface IInsurance {
   id: string
   name: string
   description: string
@@ -29,31 +29,29 @@ export interface Insurance {
   basePrice: number
   requirements: string[]
   availablePaymentFrequencies: PaymentFrequency[]
-  coverages: InsuranceCoverage[]
-  benefits: InsuranceBenefit[]
+  coverages: ICoverage[]
+  benefits: IBenefit[]
   createdAt: string
   updatedAt: string
   deletedAt: string | null
-  rank: number
+  order: number
 }
 
-export interface InsuranceCoverage {
+export interface ICoverage {
   id: string
   name: string
   description: string
   coverageAmount: number
   additionalCost: number
-  insurance: Insurance
   createdAt: string
   updatedAt: string
 }
 
-export interface InsuranceBenefit {
+export interface IBenefit {
   id: string
   name: string
   description: string
   additionalCost: number
-  insurance: Insurance
   createdAt: string
   updatedAt: string
 }
@@ -63,9 +61,11 @@ export interface CreateInsuranceDto {
   description: string
   type: InsuranceType
   basePrice: number
-  rank: number
+  order: number
   requirements?: string[]
   availablePaymentFrequencies?: PaymentFrequency[]
+  coverageIds?: string[]
+  benefitIds?: string[]
 }
 
 export interface UpdateInsuranceDto {
@@ -74,31 +74,33 @@ export interface UpdateInsuranceDto {
   type?: InsuranceType
   basePrice?: number
   requirements?: string[]
-  rank?: number
+  order?: number
   availablePaymentFrequencies?: PaymentFrequency[]
+  coverageIds?: string[]
+  benefitIds?: string[]
 }
 
-export interface CreateInsuranceCoverageDto {
+export interface CreateCoverageDto {
   name: string
   description: string
   coverageAmount: number
   additionalCost: number
 }
 
-export interface UpdateInsuranceCoverageDto {
+export interface UpdateCoverageDto {
   name?: string
   description?: string
   coverageAmount?: number
   additionalCost?: number
 }
 
-export interface CreateInsuranceBenefitDto {
+export interface CreateBenefitDto {
   name: string
   description: string
   additionalCost: number
 }
 
-export interface UpdateInsuranceBenefitDto {
+export interface UpdateBenefitDto {
   name?: string
   description?: string
   additionalCost?: number
@@ -122,8 +124,8 @@ export interface ApiResponse<T> {
 }
 
 export interface InsurancesState {
-  insurances: Insurance[]
-  selectedInsurance: Insurance | null
+  insurances: IInsurance[]
+  selectedInsurance: IInsurance | null
   loading: boolean
   error: string | null
 }

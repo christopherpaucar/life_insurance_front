@@ -9,13 +9,15 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: ['tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**', '**/vitest.config.mts', ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'json'],
       reportsDirectory: './coverage',
       all: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: [
+      ignoreEmptyLines: true,
+            exclude: [
         'coverage/**',
         'dist/**',
         '**/node_modules/**',
@@ -31,7 +33,9 @@ export default defineConfig({
         'src/**/*.spec.{ts,tsx}',
         'src/**/types.ts',
         'src/**/index.ts',
+        'src/components/ui/**',
       ]
+
     },
     deps: {
       inline: [/@testing-library\/.*/]
