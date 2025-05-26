@@ -22,7 +22,7 @@ interface InsuranceDetailsProps {
   insuranceId: string
 }
 
-export const InsuranceDetails = ({ insuranceId }: InsuranceDetailsProps) => {
+export const InsuranceDetailsSell = ({ insuranceId }: InsuranceDetailsProps) => {
   const { insurance, isLoading } = useInsurance(insuranceId)
   const router = useRouter()
 

@@ -2,32 +2,32 @@
 import { getHttpClient } from '@/lib/http'
 import {
   CreateInsuranceDto,
-  Insurance,
+  IInsurance,
   UpdateInsuranceDto,
   ApiResponse,
 } from './insurances.interfaces'
 
 export const insurancesService = {
-  getInsurances: async (params?: any): Promise<ApiResponse<Insurance[]>> => {
-    const response = await getHttpClient().get<ApiResponse<Insurance[]>>('/insurances', { params })
+  getInsurances: async (params?: any): Promise<ApiResponse<IInsurance[]>> => {
+    const response = await getHttpClient().get<ApiResponse<IInsurance[]>>('/insurances', { params })
     return response.data
   },
 
-  getInsurance: async (id: string): Promise<ApiResponse<Insurance>> => {
-    const response = await getHttpClient().get<ApiResponse<Insurance>>(`/insurances/${id}`)
+  getInsurance: async (id: string): Promise<ApiResponse<IInsurance>> => {
+    const response = await getHttpClient().get<ApiResponse<IInsurance>>(`/insurances/${id}`)
     return response.data
   },
 
-  createInsurance: async (data: CreateInsuranceDto): Promise<ApiResponse<Insurance>> => {
-    const response = await getHttpClient().post<ApiResponse<Insurance>>('/insurances', data)
+  createInsurance: async (data: CreateInsuranceDto): Promise<ApiResponse<IInsurance>> => {
+    const response = await getHttpClient().post<ApiResponse<IInsurance>>('/insurances', data)
     return response.data
   },
 
   updateInsurance: async (
     id: string,
     data: UpdateInsuranceDto
-  ): Promise<ApiResponse<Insurance>> => {
-    const response = await getHttpClient().put<ApiResponse<Insurance>>(`/insurances/${id}`, data)
+  ): Promise<ApiResponse<IInsurance>> => {
+    const response = await getHttpClient().put<ApiResponse<IInsurance>>(`/insurances/${id}`, data)
     return response.data
   },
 

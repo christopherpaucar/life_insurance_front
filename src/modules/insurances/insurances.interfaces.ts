@@ -1,3 +1,16 @@
+export interface InsuranceCoverageRelationDto {
+  id: string
+  coverageAmount: number
+  additionalCost: number
+  delete?: boolean
+}
+
+export interface InsuranceBenefitRelationDto {
+  id: string
+  additionalCost: number
+  delete?: boolean
+}
+
 export enum InsuranceType {
   LIFE = 'life',
   HEALTH = 'health',
@@ -29,8 +42,8 @@ export interface IInsurance {
   basePrice: number
   requirements: string[]
   availablePaymentFrequencies: PaymentFrequency[]
-  coverages: ICoverage[]
-  benefits: IBenefit[]
+  coverages: (InsuranceCoverageRelationDto & { coverage: ICoverage })[]
+  benefits: (InsuranceBenefitRelationDto & { benefit: IBenefit })[]
   createdAt: string
   updatedAt: string
   deletedAt: string | null
@@ -41,19 +54,21 @@ export interface ICoverage {
   id: string
   name: string
   description: string
-  coverageAmount: number
-  additionalCost: number
   createdAt: string
   updatedAt: string
+  deletedAt: string | null
+  additionalCost?: number
+  coverageAmount?: number
 }
 
 export interface IBenefit {
   id: string
   name: string
   description: string
-  additionalCost: number
   createdAt: string
   updatedAt: string
+  deletedAt: string | null
+  additionalCost?: number
 }
 
 export interface CreateInsuranceDto {
@@ -64,8 +79,8 @@ export interface CreateInsuranceDto {
   order: number
   requirements?: string[]
   availablePaymentFrequencies?: PaymentFrequency[]
-  coverageIds?: string[]
-  benefitIds?: string[]
+  coverages?: InsuranceCoverageRelationDto[]
+  benefits?: InsuranceBenefitRelationDto[]
 }
 
 export interface UpdateInsuranceDto {
@@ -76,34 +91,28 @@ export interface UpdateInsuranceDto {
   requirements?: string[]
   order?: number
   availablePaymentFrequencies?: PaymentFrequency[]
-  coverageIds?: string[]
-  benefitIds?: string[]
+  coverages?: InsuranceCoverageRelationDto[]
+  benefits?: InsuranceBenefitRelationDto[]
 }
 
 export interface CreateCoverageDto {
   name: string
   description: string
-  coverageAmount: number
-  additionalCost: number
 }
 
 export interface UpdateCoverageDto {
   name?: string
   description?: string
-  coverageAmount?: number
-  additionalCost?: number
 }
 
 export interface CreateBenefitDto {
   name: string
   description: string
-  additionalCost: number
 }
 
 export interface UpdateBenefitDto {
   name?: string
   description?: string
-  additionalCost?: number
 }
 
 export interface InsuranceQueryParams {

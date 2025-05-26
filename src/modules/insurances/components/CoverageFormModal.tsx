@@ -20,8 +20,6 @@ import { ICoverage, CreateCoverageDto, UpdateCoverageDto } from '../insurances.i
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   description: z.string().min(1, 'La descripción es requerida'),
-  coverageAmount: z.number().min(0, 'El monto de cobertura debe ser mayor o igual a 0'),
-  additionalCost: z.number().min(0, 'El costo adicional debe ser mayor o igual a 0'),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -41,9 +39,13 @@ export function CoverageFormModal({ open, onClose, mode, coverage }: CoverageFor
     defaultValues: {
       name: coverage?.name ?? '',
       description: coverage?.description ?? '',
-      coverageAmount: coverage?.coverageAmount ?? 0,
-      additionalCost: coverage?.additionalCost ?? 0,
     },
+    values: coverage
+      ? {
+          name: coverage.name,
+          description: coverage.description,
+        }
+      : undefined,
   })
 
   const onSubmit = (values: FormValues) => {
@@ -84,40 +86,6 @@ export function CoverageFormModal({ open, onClose, mode, coverage }: CoverageFor
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="coverageAmount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Monto de Cobertura</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="additionalCost"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Costo Adicional</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

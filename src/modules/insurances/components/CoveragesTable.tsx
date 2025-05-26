@@ -48,6 +48,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { CoverageFormModal } from './CoverageFormModal'
+import { format } from 'date-fns'
 
 export function CoveragesTable() {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -108,14 +109,19 @@ export function CoveragesTable() {
       cell: ({ row }) => <div>{row.getValue('description')}</div>,
     },
     {
-      accessorKey: 'coverageAmount',
-      header: 'Monto de Cobertura',
-      cell: ({ row }) => <div>${row.getValue('coverageAmount')}</div>,
+      accessorKey: 'deletedAt',
+      header: 'Estado',
+      cell: ({ row }) => <div>{row.getValue('deletedAt') ? 'Inactivo' : 'Activo'}</div>,
     },
     {
-      accessorKey: 'additionalCost',
-      header: 'Costo Adicional',
-      cell: ({ row }) => <div>${row.getValue('additionalCost')}</div>,
+      accessorKey: 'createdAt',
+      header: 'Creado',
+      cell: ({ row }) => <div>{format(new Date(row.getValue('createdAt')), 'dd/MM/yyyy')}</div>,
+    },
+    {
+      accessorKey: 'updatedAt',
+      header: 'Actualizado',
+      cell: ({ row }) => <div>{format(new Date(row.getValue('updatedAt')), 'dd/MM/yyyy')}</div>,
     },
     {
       id: 'actions',

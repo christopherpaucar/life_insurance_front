@@ -21,6 +21,8 @@ import {
   InsuranceType,
   PaymentFrequency,
   getEnumLabel,
+  InsuranceCoverageRelationDto,
+  InsuranceBenefitRelationDto,
 } from '../insurances.interfaces'
 import {
   Select,
@@ -43,14 +45,32 @@ const formSchema = z.object({
   requirements: z.array(z.string()).default([]),
   availablePaymentFrequencies: z.array(z.nativeEnum(PaymentFrequency)).default([]),
   order: z.coerce.number().default(0),
+  coverages: z
+    .array(
+      z.object({
+        id: z.string(),
+        coverageAmount: z.coerce.number(),
+        additionalCost: z.coerce.number(),
+      })
+    )
+    .default([]),
+  benefits: z
+    .array(
+      z.object({
+        id: z.string(),
+        additionalCost: z.coerce.number(),
+      })
+    )
+    .default([]),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
 interface InsuranceFormModalProps {
+  insurance?: IInsurance
   isOpen: boolean
   onClose: () => void
-  insurance?: IInsurance | null // Optional for edit mode
+  onSave: (data: UpdateInsuranceDto) => void
   mode: 'create' | 'edit'
 }
 
@@ -67,11 +87,13 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
   const [formData, setFormData] = useState<FormValues>({
     name: '',
     description: '',
-    type: InsuranceType.LIFE, // Default value
+    type: InsuranceType.LIFE,
     basePrice: 0,
     requirements: [],
     availablePaymentFrequencies: [],
     order: 0,
+    coverages: [],
+    benefits: [],
   })
 
   // New requirement input state
@@ -87,10 +109,19 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         name: insurance.name,
         description: insurance.description,
         type: insurance.type,
-        basePrice: insurance.basePrice,
+        basePrice: Number(insurance.basePrice),
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
         order: insurance.order,
+        coverages: insurance.coverages.map((coverage) => ({
+          id: coverage.id,
+          coverageAmount: Number(coverage.coverageAmount) || 0,
+          additionalCost: Number(coverage.additionalCost) || 0,
+        })),
+        benefits: insurance.benefits.map((benefit) => ({
+          id: benefit.id,
+          additionalCost: Number(benefit.additionalCost) || 0,
+        })),
       })
     } else {
       setFormData({
@@ -101,23 +132,33 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         requirements: [],
         availablePaymentFrequencies: [],
         order: 0,
+        coverages: [],
+        benefits: [],
       })
     }
     setNewRequirement('')
     setErrors({})
   }, [mode, insurance])
 
-  // Load insurance data when in edit mode
   useEffect(() => {
     if (mode === 'edit' && insurance && isOpen) {
       setFormData({
         name: insurance.name,
         description: insurance.description,
         type: insurance.type,
-        basePrice: insurance.basePrice,
+        basePrice: Number(insurance.basePrice),
         requirements: insurance.requirements || [],
         availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
         order: insurance.order,
+        coverages: insurance.coverages.map((coverageRelation) => ({
+          id: coverageRelation.coverage.id,
+          coverageAmount: Number(coverageRelation.coverageAmount) || 0,
+          additionalCost: Number(coverageRelation.additionalCost) || 0,
+        })),
+        benefits: insurance.benefits.map((benefitRelation) => ({
+          id: benefitRelation.benefit.id,
+          additionalCost: Number(benefitRelation.additionalCost) || 0,
+        })),
       })
     }
 
@@ -126,7 +167,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
   }, [insurance, isOpen, mode, resetForm])
 
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement
     if (type === 'number') {
@@ -192,14 +232,11 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     e.preventDefault()
 
     try {
-      // Validate form data with Zod
       formSchema.parse(formData)
 
-      // Clear errors
       setErrors({})
 
       if (mode === 'create') {
-        // Submit data for create
         createInsurance(formData as CreateInsuranceDto, {
           onSuccess: () => {
             resetForm()
@@ -207,7 +244,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
           },
         })
       } else if (mode === 'edit' && insurance) {
-        // Create UpdateInsuranceDto with only changed fields
         const updateDto: UpdateInsuranceDto = {}
 
         if (formData.name !== insurance.name) updateDto.name = formData.name
@@ -217,25 +253,30 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         if (formData.basePrice !== insurance.basePrice) updateDto.basePrice = formData.basePrice
         if (formData.order !== insurance.order) updateDto.order = formData.order
 
-        // For arrays, we need to check if they've actually changed
         const reqChanged =
           JSON.stringify(formData.requirements) !== JSON.stringify(insurance.requirements || [])
         const freqChanged =
           JSON.stringify(formData.availablePaymentFrequencies) !==
           JSON.stringify(insurance.availablePaymentFrequencies || [])
+        const coveragesChanged =
+          JSON.stringify(formData.coverages) !== JSON.stringify(insurance.coverages || [])
+        const benefitsChanged =
+          JSON.stringify(formData.benefits) !== JSON.stringify(insurance.benefits || [])
 
         if (reqChanged) updateDto.requirements = formData.requirements
         if (freqChanged)
           updateDto.availablePaymentFrequencies = formData.availablePaymentFrequencies
+        if (coveragesChanged) updateDto.coverages = formData.coverages
+        if (benefitsChanged) updateDto.benefits = formData.benefits
 
-        // Only update if there are changes
-        if (Object.keys(updateDto).length === 0) {
+        const hasChanges = Object.keys(updateDto).length > 0
+
+        if (!hasChanges) {
           toast.info('No se detectaron cambios')
           onClose()
           return
         }
 
-        // Submit data for update
         updateInsurance(insurance.id, updateDto, {
           onSuccess: () => {
             resetForm()
@@ -245,7 +286,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
-        // Convert Zod errors to record
         const fieldErrors: Record<string, string> = {}
         err.errors.forEach((error) => {
           if (error.path.length > 0) {
@@ -265,8 +305,44 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     const value = Math.min(Math.max(1, Number(e.target.value)), 10)
     setFormData((prev) => ({
       ...prev,
-      rank: value,
+      order: value,
     }))
+  }
+
+  const addCoverages = (coverages: InsuranceCoverageRelationDto[]) => {
+    setFormData((prev) => {
+      const updatedCoverages = [...prev.coverages]
+      coverages.forEach((newCoverage) => {
+        const existingIndex = updatedCoverages.findIndex((c) => c.id === newCoverage.id)
+        if (existingIndex !== -1) {
+          updatedCoverages[existingIndex] = newCoverage
+        } else {
+          updatedCoverages.push(newCoverage)
+        }
+      })
+      return {
+        ...prev,
+        coverages: updatedCoverages,
+      }
+    })
+  }
+
+  const addBenefits = (benefits: InsuranceBenefitRelationDto[]) => {
+    setFormData((prev) => {
+      const updatedBenefits = [...prev.benefits]
+      benefits.forEach((newBenefit) => {
+        const existingIndex = updatedBenefits.findIndex((b) => b.id === newBenefit.id)
+        if (existingIndex !== -1) {
+          updatedBenefits[existingIndex] = newBenefit
+        } else {
+          updatedBenefits.push(newBenefit)
+        }
+      })
+      return {
+        ...prev,
+        benefits: updatedBenefits,
+      }
+    })
   }
 
   return (
@@ -280,7 +356,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
       }}
       modal={true}
     >
-      <DialogContent className="sm:max-w-[800px] pointer-events-auto">
+      <DialogContent className="sm:max-w-[800px] pointer-events-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Crear Plan de Seguro' : 'Editar Plan de Seguro'}
@@ -332,7 +408,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
               <div className="grid gap-3">
                 <Label htmlFor="type">Tipo de Seguro</Label>
                 <Select
-                  value={formData.type as InsuranceType}
+                  value={formData.type}
                   onValueChange={(value) => handleSelectChange('type', value)}
                 >
                   <SelectTrigger id="type" className={errors.type ? 'border-red-500' : ''}>
@@ -438,7 +514,12 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
 
           {mode === 'edit' && insurance && (
             <div className="pt-6 border-t">
-              <InsuranceDetailsForm />
+              <InsuranceDetailsForm
+                coverages={formData.coverages}
+                benefits={formData.benefits}
+                addCoverages={addCoverages}
+                addBenefits={addBenefits}
+              />
             </div>
           )}
 

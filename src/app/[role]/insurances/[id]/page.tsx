@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { InsuranceDetails } from '@/modules/insurances/components/InsuranceDetails'
+import { InsuranceDetailsSell } from '@/modules/insurances/components/InsuranceDetailsSell'
 
 interface InsuranceDetailsPageProps {
   params: {
@@ -15,7 +15,7 @@ export default function InsuranceDetailsPage({ params }: InsuranceDetailsPagePro
 
   return (
     <div className="container py-6">
-      <InsuranceDetails insuranceId={unwrappedParams.id} />
+      <InsuranceDetailsSell insuranceId={unwrappedParams.id} />
     </div>
   )
 }

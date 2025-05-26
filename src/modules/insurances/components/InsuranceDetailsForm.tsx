@@ -1,194 +1,76 @@
-import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
-import { CoverageFormModal } from './CoverageFormModal'
-import { BenefitFormModal } from './BenefitFormModal'
+import { useState, useCallback } from 'react'
 import { useCoverages } from '../useCoverages'
 import { useBenefits } from '../useBenefits'
-import { Coverage, Benefit } from '../insurances.interfaces'
-import { formatCurrency } from '@/lib/utils'
+import { InsuranceCoverageRelationDto, InsuranceBenefitRelationDto } from '../insurances.interfaces'
+import { CoverageBenefitSelector } from './CoverageBenefitSelector'
 
-export const InsuranceDetailsForm: React.FC = () => {
-  const [isCoverageModalOpen, setIsCoverageModalOpen] = useState(false)
-  const [isBenefitModalOpen, setIsBenefitModalOpen] = useState(false)
-  const [selectedCoverage, setSelectedCoverage] = useState<Coverage | null>(null)
-  const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null)
+export const InsuranceDetailsForm: React.FC<{
+  coverages: InsuranceCoverageRelationDto[]
+  benefits: InsuranceBenefitRelationDto[]
+  addCoverages: (coverages: InsuranceCoverageRelationDto[]) => void
+  addBenefits: (benefits: InsuranceBenefitRelationDto[]) => void
+}> = ({ coverages, benefits, addCoverages, addBenefits }) => {
+  const [selectedCoverages, setSelectedCoverages] =
+    useState<InsuranceCoverageRelationDto[]>(coverages)
+  const [selectedBenefits, setSelectedBenefits] = useState<InsuranceBenefitRelationDto[]>(benefits)
 
-  const { coverages, deleteCoverage, isDeleting: isDeletingCoverage } = useCoverages()
-  const { benefits, deleteBenefit, isDeleting: isDeletingBenefit } = useBenefits()
+  const { coverages: availableCoverages } = useCoverages()
+  const { benefits: availableBenefits } = useBenefits()
 
-  const handleEditCoverage = (coverage: Coverage) => {
-    setSelectedCoverage(coverage)
-    setIsCoverageModalOpen(true)
-  }
+  const handleCoverageChange = useCallback((newCoverages: InsuranceCoverageRelationDto[]) => {
+    setSelectedCoverages(newCoverages)
+    addCoverages(newCoverages)
+  }, [])
 
-  const handleEditBenefit = (benefit: Benefit) => {
-    setSelectedBenefit(benefit)
-    setIsBenefitModalOpen(true)
-  }
+  const handleBenefitChange = useCallback((newBenefits: InsuranceBenefitRelationDto[]) => {
+    setSelectedBenefits(newBenefits)
+    addBenefits(newBenefits)
+  }, [])
 
-  const handleDeleteCoverage = (id: string) => {
-    if (window.confirm('¿Está seguro de eliminar esta cobertura?')) {
-      deleteCoverage(id)
+  const handleCoverageDelete = useCallback((coverage: InsuranceCoverageRelationDto) => {
+    console.log('coverage', coverage)
+
+    if (selectedCoverages.some((c) => c.id === coverage.id)) {
+      addCoverages([
+        ...selectedCoverages.filter((c) => c.id !== coverage.id),
+        {
+          ...coverage,
+          delete: true,
+        },
+      ])
     }
-  }
 
-  const handleDeleteBenefit = (id: string) => {
-    if (window.confirm('¿Está seguro de eliminar este beneficio?')) {
-      deleteBenefit(id)
+    setSelectedCoverages(selectedCoverages.filter((c) => c.id !== coverage.id))
+  }, [])
+
+  const handleBenefitDelete = useCallback((benefit: InsuranceBenefitRelationDto) => {
+    if (selectedBenefits.some((b) => b.id === benefit.id)) {
+      addBenefits([
+        ...selectedBenefits.filter((b) => b.id !== benefit.id),
+        {
+          ...benefit,
+          delete: true,
+        },
+      ])
     }
-  }
+
+    setSelectedBenefits(selectedBenefits.filter((b) => b.id !== benefit.id))
+  }, [])
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Coberturas</CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setSelectedCoverage(null)
-              setIsCoverageModalOpen(true)
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Agregar Cobertura
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {coverages?.map((coverage) => (
-              <div
-                key={coverage.id}
-                className="flex items-start justify-between p-4 border rounded-lg"
-              >
-                <div className="space-y-1">
-                  <h4 className="font-medium">{coverage.name}</h4>
-                  <p className="text-sm text-muted-foreground">{coverage.description}</p>
-                  <div className="flex gap-4 text-sm">
-                    <span className="text-primary">
-                      Cobertura: {formatCurrency(coverage.coverageAmount)}
-                    </span>
-                    <span className="text-primary">
-                      Costo: {formatCurrency(coverage.additionalCost)}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => handleEditCoverage(coverage)}
-                    disabled={isDeletingCoverage}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => handleDeleteCoverage(coverage.id)}
-                    disabled={isDeletingCoverage}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-            {(!coverages || coverages.length === 0) && (
-              <p className="text-center text-muted-foreground py-4">
-                No hay coberturas registradas
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Beneficios</CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={() => {
-              setSelectedBenefit(null)
-              setIsBenefitModalOpen(true)
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Agregar Beneficio
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {benefits?.map((benefit) => (
-              <div
-                key={benefit.id}
-                className="flex items-start justify-between p-4 border rounded-lg"
-              >
-                <div className="space-y-1">
-                  <h4 className="font-medium">{benefit.name}</h4>
-                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
-                  <div className="text-sm">
-                    <span className="text-primary">
-                      Costo: {formatCurrency(benefit.additionalCost)}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => handleEditBenefit(benefit)}
-                    disabled={isDeletingBenefit}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => handleDeleteBenefit(benefit.id)}
-                    disabled={isDeletingBenefit}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-            {(!benefits || benefits.length === 0) && (
-              <p className="text-center text-muted-foreground py-4">
-                No hay beneficios registrados
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <CoverageFormModal
-        isOpen={isCoverageModalOpen}
-        onClose={() => {
-          setIsCoverageModalOpen(false)
-          setSelectedCoverage(null)
-        }}
-        coverage={selectedCoverage}
-        mode={selectedCoverage ? 'edit' : 'create'}
-      />
-
-      <BenefitFormModal
-        isOpen={isBenefitModalOpen}
-        onClose={() => {
-          setIsBenefitModalOpen(false)
-          setSelectedBenefit(null)
-        }}
-        benefit={selectedBenefit}
-        mode={selectedBenefit ? 'edit' : 'create'}
-      />
+    <div className="max-h-[calc(100vh-200px)] overflow-y-auto pr-4">
+      <div className="space-y-6">
+        <CoverageBenefitSelector
+          availableCoverages={availableCoverages}
+          availableBenefits={availableBenefits}
+          selectedCoverages={selectedCoverages}
+          selectedBenefits={selectedBenefits}
+          onCoverageChange={handleCoverageChange}
+          onBenefitChange={handleBenefitChange}
+          onCoverageDelete={handleCoverageDelete}
+          onBenefitDelete={handleBenefitDelete}
+        />
+      </div>
     </div>
   )
 }

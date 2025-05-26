@@ -108,11 +108,6 @@ export function BenefitsTable() {
       cell: ({ row }) => <div>{row.getValue('description')}</div>,
     },
     {
-      accessorKey: 'additionalCost',
-      header: 'Costo Adicional',
-      cell: ({ row }) => <div>${row.getValue('additionalCost')}</div>,
-    },
-    {
       id: 'actions',
       cell: ({ row }) => {
         const benefit = row.original

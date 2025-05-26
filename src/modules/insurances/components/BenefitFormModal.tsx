@@ -20,7 +20,6 @@ import { IBenefit, CreateBenefitDto, UpdateBenefitDto } from '../insurances.inte
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   description: z.string().min(1, 'La descripción es requerida'),
-  additionalCost: z.number().min(0, 'El costo adicional debe ser mayor o igual a 0'),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -40,8 +39,13 @@ export function BenefitFormModal({ open, onClose, mode, benefit }: BenefitFormMo
     defaultValues: {
       name: benefit?.name ?? '',
       description: benefit?.description ?? '',
-      additionalCost: benefit?.additionalCost ?? 0,
     },
+    values: benefit
+      ? {
+          name: benefit.name,
+          description: benefit.description,
+        }
+      : undefined,
   })
 
   const onSubmit = (values: FormValues) => {
@@ -50,6 +54,7 @@ export function BenefitFormModal({ open, onClose, mode, benefit }: BenefitFormMo
     } else if (mode === 'edit' && benefit) {
       updateBenefit(benefit.id, values as UpdateBenefitDto)
     }
+    form.reset()
     onClose()
   }
 
@@ -82,23 +87,6 @@ export function BenefitFormModal({ open, onClose, mode, benefit }: BenefitFormMo
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="additionalCost"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Costo Adicional</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

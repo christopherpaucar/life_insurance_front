@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
-import { InsuranceDetails } from '@/modules/insurances/components/InsuranceDetails'
+import { InsuranceDetailsSell } from '@/modules/insurances/components/InsuranceDetailsSell'
 import { InsuranceType, PaymentFrequency } from '@/modules/insurances/insurances.interfaces'
 import { useInsurances, useInsurance } from '@/modules/insurances/useInsurances'
 import React from 'react'
@@ -22,22 +22,22 @@ vi.mock('@/modules/insurances/useInsurances', () => ({
       benefits: [],
       deletedAt: null,
       requirements: ['Requisito 1'],
-      availablePaymentFrequencies: [PaymentFrequency.MONTHLY]
+      availablePaymentFrequencies: [PaymentFrequency.MONTHLY],
     },
     isLoading: false,
     isError: false,
-    error: null
+    error: null,
   })),
   useInsuranceCoverages: vi.fn(() => ({
     coverages: [],
     deleteCoverage: vi.fn(),
-    isDeleting: false
+    isDeleting: false,
   })),
   useInsuranceBenefits: vi.fn(() => ({
     benefits: [],
     deleteBenefit: vi.fn(),
-    isDeleting: false
-  }))
+    isDeleting: false,
+  })),
 }))
 
 describe('InsuranceDetails', () => {
@@ -80,4 +80,4 @@ describe('InsuranceDetails', () => {
   it('debe mostrar mensaje cuando no hay beneficios', () => {
     expect(true).toBe(true)
   })
-}) 
+})
