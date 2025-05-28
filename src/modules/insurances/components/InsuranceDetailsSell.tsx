@@ -1,5 +1,5 @@
 import { useInsurance } from '../useInsurances'
-import { getEnumLabel } from '../insurances.interfaces'
+import { getEnumLabel, PaymentFrequency } from '../insurances.interfaces'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -100,12 +100,14 @@ export const InsuranceDetailsSell = ({ insuranceId }: InsuranceDetailsProps) => 
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-lg">{coverage.name}</h3>
+                          <h3 className="font-semibold text-lg">{coverage.coverage.name}</h3>
                           <Badge variant="secondary" className="text-sm">
                             Cobertura Principal
                           </Badge>
                         </div>
-                        <p className="text-muted-foreground mt-1">{coverage.description}</p>
+                        <p className="text-muted-foreground mt-1">
+                          {coverage.coverage.description}
+                        </p>
                         <div className="grid grid-cols-2 gap-4 mt-4">
                           <div className="space-y-1">
                             <p className="text-sm text-muted-foreground">Monto de Cobertura</p>
@@ -146,12 +148,12 @@ export const InsuranceDetailsSell = ({ insuranceId }: InsuranceDetailsProps) => 
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-lg">{benefit.name}</h3>
+                          <h3 className="font-semibold text-lg">{benefit.benefit.name}</h3>
                           <Badge variant="secondary" className="text-sm">
                             Beneficio Adicional
                           </Badge>
                         </div>
-                        <p className="text-muted-foreground mt-1">{benefit.description}</p>
+                        <p className="text-muted-foreground mt-1">{benefit.benefit.description}</p>
                         <div className="mt-4">
                           <div className="space-y-1">
                             <p className="text-sm text-muted-foreground">Costo del Beneficio</p>
@@ -199,17 +201,27 @@ export const InsuranceDetailsSell = ({ insuranceId }: InsuranceDetailsProps) => 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Precio base</span>
-                  <span className="text-2xl font-bold text-primary">${insurance.basePrice}</span>
+                  <span className="text-2xl font-bold text-primary">
+                    $
+                    {
+                      insurance.prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)
+                        ?.price
+                    }
+                  </span>
                 </div>
               </div>
               <Separator />
               <div className="space-y-3">
                 <span className="text-muted-foreground">Frecuencias de pago disponibles</span>
                 <div className="flex flex-wrap gap-2">
-                  {insurance.availablePaymentFrequencies.map((frequency) => (
-                    <Badge key={frequency} variant="secondary" className="flex items-center gap-1">
+                  {insurance.prices.map((price) => (
+                    <Badge
+                      key={price.frequency}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       <Calendar className="h-3 w-3" />
-                      {getEnumLabel(frequency)}
+                      {getEnumLabel(price.frequency)}
                     </Badge>
                   ))}
                 </div>

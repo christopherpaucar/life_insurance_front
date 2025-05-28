@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plus, Trash2, HelpCircle } from 'lucide-react'
+import { Relationship } from '../../insurances/insurances.interfaces'
+import { getEnumLabel } from '../../insurances/insurances.interfaces'
 
 const beneficiarySchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -40,8 +42,6 @@ interface BeneficiariesFormProps {
   onNext: () => void
   onBack: () => void
 }
-
-const relationships = ['spouse', 'child', 'parent', 'sibling', 'other']
 
 export function BeneficiariesForm({
   formData,
@@ -77,7 +77,7 @@ export function BeneficiariesForm({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          form.handleSubmit(onSubmit)(e)
+          void form.handleSubmit(onSubmit)(e)
         }}
         className="space-y-6"
       >
@@ -147,9 +147,9 @@ export function BeneficiariesForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {relationships.map((relationship) => (
+                          {Object.values(Relationship).map((relationship) => (
                             <SelectItem key={relationship} value={relationship}>
-                              {relationship.charAt(0).toUpperCase() + relationship.slice(1)}
+                              {getEnumLabel(relationship)}
                             </SelectItem>
                           ))}
                         </SelectContent>

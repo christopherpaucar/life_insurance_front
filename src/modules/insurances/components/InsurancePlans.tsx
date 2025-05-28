@@ -1,5 +1,5 @@
 import { useInsurances } from '../useInsurances'
-import { getEnumLabel } from '../insurances.interfaces'
+import { getEnumLabel, PaymentFrequency } from '../insurances.interfaces'
 import {
   Card,
   CardContent,
@@ -91,7 +91,11 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
                 </Badge>
                 <div className="flex items-end gap-1 mb-2">
                   <span className="text-3xl font-extrabold text-primary">
-                    ${insurance.basePrice}
+                    $
+                    {
+                      insurance.prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)
+                        ?.price
+                    }
                   </span>
                   <span className="text-base text-muted-foreground">/mes</span>
                 </div>
@@ -102,9 +106,13 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
                   <li className="text-sm text-foreground font-medium">Frecuencias disponibles:</li>
                   <li>
                     <div className="flex flex-wrap gap-2">
-                      {insurance.availablePaymentFrequencies.map((frequency) => (
-                        <Badge key={frequency} variant="outline" className="text-xs px-2 py-1">
-                          {getEnumLabel(frequency)}
+                      {insurance.prices.map((price) => (
+                        <Badge
+                          key={price.frequency}
+                          variant="outline"
+                          className="text-xs px-2 py-1"
+                        >
+                          {getEnumLabel(price.frequency)}
                         </Badge>
                       ))}
                     </div>

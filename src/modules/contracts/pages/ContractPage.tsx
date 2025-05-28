@@ -9,6 +9,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { useContract } from '../hooks/useContract'
+import { useInsurance } from '../../insurances/useInsurances'
 
 export function InsuranceContractForm() {
   const searchParams = useSearchParams()
@@ -63,6 +64,8 @@ export function InsuranceContractForm() {
     if (isStepEnabled(step)) return 'enabled'
     return 'disabled'
   }
+
+  const { insurance } = useInsurance(insuranceId || '')
 
   return (
     <div className="container mx-auto py-8">
@@ -121,7 +124,12 @@ export function InsuranceContractForm() {
               </div>
             </div>
             <TabsContent value="contract">
-              <ContractForm formData={formData} setFormData={setFormData} onNext={handleNext} />
+              <ContractForm
+                formData={formData}
+                setFormData={setFormData}
+                onNext={handleNext}
+                availableFrequencies={insurance?.prices.map((price) => price.frequency) || []}
+              />
             </TabsContent>
             <TabsContent value="beneficiaries">
               <BeneficiariesForm

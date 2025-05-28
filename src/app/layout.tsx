@@ -4,6 +4,7 @@ import './globals.css'
 import { RouteManager } from '../components/auth/RouteManager'
 import { QueryProvider } from '../providers/QueryProvider'
 import { Toaster } from '../components/ui/sonner'
+import { Providers } from './providers'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,10 +29,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <QueryProvider>
-          <RouteManager>{children}</RouteManager>
-        </QueryProvider>
-        <Toaster richColors closeButton position="top-right" />
+        <Providers>
+          <QueryProvider>
+            <RouteManager>{children}</RouteManager>
+          </QueryProvider>
+          <Toaster richColors closeButton position="top-right" />
+        </Providers>
       </body>
     </html>
   )

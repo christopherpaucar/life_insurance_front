@@ -35,6 +35,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { RoleType } from '../../auth/auth.interfaces'
 
 interface ContractDetailsProps {
   contractId: string
@@ -99,10 +100,8 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
     return <div>No se encontró el contrato</div>
   }
 
-  const isClient = user?.roles.some((role) => role.name === 'CLIENTE')
-  const isAgent = user?.roles.some((role) => role.name === 'AGENTE')
-
-  console.log({ isClient, isAgent })
+  const isClient = user?.role.name === RoleType.CLIENT
+  const isAgent = user?.role.name === RoleType.AGENT
 
   const handleStatusChange = (status: ContractStatus) => {
     setSelectedStatus(status)
@@ -131,8 +130,6 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
   const handleSignContract = () => {
     signContract({ contractId })
   }
-
-  console.log(contract)
 
   return (
     <div className="space-y-6">

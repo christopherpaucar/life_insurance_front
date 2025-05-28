@@ -90,7 +90,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     type: InsuranceType.LIFE,
     basePrice: 0,
     requirements: [],
-    availablePaymentFrequencies: [],
+    availablePaymentFrequencies: [PaymentFrequency.MONTHLY],
     order: 0,
     coverages: [],
     benefits: [],
@@ -109,9 +109,11 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         name: insurance.name,
         description: insurance.description,
         type: insurance.type,
-        basePrice: Number(insurance.basePrice),
+        basePrice: Number(
+          insurance.prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)?.price
+        ),
         requirements: insurance.requirements || [],
-        availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        availablePaymentFrequencies: insurance.prices.map((price) => price.frequency),
         order: insurance.order,
         coverages: insurance.coverages.map((coverage) => ({
           id: coverage.id,
@@ -130,8 +132,8 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         type: InsuranceType.LIFE,
         basePrice: 0,
         requirements: [],
-        availablePaymentFrequencies: [],
-        order: 0,
+        availablePaymentFrequencies: [PaymentFrequency.MONTHLY],
+        order: 1,
         coverages: [],
         benefits: [],
       })
@@ -146,9 +148,11 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         name: insurance.name,
         description: insurance.description,
         type: insurance.type,
-        basePrice: Number(insurance.basePrice),
+        basePrice: Number(
+          insurance.prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)?.price
+        ),
         requirements: insurance.requirements || [],
-        availablePaymentFrequencies: insurance.availablePaymentFrequencies || [],
+        availablePaymentFrequencies: insurance.prices.map((price) => price.frequency),
         order: insurance.order,
         coverages: insurance.coverages.map((coverageRelation) => ({
           id: coverageRelation.coverage.id,
@@ -172,7 +176,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     if (type === 'number') {
       setFormData((prev) => ({
         ...prev,
-        [name]: value ? Number(value) : 0,
+        [name]: value === '' ? '' : Number(value),
       }))
     } else {
       setFormData((prev) => ({
@@ -190,6 +194,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
   }
 
   const handleFrequencyToggle = (frequency: PaymentFrequency) => {
+    if (frequency === PaymentFrequency.MONTHLY) return
     setFormData((prev) => {
       const currentFrequencies = prev.availablePaymentFrequencies || []
       if (currentFrequencies.includes(frequency)) {
@@ -250,14 +255,20 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         if (formData.description !== insurance.description)
           updateDto.description = formData.description
         if (formData.type !== insurance.type) updateDto.type = formData.type
-        if (formData.basePrice !== insurance.basePrice) updateDto.basePrice = formData.basePrice
+        if (
+          formData.basePrice !==
+          Number(
+            insurance.prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)?.price
+          )
+        )
+          updateDto.basePrice = formData.basePrice
         if (formData.order !== insurance.order) updateDto.order = formData.order
 
         const reqChanged =
           JSON.stringify(formData.requirements) !== JSON.stringify(insurance.requirements || [])
         const freqChanged =
           JSON.stringify(formData.availablePaymentFrequencies) !==
-          JSON.stringify(insurance.availablePaymentFrequencies || [])
+          JSON.stringify(insurance.prices.map((price) => price.frequency) || [])
         const coveragesChanged =
           JSON.stringify(formData.coverages) !== JSON.stringify(insurance.coverages || [])
         const benefitsChanged =
@@ -426,7 +437,7 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
               </div>
 
               <div className="grid gap-3">
-                <Label htmlFor="basePrice">Precio Base (USD)</Label>
+                <Label htmlFor="basePrice">Precio Prima Mensual (USD)</Label>
                 <Input
                   id="basePrice"
                   name="basePrice"

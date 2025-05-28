@@ -1,6 +1,12 @@
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  getEnumLabel,
+  PaymentFrequency,
+  Relationship,
+} from '../../insurances/insurances.interfaces'
+import { es } from 'date-fns/locale'
 
 interface ReviewFormProps {
   formData: any
@@ -11,7 +17,7 @@ interface ReviewFormProps {
 
 export function ReviewForm({ formData, onSubmit, onBack, isLoading }: ReviewFormProps) {
   const formatDate = (date: string) => {
-    return format(new Date(date), 'PPP')
+    return format(new Date(date), 'PPP', { locale: es })
   }
 
   return (
@@ -30,14 +36,18 @@ export function ReviewForm({ formData, onSubmit, onBack, isLoading }: ReviewForm
               <dt className="text-sm font-medium text-muted-foreground">Fecha de fin</dt>
               <dd className="text-lg">{formatDate(formData.endDate as string)}</dd>
             </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">Monto total</dt>
-              <dd className="text-lg">Llenado por el agente en una fase posterior</dd>
-            </div>
+
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Frecuencia de pago</dt>
-              <dd className="text-lg capitalize">{formData.paymentFrequency}</dd>
+              <dd className="text-lg capitalize">
+                {getEnumLabel(formData.paymentFrequency as PaymentFrequency)}
+              </dd>
             </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">Número de periodos</dt>
+              <dd className="text-lg">{formData.periods}</dd>
+            </div>
+
             {formData.notes && (
               <div className="col-span-2">
                 <dt className="text-sm font-medium text-muted-foreground">Notas</dt>
@@ -64,7 +74,9 @@ export function ReviewForm({ formData, onSubmit, onBack, isLoading }: ReviewForm
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-muted-foreground">Relación</dt>
-                    <dd className="text-lg capitalize">{beneficiary.relationship}</dd>
+                    <dd className="text-lg capitalize">
+                      {getEnumLabel(beneficiary.relationship as Relationship)}
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-muted-foreground">Porcentaje</dt>

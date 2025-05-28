@@ -25,7 +25,6 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -53,6 +52,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { PaymentFrequency } from '@/modules/insurances/insurances.interfaces'
 
 export default function AdminInsurancePage() {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -118,25 +118,6 @@ export default function AdminInsurancePage() {
 
   const columns: ColumnDef<IInsurance>[] = [
     {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
       accessorKey: 'name',
       header: 'Nombre',
       cell: ({ row }) => <div>{row.getValue('name')}</div>,
@@ -149,30 +130,66 @@ export default function AdminInsurancePage() {
     {
       accessorKey: 'description',
       header: 'Descripción',
-      cell: ({ row }) => <div className="max-w-xs truncate">{row.getValue('description')}</div>,
+      cell: ({ row }) => <div className="max-w-xl truncate">{row.getValue('description')}</div>,
     },
     {
-      accessorKey: 'basePrice',
-      header: () => <div className="text-right">Precio Base</div>,
-      cell: ({ row }) => <div className="text-right">${row.getValue('basePrice')}</div>,
+      accessorKey: 'prices',
+      header: () => <div className="text-right">Precio Base (Mensual)</div>,
+      cell: ({ row }) => {
+        const prices = row.original.prices || []
+        return (
+          <div className="text-right">
+            {prices.length > 0
+              ? `$${prices.find((price) => price.frequency === PaymentFrequency.MONTHLY)?.price}`
+              : 'No definido'}
+          </div>
+        )
+      },
     },
     {
       accessorKey: 'availablePaymentFrequencies',
       header: 'Frecuencias de Pago',
       cell: ({ row }) => {
-        const frequencies = row.original.availablePaymentFrequencies || []
+        const frequencies = row.original.prices || []
+
         return (
           <div className="flex flex-wrap gap-1">
-            {frequencies.map((freq: string) => (
-              <Badge key={freq} variant="outline" className="text-xs">
-                {getEnumLabel(freq)}
-              </Badge>
-            ))}
+            {frequencies.map((price) => {
+              return (
+                <Badge key={price.frequency} variant="outline" className="text-xs">
+                  {getEnumLabel(price.frequency)}
+                </Badge>
+              )
+            })}
             {frequencies.length === 0 && (
               <span className="text-muted-foreground text-xs">No definido</span>
             )}
           </div>
         )
+      },
+    },
+    {
+      accessorKey: 'coverages',
+      header: 'Coberturas',
+      cell: ({ row }) => {
+        const coverages = row.original.coverages || []
+        return (
+          <div>
+            {coverages.length > 0 ? (
+              <span className="text-xs">{coverages.length} cobertura(s)</span>
+            ) : (
+              <span className="text-muted-foreground text-xs">Ninguno</span>
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: 'benefits',
+      header: 'Beneficios',
+      cell: ({ row }) => {
+        const benefits = row.original.benefits || []
+        return <div>{benefits.length} beneficio(s)</div>
       },
     },
     {
@@ -309,10 +326,6 @@ export default function AdminInsurancePage() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{' '}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -353,8 +366,9 @@ export default function AdminInsurancePage() {
       <InsuranceFormModal
         isOpen={modalOpen}
         onClose={handleCloseModal}
-        insurance={selectedInsurance}
+        insurance={selectedInsurance ?? undefined}
         mode={modalMode}
+        onSave={() => {}}
       />
 
       {/* Delete Confirmation Modal */}

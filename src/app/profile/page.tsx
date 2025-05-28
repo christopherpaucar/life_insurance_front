@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthStore } from '@/modules/auth/auth.store'
 import { toast } from 'sonner'
+import { RoleType } from '../../modules/auth/auth.interfaces'
 
 export default function ProfilePage() {
   const { user } = useAuthStore()
@@ -108,24 +109,25 @@ export default function ProfilePage() {
 
                 <div className="grid gap-2">
                   <Label htmlFor="role">Rol</Label>
-                  <Input id="role" value={user.roles?.[0]?.name || 'Sin rol asignado'} disabled />
+                  <Input id="role" value={user.role.name || 'Sin rol asignado'} disabled />
                 </div>
 
-                {user.roles?.[0]?.permissions?.length > 0 && (
-                  <div className="grid gap-2">
-                    <Label>Permisos</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {user.roles[0].permissions.map((permission, index) => (
-                        <div
-                          key={index}
-                          className="bg-secondary text-secondary-foreground rounded-md px-2 py-1 text-xs"
-                        >
-                          {permission}
-                        </div>
-                      ))}
+                {(user.role.name as RoleType) !== RoleType.CLIENT &&
+                  user.role.permissions.length > 0 && (
+                    <div className="grid gap-2">
+                      <Label>Permisos</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {user.role.permissions.map((permission, index) => (
+                          <div
+                            key={index}
+                            className="bg-secondary text-secondary-foreground rounded-md px-2 py-1 text-xs"
+                          >
+                            {permission}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
 
               {isEditing && (
