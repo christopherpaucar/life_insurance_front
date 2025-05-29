@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Contract, ContractStatus } from '../types'
+import { Contract, ContractStatus } from '../contract.interfaces'
 import { getHttpClient } from '../../../lib/http'
 import { ApiResponse } from '../../insurances/insurances.interfaces'
 import { toast } from 'sonner'
@@ -21,10 +21,6 @@ interface UploadAttachmentParams {
   file: FormData
 }
 
-interface SignContractParams {
-  contractId: string
-}
-
 export enum AttachmentType {
   IDENTIFICATION = 'identification',
   MEDICAL_RECORD = 'medical_record',
@@ -33,6 +29,11 @@ export enum AttachmentType {
   REIMBURSEMENT = 'reimbursement',
   INVOICE = 'invoice',
   OTHER = 'other',
+}
+
+export enum PaymentMethodType {
+  CREDIT_CARD = 'credit_card',
+  DEBIT_CARD = 'debit_card',
 }
 
 export function useContract(id?: string) {
@@ -83,13 +84,49 @@ export function useContract(id?: string) {
     },
   })
 
-  const signContractMutation = useMutation<ApiResponse<void>, Error, SignContractParams>({
-    mutationFn: async ({ contractId }) => {
-      const response = await api.post<ApiResponse<void>>(`/contracts/${contractId}/sign`)
+  const activateContractByClientMutation = useMutation<
+    ApiResponse<Contract>,
+    Error,
+    {
+      contractId: string
+      paymentMethodType: PaymentMethodType
+      paymentDetails: Record<string, any>
+      p12File: File
+    }
+  >({
+    mutationFn: async ({ contractId, paymentMethodType, paymentDetails, p12File }) => {
+      const formData = new FormData()
+      formData.append('paymentMethodType', paymentMethodType)
+      formData.append('paymentDetails', JSON.stringify(paymentDetails))
+      formData.append('p12File', p12File)
+
+      const response = await api.post<ApiResponse<Contract>>(
+        `/contracts/${contractId}/confirm-activation`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
       return response.data
     },
-    onSuccess: (_, { contractId }) => {
-      void queryClient.invalidateQueries({ queryKey: ['contracts', contractId] })
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['contracts'] })
+    },
+  })
+
+  const activateContractByAgentMutation = useMutation<
+    ApiResponse<Contract>,
+    Error,
+    { contractId: string }
+  >({
+    mutationFn: async ({ contractId }) => {
+      const response = await api.post<ApiResponse<Contract>>(`/contracts/${contractId}/activate`)
+      return response.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['contracts'] })
     },
   })
 
@@ -143,15 +180,31 @@ export function useContract(id?: string) {
       }),
     isUploading: uploadAttachmentMutation.isPending,
 
-    signContract: (params: SignContractParams) =>
-      signContractMutation.mutate(params, {
+    activateContractByAgent: (params: { contractId: string }) =>
+      activateContractByAgentMutation.mutate(params, {
         onSuccess: () => {
-          toast.success('Contrato firmado exitosamente')
+          toast.success('Contrato activado exitosamente')
         },
         onError: () => {
-          toast.error('Error al firmar el contrato')
+          toast.error('Error al activar el contrato')
         },
       }),
-    isSigning: signContractMutation.isPending,
+    isActivating: activateContractByAgentMutation.isPending,
+
+    activateContractByClient: (params: {
+      contractId: string
+      paymentMethodType: PaymentMethodType
+      paymentDetails: Record<string, any>
+      p12File: File
+    }) =>
+      activateContractByClientMutation.mutate(params, {
+        onSuccess: () => {
+          toast.success('Contrato confirmado exitosamente')
+        },
+        onError: () => {
+          toast.error('Error al confirmar el contrato')
+        },
+      }),
+    isActivatingByClient: activateContractByClientMutation.isPending,
   }
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { contractsService } from '@/modules/contracts/contracts.service'
-import { ContractStatus, PaymentFrequency } from '@/modules/contracts/types'
+import { ContractStatus, PaymentFrequency } from '@/modules/contracts/contract.interfaces'
 import { getHttpClient } from '@/lib/http'
 
 // Mock de getHttpClient
@@ -12,8 +12,8 @@ vi.mock('@/lib/http', () => ({
     delete: vi.fn(),
     patch: vi.fn(),
     setAuthToken: vi.fn(),
-    removeAuthToken: vi.fn()
-  }))
+    removeAuthToken: vi.fn(),
+  })),
 }))
 
 describe('contractsService', () => {
@@ -24,7 +24,7 @@ describe('contractsService', () => {
     delete: vi.fn(),
     patch: vi.fn(),
     setAuthToken: vi.fn(),
-    removeAuthToken: vi.fn()
+    removeAuthToken: vi.fn(),
   }
 
   beforeEach(() => {
@@ -125,4 +125,4 @@ describe('contractsService', () => {
       })
     })
   })
-}) 
+})

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -25,6 +25,7 @@ export function InsuranceContractForm() {
     beneficiaries: [],
     notes: '',
   })
+  const [hasStartedCreation, setHasStartedCreation] = useState(false)
 
   const { createContract, isCreating } = useContract()
 
@@ -47,8 +48,15 @@ export function InsuranceContractForm() {
   }
 
   const handleSubmit = () => {
+    setHasStartedCreation(true)
     createContract(formData)
   }
+
+  useEffect(() => {
+    if (hasStartedCreation && !isCreating) {
+      router.push('/client/my-insurances')
+    }
+  }, [isCreating, router, hasStartedCreation])
 
   const isStepCompleted = (step: string) => completedSteps.includes(step)
   const isStepEnabled = (step: string) => {

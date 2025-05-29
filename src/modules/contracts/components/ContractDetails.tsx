@@ -1,21 +1,9 @@
-import { ContractStatus } from '../types'
+import { ContractStatus } from '../contract.interfaces'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
-import {
-  Upload,
-  FileText,
-  Download,
-  Calendar,
-  User,
-  DollarSign,
-  Clock,
-  AlertCircle,
-} from 'lucide-react'
+import { BarChart3, FileText, Receipt, History } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -24,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAuthService } from '../../auth/useAuth'
-import { useContract, AttachmentType } from '../hooks/useContract'
+import { PaymentMethodType, useContract } from '../hooks/useContract'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
@@ -34,47 +22,56 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { RoleType } from '../../auth/auth.interfaces'
+import { Progress } from '@/components/ui/progress'
+import { statusColors, statusLabels } from '../constants/contractStatus'
+import { PaymentForm } from './PaymentForm'
+import { ContractOverview } from './ContractOverview'
+import { ContractDocuments } from './ContractDocuments'
+import { ContractPayments } from './ContractPayments'
+import { ContractHistory } from './ContractHistory'
+import { useContractState } from '../hooks/useContractState'
 
 interface ContractDetailsProps {
   contractId: string
 }
 
-export const statusColors = {
-  [ContractStatus.ACTIVE]: 'bg-green-500',
-  [ContractStatus.PENDING_SIGNATURE]: 'bg-yellow-500',
-  [ContractStatus.EXPIRED]: 'bg-red-500',
-  [ContractStatus.CANCELLED]: 'bg-gray-500',
-  [ContractStatus.DRAFT]: 'bg-gray-500',
-  [ContractStatus.PENDING_BASIC_DOCUMENTS]: 'bg-blue-500',
-}
-
-export const statusLabels = {
-  [ContractStatus.ACTIVE]: 'Activo',
-  [ContractStatus.PENDING_SIGNATURE]: 'Pendiente de firma',
-  [ContractStatus.EXPIRED]: 'Vencido',
-  [ContractStatus.CANCELLED]: 'Cancelado',
-  [ContractStatus.DRAFT]: 'Borrador',
-  [ContractStatus.PENDING_BASIC_DOCUMENTS]: 'Pendiente de documentos básicos',
-}
-
 export function ContractDetails({ contractId }: ContractDetailsProps) {
   const { user } = useAuthService()
-  const { contract, isLoading, updateContract, uploadAttachment, signContract } =
-    useContract(contractId)
-  const [activeTab, setActiveTab] = useState('details')
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [selectedStatus, setSelectedStatus] = useState<ContractStatus | null>(null)
-  const [selectedDocType, setSelectedDocType] = useState<AttachmentType | null>(null)
+  const {
+    contract,
+    isLoading,
+    updateContract,
+    uploadAttachment,
+    activateContractByAgent,
+    activateContractByClient,
+    isActivatingByClient,
+  } = useContract(contractId)
 
-  const requiredDocuments = [
-    { type: AttachmentType.IDENTIFICATION, label: 'Identificación' },
-    { type: AttachmentType.MEDICAL_RECORD, label: 'Historial Médico' },
-  ]
+  const {
+    activeTab,
+    setActiveTab,
+    showConfirmModal,
+    setShowConfirmModal,
+    selectedStatus,
+    selectedDocType,
+    setSelectedDocType,
+    showPaymentForm,
+    setShowPaymentForm,
+    handleStatusChange,
+    confirmStatusChange,
+  } = useContractState()
 
-  const hasUploadedDocument = (type: AttachmentType) => {
-    return contract?.attachments?.some((attachment) => attachment.type === type)
+  const getProgressPercentage = () => {
+    if (!contract) return 0
+    const totalSteps = 3
+    let completedSteps = 0
+
+    if (contract.status !== ContractStatus.DRAFT) completedSteps++
+    if (contract.attachments?.length > 0) completedSteps++
+    if (contract.signatureUrl) completedSteps++
+
+    return (completedSteps / totalSteps) * 100
   }
 
   if (isLoading) {
@@ -103,19 +100,6 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
   const isClient = user?.role.name === RoleType.CLIENT
   const isAgent = user?.role.name === RoleType.AGENT
 
-  const handleStatusChange = (status: ContractStatus) => {
-    setSelectedStatus(status)
-    setShowConfirmModal(true)
-  }
-
-  const confirmStatusChange = () => {
-    if (selectedStatus) {
-      updateContract({ id: contractId, data: { status: selectedStatus } })
-      setShowConfirmModal(false)
-      setSelectedStatus(null)
-    }
-  }
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file && selectedDocType) {
@@ -127,8 +111,21 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
     }
   }
 
-  const handleSignContract = () => {
-    signContract({ contractId })
+  const handlePaymentSubmit = (data: {
+    paymentMethodType: PaymentMethodType
+    paymentDetails: {
+      cardNumber: string
+      cardHolderName: string
+      cardExpirationDate: string
+      cardCvv: string
+    }
+    p12File: File
+  }) => {
+    activateContractByClient({
+      contractId,
+      ...data,
+    })
+    setShowPaymentForm(false)
   }
 
   return (
@@ -142,22 +139,30 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
             </div>
             <div className="flex items-center gap-4">
               {isAgent && (
-                <Select value={contract.status} onValueChange={handleStatusChange}>
+                <Select
+                  value={contract.status}
+                  onValueChange={(status) => handleStatusChange(status as ContractStatus)}
+                >
                   <SelectTrigger className="w-[200px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(ContractStatus).map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {statusLabels[status]}
-                      </SelectItem>
-                    ))}
+                    {Object.values(ContractStatus)
+                      .filter((status) => status !== ContractStatus.ACTIVE)
+                      .map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {statusLabels[status]}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               )}
               <Badge className={`${statusColors[contract.status]} text-white px-4 py-1`}>
                 {statusLabels[contract.status]}
               </Badge>
+              {isClient && contract.status === ContractStatus.AWAITING_CLIENT_CONFIRMATION && (
+                <Button onClick={() => setShowPaymentForm(true)}>Activar Contrato</Button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -175,221 +180,88 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
               <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
                 Cancelar
               </Button>
-              <Button onClick={confirmStatusChange}>Confirmar</Button>
+              <Button
+                onClick={() =>
+                  confirmStatusChange(
+                    () =>
+                      updateContract({
+                        id: contractId,
+                        data: { status: selectedStatus as ContractStatus },
+                      }),
+                    () => activateContractByAgent({ contractId })
+                  )
+                }
+              >
+                Confirmar
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
+        <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Activar contrato</DialogTitle>
+              <DialogDescription>
+                Ingresa los datos de tu tarjeta y sube tu archivo P12 para firmar el contrato
+              </DialogDescription>
+            </DialogHeader>
+            <PaymentForm onSubmit={handlePaymentSubmit} isLoading={isActivatingByClient} />
+          </DialogContent>
+        </Dialog>
+
         <CardContent>
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium">Progreso del contrato</h3>
+              <span className="text-sm text-muted-foreground">
+                {Math.round(getProgressPercentage())}%
+              </span>
+            </div>
+            <Progress value={getProgressPercentage()} className="h-2" />
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="details">Detalles</TabsTrigger>
-              <TabsTrigger value="documents">Documentos</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Resumen
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Documentos
+              </TabsTrigger>
+              <TabsTrigger value="payments" className="flex items-center gap-2">
+                <Receipt className="h-4 w-4" />
+                Pagos
+              </TabsTrigger>
+              <TabsTrigger value="history" className="flex items-center gap-2">
+                <History className="h-4 w-4" />
+                Historial
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="details" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Calendar className="h-5 w-5" />
-                      Información del Contrato
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <dl className="space-y-4">
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Seguro</dt>
-                        <dd className="text-lg font-medium">{contract.insurance.name}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Fecha de inicio
-                        </dt>
-                        <dd className="text-lg">
-                          {format(new Date(contract.startDate), 'PPP', { locale: es })}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Fecha de fin</dt>
-                        <dd className="text-lg">
-                          {format(new Date(contract.endDate), 'PPP', { locale: es })}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Frecuencia de pago
-                        </dt>
-                        <dd className="text-lg capitalize">{contract.paymentFrequency}</dd>
-                      </div>
-                    </dl>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <DollarSign className="h-5 w-5" />
-                      Información de Pago
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <dl className="space-y-4">
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">Monto total</dt>
-                        <dd className="text-2xl font-bold text-primary">${contract.totalAmount}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          Monto por cuota
-                        </dt>
-                        <dd className="text-lg">${contract.installmentAmount}</dd>
-                      </div>
-                    </dl>
-                  </CardContent>
-                </Card>
-
-                {contract.beneficiaries?.length > 0 && (
-                  <Card className="md:col-span-2">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <User className="h-5 w-5" />
-                        Beneficiarios
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {contract.beneficiaries.map((beneficiary) => (
-                          <div key={beneficiary.id} className="p-4 border rounded-lg space-y-2">
-                            <div className="font-medium">
-                              {beneficiary.firstName} {beneficiary.lastName}
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div className="text-muted-foreground">Porcentaje</div>
-                              <div>{beneficiary.percentage}%</div>
-                              <div className="text-muted-foreground">Relación</div>
-                              <div>{beneficiary.relationship}</div>
-                              <div className="text-muted-foreground">Contacto</div>
-                              <div>{beneficiary.contactInfo}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {contract.notes && (
-                  <Card className="md:col-span-2">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Clock className="h-5 w-5" />
-                        Notas
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{contract.notes}</p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+            <TabsContent value="overview" className="mt-6">
+              <ContractOverview contract={contract} />
             </TabsContent>
 
             <TabsContent value="documents" className="mt-6">
-              <div className="space-y-6">
-                {isClient && contract.status === ContractStatus.PENDING_BASIC_DOCUMENTS && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Documentos Requeridos</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <Alert>
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          Por favor, sube los siguientes documentos para continuar con el proceso de
-                          tu seguro.
-                        </AlertDescription>
-                      </Alert>
+              <ContractDocuments
+                contract={contract}
+                isClient={isClient}
+                isAgent={isAgent}
+                onFileUpload={handleFileUpload}
+                selectedDocType={selectedDocType}
+                setSelectedDocType={setSelectedDocType}
+              />
+            </TabsContent>
 
-                      <div className="grid gap-4">
-                        {requiredDocuments.map((doc) => (
-                          <div
-                            key={doc.type}
-                            className="flex items-center justify-between p-4 border rounded-lg"
-                          >
-                            <div className="space-y-1">
-                              <div className="font-medium">{doc.label}</div>
-                              {hasUploadedDocument(doc.type) ? (
-                                <div className="text-sm text-green-600">Documento subido</div>
-                              ) : (
-                                <div className="text-sm text-muted-foreground">Pendiente</div>
-                              )}
-                            </div>
-                            {!hasUploadedDocument(doc.type) && (
-                              <Button
-                                variant="outline"
-                                onClick={() => setSelectedDocType(doc.type)}
-                                asChild
-                              >
-                                <label>
-                                  <Upload className="h-4 w-4 mr-2" />
-                                  Subir
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    onChange={handleFileUpload}
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                  />
-                                </label>
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+            <TabsContent value="payments" className="mt-6">
+              <ContractPayments contract={contract} />
+            </TabsContent>
 
-                {isClient && contract.status === ContractStatus.PENDING_SIGNATURE && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Button onClick={handleSignContract} className="flex-1">
-                          <FileText className="h-4 w-4 mr-2" />
-                          Firmar Contrato
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                <div className="grid gap-4">
-                  {contract.attachments?.map((attachment) => (
-                    <Card key={attachment.fileUrl}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <FileText className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                              <div className="font-medium">{attachment.fileName}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {requiredDocuments.find((doc) => doc.type === attachment.type)
-                                  ?.label || 'Otro documento'}
-                              </div>
-                            </div>
-                          </div>
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={attachment.fileUrl} target="_blank" rel="noopener noreferrer">
-                              <Download className="h-4 w-4 mr-2" />
-                              Descargar
-                            </a>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+            <TabsContent value="history" className="mt-6">
+              <ContractHistory contract={contract} />
             </TabsContent>
           </Tabs>
         </CardContent>

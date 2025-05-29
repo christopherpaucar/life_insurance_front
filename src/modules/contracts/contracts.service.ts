@@ -1,5 +1,5 @@
 import { getHttpClient } from '@/lib/http'
-import { Contract } from './types'
+import { Contract } from './contract.interfaces'
 import { ApiResponse } from '../insurances/insurances.interfaces'
 
 export const contractsService = {

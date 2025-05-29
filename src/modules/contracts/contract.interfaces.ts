@@ -1,10 +1,11 @@
 export enum ContractStatus {
-  ACTIVE = 'active',
   DRAFT = 'draft',
-  PENDING_SIGNATURE = 'pending_signature',
+  AWAITING_CLIENT_CONFIRMATION = 'awaiting_client_confirmation',
   PENDING_BASIC_DOCUMENTS = 'pending_basic_documents',
+  ACTIVE = 'active',
   EXPIRED = 'expired',
   CANCELLED = 'cancelled',
+  INACTIVE = 'inactive',
 }
 
 export enum PaymentFrequency {
@@ -21,6 +22,12 @@ export enum AttachmentType {
   REIMBURSEMENT = 'reimbursement',
   INVOICE = 'invoice',
   OTHER = 'other',
+}
+
+export enum TransactionStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
 }
 
 export interface Contract {
@@ -56,5 +63,11 @@ export interface Contract {
     percentage: number
     contactInfo: string
     relationship: string
+  }>
+  transactions: Array<{
+    id: string
+    amount: number
+    date: string
+    status: TransactionStatus
   }>
 }

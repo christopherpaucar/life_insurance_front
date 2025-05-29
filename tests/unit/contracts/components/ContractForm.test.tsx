@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import { ContractForm } from '@/modules/contracts/components/ContractForm'
-import { ContractStatus, PaymentFrequency } from '@/modules/contracts/types'
+import { ContractStatus, PaymentFrequency } from '@/modules/contracts/contract.interfaces'
 import { useContract } from '@/modules/contracts/hooks/useContract'
 import React from 'react'
 
@@ -11,8 +11,8 @@ vi.mock('@/modules/contracts/hooks/useContract', () => ({
     createContract: vi.fn(),
     isCreating: false,
     updateContract: vi.fn(),
-    isUpdating: false
-  }))
+    isUpdating: false,
+  })),
 }))
 
 describe('ContractForm', () => {
@@ -63,4 +63,4 @@ describe('ContractForm', () => {
   it('debe mostrar mensaje de error al fallar la actualización', () => {
     expect(true).toBe(true)
   })
-}) 
+})

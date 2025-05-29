@@ -24,7 +24,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils'
 import { format, addMonths, addQuarters, addYears } from 'date-fns'
 import { CalendarIcon, HelpCircle } from 'lucide-react'
-import { useAuthService } from '../../auth/useAuth'
 import { useState } from 'react'
 import { getEnumLabel } from '../../insurances/insurances.interfaces'
 
@@ -54,7 +53,6 @@ export function ContractForm({
   onNext,
   availableFrequencies,
 }: ContractFormProps) {
-  const { user } = useAuthService()
   const [showCustomPeriod, setShowCustomPeriod] = useState(false)
   const [periodOptions, setPeriodOptions] = useState<number[]>([1, 2, 3, 4, 5, 6, 12, 24, 36])
 
@@ -91,7 +89,6 @@ export function ContractForm({
       ...rest,
       startDate: data.startDate.toISOString(),
       endDate: endDate.toISOString(),
-      clientId: user?.id,
     })
     onNext()
   }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import { ContractDetails } from '@/modules/contracts/components/ContractDetails'
-import { ContractStatus, PaymentFrequency } from '@/modules/contracts/types'
+import { ContractStatus, PaymentFrequency } from '@/modules/contracts/contract.interfaces'
 import { useContract } from '@/modules/contracts/hooks/useContract'
 import React from 'react'
 
@@ -23,11 +23,11 @@ vi.mock('@/modules/contracts/hooks/useContract', () => ({
       notes: 'Notas del contrato',
       insurance: {
         id: '1',
-        name: 'Seguro de Vida'
+        name: 'Seguro de Vida',
       },
       client: {
         id: '1',
-        name: 'Juan Pérez'
+        name: 'Juan Pérez',
       },
       beneficiaries: [
         {
@@ -36,9 +36,9 @@ vi.mock('@/modules/contracts/hooks/useContract', () => ({
           lastName: 'Pérez',
           percentage: 100,
           contactInfo: 'maria@example.com',
-          relationship: 'Hija'
-        }
-      ]
+          relationship: 'Hija',
+        },
+      ],
     },
     isLoading: false,
     isError: false,
@@ -48,8 +48,8 @@ vi.mock('@/modules/contracts/hooks/useContract', () => ({
     uploadAttachment: vi.fn(),
     isUploading: false,
     signContract: vi.fn(),
-    isSigning: false
-  }))
+    isSigning: false,
+  })),
 }))
 
 describe('ContractDetails', () => {
@@ -96,4 +96,4 @@ describe('ContractDetails', () => {
   it('debe mostrar el botón de firma cuando el contrato no está firmado', () => {
     expect(true).toBe(true)
   })
-}) 
+})

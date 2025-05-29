@@ -1,4 +1,4 @@
-import { ContractStatus } from '../types'
+import { ContractStatus } from '../contract.interfaces'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -38,8 +38,10 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
 } from '@tabler/icons-react'
-import { ContractDetails, statusLabels, statusColors } from './ContractDetails'
+import { ContractDetails } from './ContractDetails'
 import { useContract } from '../hooks/useContract'
+import { getEnumLabel } from '../../insurances/insurances.interfaces'
+import { statusColors, statusLabels } from '../constants/contractStatus'
 
 interface Contract {
   id: string
@@ -92,7 +94,9 @@ export function ContractList() {
     {
       accessorKey: 'paymentFrequency',
       header: 'Frecuencia de pago',
-      cell: ({ row }) => <div className="capitalize">{row.getValue('paymentFrequency')}</div>,
+      cell: ({ row }) => (
+        <div className="capitalize">{getEnumLabel(row.getValue('paymentFrequency'))}</div>
+      ),
     },
     {
       accessorKey: 'status',
