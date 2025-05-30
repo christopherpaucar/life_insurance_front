@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Contract, ContractStatus } from '../contract.interfaces'
-import { getHttpClient } from '../../../lib/http'
-import { ApiResponse } from '../../insurances/insurances.interfaces'
+import { getHttpClient } from '@/lib/http'
 import { toast } from 'sonner'
+import { ApiResponse } from '../../insurances'
 
-const api = getHttpClient()
+const api = await getHttpClient()
 
 interface UpdateContractData {
   status?: ContractStatus

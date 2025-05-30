@@ -52,6 +52,7 @@ export const privateRoutes: RouteConfig[] = [
 
   // Common user routes
   { path: '/profile', public: false },
+  { path: '/payment-methods', public: false },
   { path: '/onboarding', public: false },
   { path: '/user/profile', public: false },
   { path: '/user/settings', public: false },

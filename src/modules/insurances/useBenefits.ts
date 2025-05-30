@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { INSURANCE_QUERY_KEYS } from './useInsurances'
 import { benefitsService } from './benefits.service'
-import { CreateBenefitDto, UpdateBenefitDto } from './insurances.interfaces'
 import { toast } from 'sonner'
+import { CreateBenefitDto, UpdateBenefitDto } from './dtos/insurance.dtos'
 
 export const useBenefits = () => {
   const queryClient = useQueryClient()

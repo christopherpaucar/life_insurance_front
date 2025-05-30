@@ -177,6 +177,5 @@ export const secondaryNavItems: NavItem[] = [
     title: 'Métodos de Pago',
     url: '/payment-methods',
     icon: IconCreditCard,
-    permissions: PERMISSIONS[RoleType.CLIENT],
   },
 ]
