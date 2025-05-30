@@ -9,6 +9,7 @@ import {
   IconWallet,
   IconReportMedical,
   IconUser,
+  IconCreditCard,
 } from '@tabler/icons-react'
 import { NavItem, PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
 
@@ -171,5 +172,11 @@ export const secondaryNavItems: NavItem[] = [
     title: 'Mi Perfil',
     url: '/profile',
     icon: IconUser,
+  },
+  {
+    title: 'Métodos de Pago',
+    url: '/payment-methods',
+    icon: IconCreditCard,
+    permissions: PERMISSIONS[RoleType.CLIENT],
   },
 ]

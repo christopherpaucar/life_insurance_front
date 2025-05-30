@@ -31,6 +31,7 @@ import { ContractDocuments } from './ContractDocuments'
 import { ContractPayments } from './ContractPayments'
 import { ContractHistory } from './ContractHistory'
 import { useContractState } from '../hooks/useContractState'
+import { ContractPaymentInfo } from './ContractPaymentInfo'
 
 interface ContractDetailsProps {
   contractId: string
@@ -256,7 +257,14 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
               />
             </TabsContent>
 
-            <TabsContent value="payments" className="mt-6">
+            <TabsContent value="payments" className="mt-6 space-y-6">
+              {isClient &&
+                [
+                  ContractStatus.ACTIVE,
+                  ContractStatus.EXPIRED,
+                  ContractStatus.CANCELLED,
+                  ContractStatus.INACTIVE,
+                ].includes(contract.status) && <ContractPaymentInfo contract={contract} />}
               <ContractPayments contract={contract} />
             </TabsContent>
 

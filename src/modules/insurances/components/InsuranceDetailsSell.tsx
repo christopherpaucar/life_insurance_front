@@ -87,9 +87,15 @@ export const InsuranceDetailsSell = ({ insuranceId }: InsuranceDetailsProps) => 
 
           <Tabs defaultValue="coverages" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="coverages">Coberturas</TabsTrigger>
-              <TabsTrigger value="benefits">Beneficios</TabsTrigger>
-              <TabsTrigger value="requirements">Requisitos</TabsTrigger>
+              <TabsTrigger value="coverages">
+                Coberturas ({insurance.coverages?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger value="benefits">
+                Beneficios ({insurance.benefits?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger value="requirements">
+                Requisitos ({insurance.requirements?.length || 0})
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="coverages" className="space-y-4">
               {insurance.coverages?.map((coverage) => (

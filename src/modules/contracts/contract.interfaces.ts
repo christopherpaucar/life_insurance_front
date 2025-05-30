@@ -71,5 +71,6 @@ export interface Contract {
     status: TransactionStatus
     retryCount: number
     nextRetryPaymentDate?: string
+    retireDate?: string
   }>
 }
