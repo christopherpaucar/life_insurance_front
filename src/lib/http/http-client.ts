@@ -6,7 +6,6 @@ import axios, {
 } from 'axios'
 import { handleHttpError } from './error-handler'
 import { HttpClientConfig, HttpResponse, IHttpClient } from './types'
-import { useAuthStore } from '../../modules/auth/auth.store'
 
 /**
  * Default HTTP client configuration
@@ -67,10 +66,13 @@ export class HttpClient implements IHttpClient {
 
     // Add request interceptor for authentication
     this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      if (useAuthStore.getState().token) {
+      const token = JSON.parse(localStorage.getItem('auth-storage') || '{}').state?.token
+
+      if (token) {
         config.headers = config.headers || {}
-        config.headers.Authorization = `Bearer ${useAuthStore.getState().token}`
+        config.headers.Authorization = `Bearer ${token}`
       }
+
       return config
     })
 

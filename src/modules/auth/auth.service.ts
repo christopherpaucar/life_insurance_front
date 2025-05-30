@@ -1,7 +1,7 @@
 import { IOnboarding, RegisterDto } from './auth.interfaces'
 import { getHttpClient } from '@/lib/http'
 
-const api = getHttpClient()
+const api = await getHttpClient()
 
 export const authServices = {
   login: async (email: string, password: string) => {

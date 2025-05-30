@@ -15,7 +15,12 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
   } = useForm<LoginDto>()
 
   return (
-    <form onSubmit={handleSubmit(onSubmit || (() => {}))}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        void handleSubmit(onSubmit || (() => {}))()
+      }}
+    >
       <div className="space-y-4">
         <div>
           <Input
