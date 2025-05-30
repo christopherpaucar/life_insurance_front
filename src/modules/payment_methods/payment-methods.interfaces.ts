@@ -6,9 +6,9 @@ export enum PaymentMethodType {
 export interface IPaymentMethod {
   id: string
   type: PaymentMethodType
-  name: string
   details: Record<string, any>
   isValid: boolean
+  isDefault: boolean
 }
 
 export interface QueryParams {
@@ -17,4 +17,10 @@ export interface QueryParams {
   search?: string
   sort?: string
   order?: string
+}
+
+export interface CreatePaymentMethodDto {
+  type: PaymentMethodType
+  details: Record<string, any>
+  isDefault: boolean
 }

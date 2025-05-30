@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { IPaymentMethod, QueryParams } from './payment-methods.interfaces'
+import { CreatePaymentMethodDto, QueryParams } from './payment-methods.interfaces'
 import { paymentMethodsService } from './paymentMethods.service'
 import { toast } from 'sonner'
 
@@ -18,7 +18,7 @@ export const usePaymentMethods = (params?: QueryParams) => {
   })
 
   const createPaymentMethodMutation = useMutation({
-    mutationFn: (paymentMethod: IPaymentMethod) =>
+    mutationFn: (paymentMethod: CreatePaymentMethodDto) =>
       paymentMethodsService.createPaymentMethod(paymentMethod),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: PAYMENT_METHODS_QUERY_KEYS.all })
@@ -31,7 +31,7 @@ export const usePaymentMethods = (params?: QueryParams) => {
   })
 
   const updatePaymentMethodMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: IPaymentMethod }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreatePaymentMethodDto> }) =>
       paymentMethodsService.updatePaymentMethod(id, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: PAYMENT_METHODS_QUERY_KEYS.all })
@@ -63,14 +63,14 @@ export const usePaymentMethods = (params?: QueryParams) => {
     error: getPaymentMethodsQuery.error,
     refetch: getPaymentMethodsQuery.refetch,
 
-    createPaymentMethod: (data: IPaymentMethod, options?: { onSuccess?: () => void }) => {
+    createPaymentMethod: (data: CreatePaymentMethodDto, options?: { onSuccess?: () => void }) => {
       return createPaymentMethodMutation.mutate(data, options)
     },
     isCreating: createPaymentMethodMutation.isPending,
 
     updatePaymentMethod: (
       id: string,
-      data: IPaymentMethod,
+      data: Partial<CreatePaymentMethodDto>,
       options?: { onSuccess?: () => void }
     ) => {
       return updatePaymentMethodMutation.mutate({ id, data }, options)
