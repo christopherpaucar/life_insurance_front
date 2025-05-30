@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getHttpClient } from '@/lib/http'
-import {
-  CreateInsuranceDto,
-  IInsurance,
-  UpdateInsuranceDto,
-  ApiResponse,
-} from './insurances.interfaces'
+import { CreateInsuranceDto, UpdateInsuranceDto, ApiResponse } from './dtos/insurance.dtos'
+import { IInsurance } from './interfaces/insurance.interfaces'
 
 export const insurancesService = {
   getInsurances: async (params?: any): Promise<ApiResponse<IInsurance[]>> => {

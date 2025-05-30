@@ -43,7 +43,7 @@ export function ContractPayments({ contract }: ContractPaymentsProps) {
                     <div>
                       <div className="font-medium">${transaction.amount}</div>
                       <div className="text-sm text-muted-foreground">
-                        {format(new Date(transaction.date), 'PPP', { locale: es })}
+                        {format(new Date(transaction.nextPaymentDate), 'PPP', { locale: es })}
                       </div>
                     </div>
                   </div>

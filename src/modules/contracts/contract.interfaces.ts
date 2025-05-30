@@ -67,7 +67,9 @@ export interface Contract {
   transactions: Array<{
     id: string
     amount: number
-    date: string
+    nextPaymentDate: string
     status: TransactionStatus
+    retryCount: number
+    nextRetryPaymentDate?: string
   }>
 }

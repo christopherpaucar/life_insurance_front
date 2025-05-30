@@ -1,13 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  CreateInsuranceDto,
-  InsuranceQueryParams,
-  InsuranceType,
-  PaymentFrequency,
-  UpdateInsuranceDto,
-} from './insurances.interfaces'
+import { CreateInsuranceDto, InsuranceQueryParams, UpdateInsuranceDto } from './dtos/insurance.dtos'
 import { insurancesService } from './insurances.service'
 import { toast } from 'sonner'
+import { InsuranceType } from './enums/insurance.enums'
+import { PaymentFrequency } from './enums/insurance.enums'
 
 export const INSURANCE_QUERY_KEYS = {
   all: ['insurances'] as const,

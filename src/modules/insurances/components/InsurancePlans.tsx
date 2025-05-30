@@ -1,5 +1,5 @@
 import { useInsurances } from '../useInsurances'
-import { getEnumLabel, PaymentFrequency } from '../insurances.interfaces'
+import { PaymentFrequency } from '../enums/insurance.enums'
 import {
   Card,
   CardContent,
@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRouter } from 'next/navigation'
+import { getEnumLabel } from '../utils/enum.utils'
+import { IInsurance } from '../interfaces/insurance.interfaces'
 
 interface InsurancePlansProps {
   role: string
@@ -50,7 +52,7 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
     )
   }
 
-  const firstActive = insurances.find((i) => !i.deletedAt)
+  const firstActive = insurances.find((i: IInsurance) => !i.deletedAt)
 
   return (
     <div className="flex flex-col items-center gap-8 p-2">
@@ -63,7 +65,7 @@ export const InsurancePlans = ({ role }: InsurancePlansProps) => {
         </p>
       </div>
       <div className="flex flex-row flex-wrap gap-8 justify-center w-full">
-        {insurances.map((insurance) => {
+        {insurances.map((insurance: IInsurance) => {
           const isFeatured = firstActive && insurance.id === firstActive.id
           return (
             <Card

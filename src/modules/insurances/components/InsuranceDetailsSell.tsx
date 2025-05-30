@@ -1,5 +1,4 @@
 import { useInsurance } from '../useInsurances'
-import { getEnumLabel, PaymentFrequency } from '../insurances.interfaces'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,6 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { useRouter } from 'next/navigation'
+import { getEnumLabel } from '../utils/enum.utils'
+import { PaymentFrequency } from '../enums/insurance.enums'
 
 interface InsuranceDetailsProps {
   insuranceId: string

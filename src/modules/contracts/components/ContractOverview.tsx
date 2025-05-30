@@ -2,7 +2,7 @@ import { Calendar, DollarSign, User } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { getEnumLabel } from '../../insurances/insurances.interfaces'
+import { getEnumLabel } from '../../insurances/utils/enum.utils'
 import { Contract } from '../contract.interfaces'
 
 interface ContractOverviewProps {
@@ -59,8 +59,10 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
               <dd className="text-2xl font-bold text-primary">${contract.totalAmount}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">Monto por cuota</dt>
-              <dd className="text-lg">${contract.installmentAmount}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Monto por cuota ({getEnumLabel(contract.paymentFrequency)})
+              </dt>
+              <dd className="text-lg">${contract.transactions[0].amount} USD</dd>
             </div>
           </dl>
         </CardContent>
@@ -85,7 +87,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                     <div className="text-muted-foreground">Porcentaje</div>
                     <div>{beneficiary.percentage}%</div>
                     <div className="text-muted-foreground">Relación</div>
-                    <div>{beneficiary.relationship}</div>
+                    <div>{getEnumLabel(beneficiary.relationship)}</div>
                     <div className="text-muted-foreground">Contacto</div>
                     <div>{beneficiary.contactInfo}</div>
                   </div>
