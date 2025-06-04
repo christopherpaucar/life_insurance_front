@@ -29,4 +29,10 @@ export const authServices = {
 
     return response.data
   },
+
+  updateInformation: async (data: Partial<IOnboarding>) => {
+    const response = await api.post('/auth/update/onboarding', data)
+
+    return response.data
+  },
 }

@@ -1,137 +1,87 @@
-import { CreditCard, Lock, Calendar, User } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { PaymentMethodType } from '../hooks/useContract'
 import { usePaymentForm } from '../hooks/usePaymentForm'
 import { cn } from '@/lib/utils'
+import { usePaymentMethods } from '@/modules/payment_methods/usePaymentMethods'
+import { PaymentMethodList } from '@/modules/payment_methods/components/PaymentMethodList'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { PaymentMethodForm } from '@/modules/payment_methods/components/PaymentMethodForm'
+import { useState, useEffect } from 'react'
+import {
+  IPaymentMethod,
+  CreatePaymentMethodDto,
+} from '@/modules/payment_methods/payment-methods.interfaces'
 
 interface PaymentFormProps {
-  onSubmit: (data: {
-    paymentMethodType: PaymentMethodType
-    paymentDetails: {
-      cardNumber: string
-      cardHolderName: string
-      cardExpirationDate: string
-      cardCvv: string
-    }
-    p12File: File
-  }) => void
+  onSubmit: (data: { paymentMethod: IPaymentMethod; p12File: File }) => void
   isLoading: boolean
 }
 
 export function PaymentForm({ onSubmit, isLoading }: PaymentFormProps) {
-  const {
-    cardNumber,
-    setCardNumber,
-    cardHolderName,
-    setCardHolderName,
-    cardExpirationDate,
-    setCardExpirationDate,
-    cardCvv,
-    setCardCvv,
-    setP12File,
-    handleSubmit,
-    formatCardNumber,
-    formatExpirationDate,
-  } = usePaymentForm(onSubmit)
+  const { paymentMethods, isLoading: isLoadingMethods, createPaymentMethod } = usePaymentMethods()
+  const [selectedMethod, setSelectedMethod] = useState<IPaymentMethod | null>(
+    paymentMethods?.[0] || null
+  )
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const { setP12File, handleSubmit, setPaymentMethod } = usePaymentForm(onSubmit)
+
+  useEffect(() => {
+    if (selectedMethod) {
+      setPaymentMethod(selectedMethod)
+    }
+  }, [selectedMethod, setPaymentMethod])
+
+  const handleCreatePaymentMethod = (
+    data: CreatePaymentMethodDto | Partial<CreatePaymentMethodDto>
+  ) => {
+    createPaymentMethod(data as CreatePaymentMethodDto, {
+      onSuccess: () => {
+        setIsCreateModalOpen(false)
+      },
+    })
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-8">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-8 shadow-lg">
-        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-        <div className="relative space-y-6">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <CreditCard className="h-6 w-6 text-primary" />
-                <p className="text-sm font-medium text-primary">Tarjeta de crédito</p>
-              </div>
-            </div>
-            <div className="text-2xl font-bold tracking-tight">
-              {cardNumber || '**** **** **** ****'}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber" className="text-sm font-medium">
-                Número de tarjeta
-              </Label>
-              <div className="relative">
-                <Input
-                  id="cardNumber"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                  maxLength={19}
-                  placeholder="1234 5678 9012 3456"
-                  className="pl-10"
-                  required
-                />
-                <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cardHolderName" className="text-sm font-medium">
-                Nombre en la tarjeta
-              </Label>
-              <div className="relative">
-                <Input
-                  id="cardHolderName"
-                  value={cardHolderName}
-                  onChange={(e) => setCardHolderName(e.target.value.toUpperCase())}
-                  placeholder="JOHN DOE"
-                  className="pl-10"
-                  required
-                />
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="cardExpirationDate" className="text-sm font-medium">
-                  Fecha de expiración
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="cardExpirationDate"
-                    value={cardExpirationDate}
-                    onChange={(e) => setCardExpirationDate(formatExpirationDate(e.target.value))}
-                    maxLength={5}
-                    placeholder="MM/YY"
-                    className="pl-10"
-                    required
-                  />
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cardCvv" className="text-sm font-medium">
-                  CVV
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="cardCvv"
-                    type="password"
-                    value={cardCvv}
-                    onChange={(e) => setCardCvv(e.target.value.replace(/[^0-9]/g, ''))}
-                    maxLength={4}
-                    placeholder="123"
-                    className="pl-10"
-                    required
-                  />
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-4 rounded-lg border p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">Método de Pago</h3>
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Agregar Nueva Tarjeta
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Agregar Método de Pago</DialogTitle>
+              </DialogHeader>
+              <PaymentMethodForm
+                onSubmit={handleCreatePaymentMethod}
+                isLoading={isLoadingMethods}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
+
+        <PaymentMethodList
+          paymentMethods={paymentMethods}
+          selectedMethod={selectedMethod}
+          onSelectMethod={setSelectedMethod}
+          isLoading={isLoadingMethods}
+        />
       </div>
 
-      <div className="space-y-4 rounded-lg border p-6">
+      <div className="space-y-4 rounded-lg border p-4">
         <div className="space-y-2">
           <Label htmlFor="p12File" className="text-sm font-medium">
             Archivo P12

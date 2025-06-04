@@ -15,7 +15,7 @@ export interface IUser {
   }
   onboardingCompleted: boolean
   birthDate?: Date
-  booldType?: BloodType
+  bloodType?: BloodType
   gender?: string
   height?: number
   weight?: number
@@ -29,7 +29,7 @@ export interface IUser {
 
 export interface IOnboarding {
   birthDate: Date
-  booldType: BloodType
+  bloodType: BloodType
   gender: string
   height: number
   weight: number

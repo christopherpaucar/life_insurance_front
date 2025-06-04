@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAuthService } from '../../auth/useAuth'
-import { PaymentMethodType, useContract } from '../hooks/useContract'
+import { useContract } from '../hooks/useContract'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
@@ -32,6 +32,7 @@ import { ContractPayments } from './ContractPayments'
 import { ContractHistory } from './ContractHistory'
 import { useContractState } from '../hooks/useContractState'
 import { ContractPaymentInfo } from './ContractPaymentInfo'
+import { IPaymentMethod } from '../../payment_methods/payment-methods.interfaces'
 
 interface ContractDetailsProps {
   contractId: string
@@ -112,19 +113,11 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
     }
   }
 
-  const handlePaymentSubmit = (data: {
-    paymentMethodType: PaymentMethodType
-    paymentDetails: {
-      cardNumber: string
-      cardHolderName: string
-      cardExpirationDate: string
-      cardCvv: string
-    }
-    p12File: File
-  }) => {
+  const handlePaymentSubmit = (data: { paymentMethod: IPaymentMethod; p12File: File }) => {
     activateContractByClient({
       contractId,
-      ...data,
+      paymentMethodId: data.paymentMethod.id,
+      p12File: data.p12File,
     })
     setShowPaymentForm(false)
   }

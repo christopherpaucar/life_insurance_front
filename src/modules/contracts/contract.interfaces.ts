@@ -1,3 +1,5 @@
+import { IPaymentMethod } from '../payment_methods/payment-methods.interfaces'
+
 export enum ContractStatus {
   DRAFT = 'draft',
   AWAITING_CLIENT_CONFIRMATION = 'awaiting_client_confirmation',
@@ -41,6 +43,7 @@ export interface Contract {
   installmentAmount: number
   signatureUrl?: string
   signedAt?: string
+  paymentMethod?: IPaymentMethod
   attachments: {
     fileName: string
     fileUrl: string

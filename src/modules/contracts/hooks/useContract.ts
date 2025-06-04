@@ -89,19 +89,16 @@ export function useContract(id?: string) {
     Error,
     {
       contractId: string
-      paymentMethodType: PaymentMethodType
-      paymentDetails: Record<string, any>
+      paymentMethodId: string
       p12File: File
     }
   >({
-    mutationFn: async ({ contractId, paymentMethodType, paymentDetails, p12File }) => {
+    mutationFn: async ({ contractId, paymentMethodId, p12File }) => {
       const formData = new FormData()
-      formData.append('paymentMethodType', paymentMethodType)
-      formData.append('paymentDetails', JSON.stringify(paymentDetails))
       formData.append('p12File', p12File)
 
       const response = await api.post<ApiResponse<Contract>>(
-        `/contracts/${contractId}/confirm-activation`,
+        `/contracts/${contractId}/confirm-activation?paymentMethodId=${paymentMethodId}`,
         formData,
         {
           headers: {
@@ -193,8 +190,7 @@ export function useContract(id?: string) {
 
     activateContractByClient: (params: {
       contractId: string
-      paymentMethodType: PaymentMethodType
-      paymentDetails: Record<string, any>
+      paymentMethodId: string
       p12File: File
     }) =>
       activateContractByClientMutation.mutate(params, {

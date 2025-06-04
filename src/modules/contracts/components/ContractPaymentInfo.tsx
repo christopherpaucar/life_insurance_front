@@ -75,7 +75,7 @@ export function ContractPaymentInfo({ contract }: ContractPaymentInfoProps) {
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="h-4 w-4 text-blue-600" />
-                  <p className="font-medium text-blue-900">Próximo pago</p>
+                  <p className="font-medium text-blue-900">Próximo intento de cobro</p>
                 </div>
                 <p className="text-2xl font-bold text-blue-900">${nextPayment.amount}</p>
                 <p className="text-sm text-gray-600">

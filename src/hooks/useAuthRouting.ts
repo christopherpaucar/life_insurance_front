@@ -62,6 +62,10 @@ export function useAuthRouting() {
     return false
   }, [hydrated, getRedirectPath, router])
 
+  const shouldCompleteOnboarding = useMemo(() => {
+    return !user?.onboardingCompleted && user?.role.name === RoleType.CLIENT
+  }, [user])
+
   return {
     userRole,
     isAuthenticated,
@@ -70,5 +74,6 @@ export function useAuthRouting() {
     handleRouteAccess,
     routingService,
     pathname,
+    shouldCompleteOnboarding,
   }
 }

@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from '@tabler/icons-react'
+import { IconDotsVertical, IconLogout, IconUserCircle } from '@tabler/icons-react'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -72,14 +66,6 @@ export function NavUser({ user, logout }: { logout: () => void; user: IUser | nu
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}>
                 <IconUserCircle />
                 Mi Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings')}>
-                <IconCreditCard />
-                Configuración
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/help')}>
-                <IconNotification />
-                Ayuda
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

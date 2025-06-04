@@ -10,6 +10,7 @@ import { useAuthService } from '../useAuth'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { RoleType } from '../auth.interfaces'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const { login, isLoggingIn, user } = useAuthService()
@@ -23,7 +24,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       { email, password },
       {
         onSuccess: () => {
-          if (!user?.onboardingCompleted && user?.role.name === 'CLIENTE') {
+          if (!user?.onboardingCompleted && user?.role.name === RoleType.CLIENT) {
             router.push('/onboarding')
           } else {
             router.push('/dashboard')

@@ -3,7 +3,7 @@ import { ClientQueryParams, PaginatedResponse, UpdateClientDto } from './users.i
 import { RegisterDto } from '../auth/auth.interfaces'
 import { IUser } from '@/modules/auth/auth.interfaces'
 
-const httpClient = getHttpClient()
+const httpClient = await getHttpClient()
 
 export const usersService = {
   getUsers: async (params?: ClientQueryParams): Promise<PaginatedResponse<IUser>> => {

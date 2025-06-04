@@ -29,7 +29,6 @@ import {
   IconChevronsRight,
 } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
-import { PaymentMethodType } from '@/modules/payment_methods/payment-methods.interfaces'
 
 export function PaymentsTable() {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -43,17 +42,6 @@ export function PaymentsTable() {
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
   })
-
-  const getPaymentMethodTypeLabel = (type: PaymentMethodType) => {
-    switch (type) {
-      case PaymentMethodType.CREDIT_CARD:
-        return 'Tarjeta de Crédito'
-      case PaymentMethodType.DEBIT_CARD:
-        return 'Tarjeta de Débito'
-      default:
-        return type
-    }
-  }
 
   const columns: ColumnDef<ITransaction>[] = [
     {
@@ -84,7 +72,7 @@ export function PaymentsTable() {
     },
     {
       accessorKey: 'nextRetryPaymentDate',
-      header: 'Próximo Pago',
+      header: 'Próximo intento de cobro',
       cell: ({ row }) => <div>{row.getValue('nextRetryPaymentDate')}</div>,
     },
     {

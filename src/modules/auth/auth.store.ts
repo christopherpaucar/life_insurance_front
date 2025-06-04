@@ -19,6 +19,7 @@ interface AuthActions {
   clearError: () => void
   initializeAuth: () => void
   completeOnboarding: (data: IOnboarding) => Promise<void>
+  updateOnboarding: (data: Partial<IOnboarding>) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -107,6 +108,24 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         set({ isLoading: true, error: null })
         try {
           const response = await authServices.completeOnboarding(data)
+          const { data: userData } = response as { data: IUser }
+          set({
+            user: userData,
+            isAuthenticated: true,
+            isLoading: false,
+          })
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Onboarding failed',
+          })
+        }
+      },
+
+      updateOnboarding: async (data: Partial<IOnboarding>) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await authServices.updateInformation(data)
           const { data: userData } = response as { data: IUser }
           set({
             user: userData,

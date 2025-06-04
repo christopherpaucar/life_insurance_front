@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ClientQueryParams, UpdateClientDto } from '@/modules/users/users.interfaces'
 import { usersService } from '@/modules/users/users.service'
 import { toast } from 'sonner'
-import { RegisterDto } from '../auth/auth.interfaces'
+import { RegisterDto, RoleType } from '../auth/auth.interfaces'
+import { useAuthStore } from '../auth/auth.store'
 
 export const USER_QUERY_KEYS = {
   all: ['users'] as const,
@@ -12,10 +13,12 @@ export const USER_QUERY_KEYS = {
 
 export const useUsers = (params?: ClientQueryParams) => {
   const queryClient = useQueryClient()
+  const { user } = useAuthStore()
 
   const getUsersQuery = useQuery({
     queryKey: USER_QUERY_KEYS.list(params),
     queryFn: () => usersService.getUsers(params),
+    enabled: user?.role.name !== RoleType.CLIENT,
   })
 
   const createUserMutation = useMutation({

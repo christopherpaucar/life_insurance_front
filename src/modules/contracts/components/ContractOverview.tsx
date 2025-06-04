@@ -62,7 +62,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
               <dt className="text-sm font-medium text-muted-foreground">
                 Monto por cuota ({getEnumLabel(contract.paymentFrequency)})
               </dt>
-              <dd className="text-lg">${contract.transactions[0].amount} USD</dd>
+              <dd className="text-lg">${contract.transactions?.[0]?.amount ?? 0} USD</dd>
             </div>
           </dl>
         </CardContent>

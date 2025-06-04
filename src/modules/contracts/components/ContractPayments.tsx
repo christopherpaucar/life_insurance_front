@@ -57,7 +57,14 @@ export function ContractPayments({ contract }: ContractPaymentsProps) {
   }
 
   const getPaymentMethod = () => {
-    return 'Tarjeta terminada en 4242'
+    const label = 'Con tarjeta terminada en '
+
+    console.log(contract.paymentMethod)
+    const details = JSON.parse(contract.paymentMethod?.details as unknown as string) || {}
+
+    return details?.cardNumber?.slice(-4)
+      ? `${label}${details?.cardNumber?.slice(-4)}`
+      : 'No disponible'
   }
 
   return (
@@ -65,7 +72,7 @@ export function ContractPayments({ contract }: ContractPaymentsProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">
-            Historial de Pagos ({contract.transactions?.length || 0})
+            Pagos a realizar ({contract.transactions?.length || 0})
           </CardTitle>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">

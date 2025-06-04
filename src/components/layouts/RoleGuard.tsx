@@ -11,20 +11,23 @@ interface RoleGuardProps {
 }
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
-  const { userRole, isAuthenticated, hydrated } = useAuthRouting()
+  const { userRole, isAuthenticated, hydrated, shouldCompleteOnboarding } = useAuthRouting()
   const router = useRouter()
 
   useEffect(() => {
     // Wait until auth state is hydrated
     if (!hydrated) return
 
-    console.log(userRole)
     const hasAllowedRole = allowedRoles.includes(userRole as RoleType)
 
     if (!isAuthenticated || !hasAllowedRole) {
       router.replace('/login')
     }
-  }, [userRole, isAuthenticated, router, allowedRoles, hydrated])
+
+    if (shouldCompleteOnboarding) {
+      router.replace('/onboarding')
+    }
+  }, [userRole, isAuthenticated, router, allowedRoles, hydrated, shouldCompleteOnboarding])
 
   return <>{children}</>
 }

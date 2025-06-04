@@ -28,30 +28,68 @@ export default function HealthInfoStep({
   isFirstStep,
 }: HealthInfoStepProps) {
   const [formData, setFormData] = useState({
-    booldType: initialData.booldType || '',
+    bloodType: initialData.bloodType || '',
     height: initialData.height || '',
     weight: initialData.weight || '',
   })
 
+  const [errors, setErrors] = useState({
+    height: '',
+    weight: '',
+  })
+
+  const validateHeight = (height: string): boolean => {
+    const heightNum = Number(height)
+    if (heightNum < 50) {
+      setErrors((prev) => ({ ...prev, height: 'La estatura debe ser mayor a 50cm' }))
+      return false
+    }
+    if (heightNum > 250) {
+      setErrors((prev) => ({ ...prev, height: 'La estatura debe ser menor a 250cm' }))
+      return false
+    }
+    setErrors((prev) => ({ ...prev, height: '' }))
+    return true
+  }
+
+  const validateWeight = (weight: string): boolean => {
+    const weightNum = Number(weight)
+    if (weightNum < 20) {
+      setErrors((prev) => ({ ...prev, weight: 'El peso debe ser mayor a 20kg' }))
+      return false
+    }
+    if (weightNum > 300) {
+      setErrors((prev) => ({ ...prev, weight: 'El peso debe ser menor a 300kg' }))
+      return false
+    }
+    setErrors((prev) => ({ ...prev, weight: '' }))
+    return true
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onNext({
-      booldType: formData.booldType as BloodType,
-      height: Number(formData.height),
-      weight: Number(formData.weight),
-    })
+    const isHeightValid = validateHeight(String(formData.height))
+    const isWeightValid = validateWeight(String(formData.weight))
+
+    if (isHeightValid && isWeightValid) {
+      onNext({
+        bloodType: formData.bloodType as BloodType,
+        height: Number(formData.height),
+        weight: Number(formData.weight),
+      })
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <Label htmlFor="booldType" className="text-blue-700 font-medium mb-2">
+          <Label htmlFor="bloodType" className="text-blue-700 font-medium mb-2">
             Tipo de Sangre
           </Label>
           <Select
-            value={formData.booldType}
-            onValueChange={(value) => setFormData({ ...formData, booldType: value })}
+            value={formData.bloodType}
+            onValueChange={(value) => setFormData({ ...formData, bloodType: value })}
           >
             <SelectTrigger className="border-blue-200 focus:border-blue-500">
               <SelectValue placeholder="Selecciona tu tipo de sangre" />
@@ -74,10 +112,14 @@ export default function HealthInfoStep({
             id="height"
             type="number"
             value={formData.height}
-            onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, height: e.target.value })
+              validateHeight(e.target.value)
+            }}
             className="border-blue-200 focus:border-blue-500"
             required
           />
+          {errors.height && <p className="text-red-500 text-sm mt-1">{errors.height}</p>}
         </div>
 
         <div>
@@ -88,10 +130,14 @@ export default function HealthInfoStep({
             id="weight"
             type="number"
             value={formData.weight}
-            onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, weight: e.target.value })
+              validateWeight(e.target.value)
+            }}
             className="border-blue-200 focus:border-blue-500"
             required
           />
+          {errors.weight && <p className="text-red-500 text-sm mt-1">{errors.weight}</p>}
         </div>
       </div>
 

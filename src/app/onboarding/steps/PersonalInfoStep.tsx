@@ -12,13 +12,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { IOnboarding } from '@/modules/auth/auth.interfaces'
-import { format } from 'date-fns'
+import { format, differenceInYears, isAfter } from 'date-fns'
 
 const genderOptions = [
-  { value: 'MASCULINO', label: 'Masculino' },
-  { value: 'FEMENINO', label: 'Femenino' },
-  { value: 'OTRO', label: 'Otro' },
-  { value: 'PREFIERO_NO_DECIR', label: 'Prefiero no decir' },
+  { value: 'MALE', label: 'Masculino' },
+  { value: 'FEMALE', label: 'Femenino' },
+  { value: 'OTHER', label: 'Otro' },
+  { value: 'NOT_SPECIFIED', label: 'Prefiero no responder' },
 ]
 
 interface PersonalInfoStepProps {
@@ -42,9 +42,36 @@ export default function PersonalInfoStep({
     phoneNumber: initialData.phoneNumber || '',
   })
 
+  const [error, setError] = useState('')
+
+  const validateBirthDate = (date: Date): boolean => {
+    const today = new Date()
+    const age = differenceInYears(today, date)
+
+    if (isAfter(date, today)) {
+      setError('La fecha de nacimiento no puede ser en el futuro')
+      return false
+    }
+
+    if (age < 18) {
+      setError('Debes tener al menos 18 años')
+      return false
+    }
+
+    if (age > 120) {
+      setError('La fecha de nacimiento parece ser inválida')
+      return false
+    }
+
+    setError('')
+    return true
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onNext(formData)
+    if (validateBirthDate(formData.birthDate)) {
+      onNext(formData)
+    }
   }
 
   return (
@@ -58,10 +85,15 @@ export default function PersonalInfoStep({
             id="birthDate"
             type="date"
             value={format(formData.birthDate, 'yyyy-MM-dd')}
-            onChange={(e) => setFormData({ ...formData, birthDate: new Date(e.target.value) })}
+            onChange={(e) => {
+              const newDate = new Date(e.target.value)
+              setFormData({ ...formData, birthDate: newDate })
+              validateBirthDate(newDate)
+            }}
             className="border-blue-200 focus:border-blue-500"
             required
           />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
 
         <div>
