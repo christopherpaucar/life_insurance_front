@@ -211,7 +211,7 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
       modal={true}
     >
       <DialogContent className="sm:max-w-[800px] max-h-[90vh]">
-        <DialogHeader className="space-y-4 sticky top-0 z-10 pb-4">
+        <DialogHeader className="space-y-4 sticky top-0 z-10">
           <DialogTitle className="text-3xl font-bold text-primary">
             Nueva Solicitud de Reembolso
           </DialogTitle>
@@ -222,8 +222,8 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-8 overflow-y-auto">
-          <Card className="border-2 border-primary/20 shadow-lg">
-            <CardContent className="pt-2">
+          <Card className="border-2">
+            <CardContent>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Label className="text-lg font-semibold text-primary">
@@ -244,7 +244,7 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
                   value={formData.contractId}
                   onValueChange={(value) => handleSelectChange('contractId', value)}
                 >
-                  <SelectTrigger className="w-full border-2 border-primary/20 focus:border-primary">
+                  <SelectTrigger className="w-full border-2 focus:border-primary">
                     <SelectValue>
                       {formData.contractId ? (
                         <div className="flex items-center gap-2">
@@ -306,7 +306,7 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
                   type="button"
                   variant="outline"
                   onClick={addItem}
-                  className="flex items-center gap-2 border-2 border-primary/20 hover:bg-primary/10"
+                  className="flex items-center gap-2 border-2 hover:bg-primary/10"
                 >
                   <IconPlus size={20} className="text-primary" />
                   Agregar Item
@@ -315,11 +315,8 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
 
               <div className="space-y-6 max-h-[25vh] overflow-y-auto pr-2">
                 {formData.items.map((item, index) => (
-                  <Card
-                    key={index}
-                    className="border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow"
-                  >
-                    <CardContent className="pt-6">
+                  <Card key={index} className="border-2">
+                    <CardContent className="pt-2">
                       <div className="flex justify-between items-start mb-6">
                         <div className="space-y-1">
                           <h4 className="font-medium text-xl text-primary">Item #{index + 1}</h4>
@@ -542,7 +539,7 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
                               type="file"
                               accept=".pdf,.jpg,.jpeg,.png"
                               onChange={(e) => handleFileChange(e, index)}
-                              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 border-2 border-primary/20 focus:border-primary"
+                              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 border-2 focus:border-primary"
                             />
                             {files[index] && (
                               <span className="text-sm text-gray-600">{files[index].name}</span>
@@ -557,12 +554,12 @@ export const ReimbursementFormModal: React.FC<ReimbursementFormModalProps> = ({
             </div>
           )}
 
-          <div className="flex justify-end gap-4 pt-4 sticky bottom-0 z-10 pb-4">
+          <div className="flex justify-end gap-4 sticky bottom-0 z-10">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-2 border-primary/20 hover:bg-primary/10"
+              className="border-2 hover:bg-primary/10"
             >
               Cancelar
             </Button>

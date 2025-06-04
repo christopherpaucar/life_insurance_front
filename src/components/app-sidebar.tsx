@@ -38,14 +38,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     })
   }
 
-  // Determine which navigation items to show based on user role
   const getNavigationItems = () => {
     if (!user) return []
 
-    // Map role name to corresponding navigation items
     const roleName = user.role?.name as RoleType
 
-    // Check permissions for each role type
     if (roleName === RoleType.SUPER_ADMIN || roleName === RoleType.ADMIN) {
       return adminNavItems
     }
