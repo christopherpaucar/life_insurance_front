@@ -20,8 +20,25 @@ export const reimbursementsService = {
     return response.data
   },
 
-  createReimbursement: async (data: ICreateReimbursement): Promise<ApiResponse<IReimbursement>> => {
-    const response = await api.post<ApiResponse<IReimbursement>>('/reimbursements', data)
+  createReimbursement: async (
+    data: ICreateReimbursement,
+    files?: File[]
+  ): Promise<ApiResponse<IReimbursement>> => {
+    const formData = new FormData()
+    formData.append('contractId', data.contractId)
+    formData.append('items', JSON.stringify(data.items))
+
+    if (files) {
+      files.forEach((file) => {
+        formData.append('invoices', file)
+      })
+    }
+
+    const response = await api.post<ApiResponse<IReimbursement>>('/reimbursements', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     return response.data
   },
 

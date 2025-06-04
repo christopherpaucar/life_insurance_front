@@ -12,7 +12,13 @@ import {
   ReimbursementStatus,
   ReimbursementItemStatus,
 } from '@/modules/reimbursements/reimbursements.interfaces'
-import { IconPlus, IconSearch, IconChevronDown, IconChevronUp } from '@tabler/icons-react'
+import {
+  IconPlus,
+  IconSearch,
+  IconChevronDown,
+  IconChevronUp,
+  IconUpload,
+} from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ReimbursementFormModal } from '@/modules/reimbursements/components/ReimbursementFormModal'
@@ -180,33 +186,58 @@ export default function ReimbursementsPage() {
                           {reimbursement.items.map((item) => (
                             <div
                               key={item.id}
-                              className="p-4 border rounded-lg bg-gray-50 space-y-3"
+                              className="p-4 border rounded-lg bg-gradient-to-r from-gray-50 to-white shadow-sm hover:shadow-md transition-all duration-200 space-y-3"
                             >
                               <div className="flex justify-between items-start">
-                                <div>
-                                  <Badge className={getItemStatusColor(item.status)}>
-                                    {getEnumLabel(item.status)}
-                                  </Badge>
-                                  <p className="mt-1 text-sm font-medium">{item.type}</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-sm font-medium">
-                                    ${item.requestedAmount.toLocaleString()}
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <Badge
+                                      className={`${getItemStatusColor(item.status)} px-3 py-1 rounded-full`}
+                                    >
+                                      {getEnumLabel(item.status)}
+                                    </Badge>
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {item.type}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-600 line-clamp-2">
+                                    {item.description}
                                   </p>
-                                  {item.approvedAmount > 0 && (
-                                    <p className="text-sm text-green-600">
-                                      ${item.approvedAmount.toLocaleString()}
+                                </div>
+                                <div className="text-right space-y-1">
+                                  <div className="flex flex-col items-end">
+                                    <p className="text-sm font-semibold text-gray-900">
+                                      ${item.requestedAmount.toLocaleString()}
                                     </p>
-                                  )}
+                                    {item.approvedAmount > 0 && (
+                                      <p className="text-sm font-medium text-green-600">
+                                        ${item.approvedAmount.toLocaleString()}
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-600">{item.description}</p>
-                              <p className="text-xs text-gray-500">
-                                Fecha de servicio:{' '}
-                                {format(new Date(item.serviceDate), 'PPP', { locale: es })}
-                              </p>
+                              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                                <p className="text-xs text-gray-500">
+                                  Fecha de servicio:{' '}
+                                  {format(new Date(item.serviceDate), 'PPP', { locale: es })}
+                                </p>
+                                {item.documentUrl && (
+                                  <a
+                                    href={item.documentUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 bg-primary/5 px-3 py-1 rounded-full"
+                                  >
+                                    <IconUpload size={16} />
+                                    Ver factura
+                                  </a>
+                                )}
+                              </div>
                               {item.rejectionReason && (
-                                <p className="text-sm text-red-600">{item.rejectionReason}</p>
+                                <div className="mt-2 p-2 bg-red-50 rounded-md">
+                                  <p className="text-sm text-red-600">{item.rejectionReason}</p>
+                                </div>
                               )}
                             </div>
                           ))}

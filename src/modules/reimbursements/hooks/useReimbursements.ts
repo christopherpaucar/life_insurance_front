@@ -26,7 +26,8 @@ export const useReimbursements = () => {
   })
 
   const createReimbursementMutation = useMutation({
-    mutationFn: (data: ICreateReimbursement) => reimbursementsService.createReimbursement(data),
+    mutationFn: (data: { formData: ICreateReimbursement; files?: File[] }) =>
+      reimbursementsService.createReimbursement(data.formData, data.files),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: keys.all })
       toast.success('Reembolso creado exitosamente')
@@ -82,8 +83,12 @@ export const useReimbursements = () => {
     error: getReimbursementsQuery.error,
     refetch: getReimbursementsQuery.refetch,
 
-    createReimbursement: (data: ICreateReimbursement, options?: { onSuccess?: () => void }) => {
-      return createReimbursementMutation.mutate(data, options)
+    createReimbursement: (
+      formData: ICreateReimbursement,
+      files?: File[],
+      options?: { onSuccess?: () => void }
+    ) => {
+      return createReimbursementMutation.mutate({ formData, files }, options)
     },
     isCreating: createReimbursementMutation.isPending,
 
