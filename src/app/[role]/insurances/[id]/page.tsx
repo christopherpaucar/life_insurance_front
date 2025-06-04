@@ -3,15 +3,15 @@
 import React from 'react'
 import { InsuranceDetailsSell } from '@/modules/insurances/components/InsuranceDetailsSell'
 
-interface InsuranceDetailsPageProps {
-  params: {
+interface PageProps {
+  params: Promise<{
     id: string
     role: string
-  }
+  }>
 }
 
-export default function InsuranceDetailsPage({ params }: InsuranceDetailsPageProps) {
-  const unwrappedParams = params instanceof Promise ? React.use(params) : params
+export default function InsuranceDetailsPage({ params }: PageProps) {
+  const unwrappedParams = React.use(params)
 
   return (
     <div className="container py-6">

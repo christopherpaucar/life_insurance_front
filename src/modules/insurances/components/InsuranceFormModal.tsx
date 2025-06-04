@@ -15,16 +15,6 @@ import {
 } from '@/components/ui/dialog'
 import { useInsurances } from '../useInsurances'
 import {
-  IInsurance,
-  CreateInsuranceDto,
-  UpdateInsuranceDto,
-  InsuranceType,
-  PaymentFrequency,
-  getEnumLabel,
-  InsuranceCoverageRelationDto,
-  InsuranceBenefitRelationDto,
-} from '../insurances.interfaces'
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -34,6 +24,14 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { X } from 'lucide-react'
 import { InsuranceDetailsForm } from './InsuranceDetailsForm'
+import { PaymentFrequency, InsuranceType } from '../enums/insurance.enums'
+import {
+  IInsurance,
+  InsuranceBenefitRelationDto,
+  InsuranceCoverageRelationDto,
+} from '../interfaces/insurance.interfaces'
+import { CreateInsuranceDto, UpdateInsuranceDto } from '../dtos/insurance.dtos'
+import { getEnumLabel } from '../../../lib/utils/enum.utils'
 
 const formSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),

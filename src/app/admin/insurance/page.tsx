@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { useInsurances } from '@/modules/insurances/useInsurances'
-import { IInsurance, getEnumLabel } from '@/modules/insurances/insurances.interfaces'
 import {
   Table,
   TableHeader,
@@ -52,7 +51,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { PaymentFrequency } from '@/modules/insurances/insurances.interfaces'
+import { IInsurance } from '@/modules/insurances/interfaces/insurance.interfaces'
+import { getEnumLabel } from '@/lib/utils/enum.utils'
+import { PaymentFrequency } from '@/modules/insurances/enums/insurance.enums'
 
 export default function AdminInsurancePage() {
   const [sorting, setSorting] = useState<SortingState>([])

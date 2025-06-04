@@ -3,13 +3,16 @@
 import React from 'react'
 import { AuthenticatedLayout } from '../../components/layouts/AuthenticatedLayout'
 
-interface AuthLayoutProps {
+interface PageProps {
+  params: Promise<{
+    id: string
+    role: string
+  }>
   children: React.ReactNode
-  params: Promise<{ role: string }> | { role: string }
 }
 
-export default function AuthLayout({ children, params }: AuthLayoutProps) {
-  const unwrappedParams = params instanceof Promise ? React.use(params) : params
+export default function AuthLayout({ children, params }: PageProps) {
+  const unwrappedParams = React.use(params)
   const role = unwrappedParams.role
 
   const getLabelByRole = (role: string) => {
