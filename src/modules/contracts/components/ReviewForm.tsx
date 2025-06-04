@@ -1,11 +1,7 @@
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  getEnumLabel,
-  PaymentFrequency,
-  Relationship,
-} from '../../insurances/insurances.interfaces'
+import { getEnumLabel, PaymentFrequency, Relationship } from '../../insurances'
 import { es } from 'date-fns/locale'
 
 interface ReviewFormProps {

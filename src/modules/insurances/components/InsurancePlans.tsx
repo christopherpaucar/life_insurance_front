@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRouter } from 'next/navigation'
-import { getEnumLabel } from '../utils/enum.utils'
+import { getEnumLabel } from '../../../lib/utils/enum.utils'
 import { IInsurance } from '../interfaces/insurance.interfaces'
 
 interface InsurancePlansProps {

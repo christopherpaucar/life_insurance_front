@@ -1,6 +1,6 @@
-import { vi } from 'vitest';
-import { UseMutateFunction } from '@tanstack/react-query';
-import { LoginDto, RegisterDto, IUser } from '@/modules/auth/auth.interfaces';
+import { vi } from 'vitest'
+import { UseMutateFunction } from '@tanstack/react-query'
+import { LoginDto, RegisterDto, IUser } from '@/modules/auth/auth.interfaces'
 
 export const mockUser: IUser = {
   id: '1',
@@ -12,7 +12,7 @@ export const mockUser: IUser = {
     name: 'ADMINISTRADOR',
     permissions: ['manage_roles'],
   },
-};
+}
 
 export const mockAuthService = {
   login: vi.fn() as UseMutateFunction<void, Error, LoginDto, unknown>,
@@ -24,4 +24,4 @@ export const mockAuthService = {
   clearError: vi.fn(),
   hasPermission: vi.fn(),
   user: mockUser,
-};
+}

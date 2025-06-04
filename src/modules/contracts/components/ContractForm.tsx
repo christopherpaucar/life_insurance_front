@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils'
 import { format, addMonths, addQuarters, addYears } from 'date-fns'
 import { CalendarIcon, HelpCircle } from 'lucide-react'
 import { useState } from 'react'
-import { getEnumLabel } from '../../insurances/insurances.interfaces'
+import { getEnumLabel } from '../../insurances'
 
 type Frequency = 'monthly' | 'quarterly' | 'yearly'
 

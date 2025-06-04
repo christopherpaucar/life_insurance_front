@@ -85,11 +85,8 @@ export const privateRoutes: RouteConfig[] = [
   { path: '/agent/sales', public: false, allowedRoles: [RoleType.AGENT] },
 
   // Reviewer routes
-  { path: '/reviewer', public: false, allowedRoles: [RoleType.REVIEWER] },
   { path: '/reviewer/dashboard', public: false, allowedRoles: [RoleType.REVIEWER] },
-  { path: '/reviewer/claims', public: false, allowedRoles: [RoleType.REVIEWER] },
-  { path: '/reviewer/policies', public: false, allowedRoles: [RoleType.REVIEWER] },
-  { path: '/reviewer/reports', public: false, allowedRoles: [RoleType.REVIEWER] },
+  { path: '/reviewer/reimbursements', public: false, allowedRoles: [RoleType.REVIEWER] },
 ]
 
 // Combine all routes for easier access

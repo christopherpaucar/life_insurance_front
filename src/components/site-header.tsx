@@ -8,6 +8,14 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useCallback } from 'react'
 
+const TRADUCTIONS = {
+  dashboard: 'Dashboard',
+  profile: 'Mi Perfil',
+  reimbursements: 'Reembolsos',
+  insurances: 'Seguros',
+  reports: 'Reportes',
+}
+
 export function SiteHeader() {
   const pathname = usePathname()
 
@@ -20,10 +28,7 @@ export function SiteHeader() {
     if (lastSegment === 'dashboard') return 'Dashboard'
     if (lastSegment === 'profile') return 'Mi Perfil'
 
-    return lastSegment
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+    return lastSegment.split('-').join(' ')
   }, [pathname])
 
   return (
@@ -31,7 +36,9 @@ export function SiteHeader() {
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
-        <h1 className="text-base font-medium">{getPageTitle()}</h1>
+        <h1 className="text-base font-medium">
+          {TRADUCTIONS[getPageTitle() as keyof typeof TRADUCTIONS] || 'Dashboard'}
+        </h1>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild className="flex gap-2">
             <Link href="/profile">

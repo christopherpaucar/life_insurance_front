@@ -18,8 +18,10 @@ export default function AuthLayout({ children, params }: AuthLayoutProps) {
         return 'Panel de Administración'
       case 'agent':
         return 'Panel de Agente'
+      case 'reviewer':
+        return 'Panel de Revisor'
       case 'client':
-        return ''
+        return 'Panel de Cliente'
       default:
         return 'Panel de Administración'
     }

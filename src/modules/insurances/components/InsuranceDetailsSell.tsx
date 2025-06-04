@@ -16,7 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { useRouter } from 'next/navigation'
-import { getEnumLabel } from '../utils/enum.utils'
+import { getEnumLabel } from '../../../lib/utils/enum.utils'
 import { PaymentFrequency } from '../enums/insurance.enums'
 
 interface InsuranceDetailsProps {

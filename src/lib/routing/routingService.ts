@@ -33,7 +33,6 @@ export class RoutingService {
   public canUserAccessRoute(path: string, userRoles: RoleType): boolean {
     const route = this.findRouteConfig(path)
 
-    // No config or public route = accessible
     if (!route) return false
     if (route.public) return true
 
@@ -42,7 +41,6 @@ export class RoutingService {
       return true
     }
 
-    // Check if any user role matches allowed roles
     return route.allowedRoles.some((role) => role === userRoles)
   }
 

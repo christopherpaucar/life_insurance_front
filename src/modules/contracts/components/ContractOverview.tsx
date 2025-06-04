@@ -2,7 +2,7 @@ import { Calendar, DollarSign, User } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { getEnumLabel } from '../../insurances/utils/enum.utils'
+import { getEnumLabel } from '../../../lib/utils/enum.utils'
 import { Contract } from '../contract.interfaces'
 
 interface ContractOverviewProps {

@@ -40,7 +40,7 @@ import {
 } from '@tabler/icons-react'
 import { ContractDetails } from './ContractDetails'
 import { useContract } from '../hooks/useContract'
-import { getEnumLabel } from '../../insurances/utils/enum.utils'
+import { getEnumLabel } from '../../../lib/utils/enum.utils'
 import { statusColors, statusLabels } from '../constants/contractStatus'
 
 interface Contract {

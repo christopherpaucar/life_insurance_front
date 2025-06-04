@@ -17,8 +17,14 @@ import {
 } from '@/components/ui/sidebar'
 import { useAuthService } from '../modules/auth/useAuth'
 import { useRouter } from 'next/navigation'
-import { adminNavItems, agentNavItems, clientNavItems, secondaryNavItems } from './nav-data'
-import { REIMBURSEMENT_PERMISSIONS, RoleType } from '@/modules/auth/auth.interfaces'
+import {
+  adminNavItems,
+  agentNavItems,
+  clientNavItems,
+  reviewerNavItems,
+  secondaryNavItems,
+} from './nav-data'
+import { RoleType } from '@/modules/auth/auth.interfaces'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { logout, user } = useAuthService()
@@ -53,10 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     if (roleName === RoleType.REVIEWER) {
-      // Revisor role might have similar access as agent but more limited
-      return agentNavItems
-        .filter((item) => item.permissions?.includes(REIMBURSEMENT_PERMISSIONS.READ))
-        .filter((item) => !item.permissions)
+      return reviewerNavItems
     }
 
     return []

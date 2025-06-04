@@ -18,6 +18,7 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     // Wait until auth state is hydrated
     if (!hydrated) return
 
+    console.log(userRole)
     const hasAllowedRole = allowedRoles.includes(userRole as RoleType)
 
     if (!isAuthenticated || !hasAllowedRole) {

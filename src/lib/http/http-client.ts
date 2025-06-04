@@ -6,6 +6,7 @@ import axios, {
 } from 'axios'
 import { handleHttpError } from './error-handler'
 import { HttpClientConfig, HttpResponse, IHttpClient } from './types'
+import { toast } from 'sonner'
 
 /**
  * Default HTTP client configuration
@@ -80,10 +81,21 @@ export class HttpClient implements IHttpClient {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
+          toast.error('Sesión expirada, por favor inicie sesión nuevamente')
+
           if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
             window.location.href = '/login'
           }
         }
+
+        if (error.response?.status === 403) {
+          toast.error('No tienes permisos para acceder a este recurso')
+
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/dashboard')) {
+            window.location.href = '/dashboard'
+          }
+        }
+
         return Promise.reject(error as Error)
       }
     )

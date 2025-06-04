@@ -20,8 +20,7 @@ import {
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plus, Trash2, HelpCircle } from 'lucide-react'
-import { Relationship } from '../../insurances/insurances.interfaces'
-import { getEnumLabel } from '../../insurances/insurances.interfaces'
+import { getEnumLabel, Relationship } from '../../insurances'
 
 const beneficiarySchema = z.object({
   name: z.string().min(1, 'Name is required'),

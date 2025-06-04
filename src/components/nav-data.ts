@@ -5,7 +5,6 @@ import {
   IconKey,
   IconShieldCheck,
   IconHeartHandshake,
-  IconClipboardList,
   IconWallet,
   IconReportMedical,
   IconUser,
@@ -50,18 +49,13 @@ export const adminNavItems: NavItem[] = [
     icon: IconHeartHandshake,
   },
   {
-    title: 'Revisión de Reembolsos',
-    url: '/admin/reimbursements',
-    icon: IconClipboardList,
-  },
-  {
     title: 'Historial de Pagos',
     url: '/admin/payments',
     icon: IconWallet,
   },
   {
     title: 'Solicitud de Reembolsos',
-    url: '/admin/client-reimbursements',
+    url: '/admin/reimbursements',
     icon: IconReportMedical,
   },
   {
@@ -100,12 +94,6 @@ export const agentNavItems: NavItem[] = [
     title: 'Contratación de Seguros',
     url: '/agent/insurance-review',
     icon: IconHeartHandshake,
-    permissions: PERMISSIONS[RoleType.AGENT],
-  },
-  {
-    title: 'Revisión de Reembolsos',
-    url: '/agent/reimbursements',
-    icon: IconClipboardList,
     permissions: PERMISSIONS[RoleType.AGENT],
   },
   {
@@ -160,10 +148,25 @@ export const clientNavItems: NavItem[] = [
     permissions: PERMISSIONS[RoleType.CLIENT],
   },
   {
-    title: 'Solicitud de Reembolsos',
+    title: 'Reembolsos',
     url: '/client/reimbursements',
     icon: IconReportMedical,
     permissions: PERMISSIONS[RoleType.CLIENT],
+  },
+]
+
+export const reviewerNavItems: NavItem[] = [
+  {
+    title: 'Dashboard',
+    url: '/reviewer/dashboard',
+    icon: IconDashboard,
+    permissions: PERMISSIONS[RoleType.REVIEWER],
+  },
+  {
+    title: 'Solicitudes de Reembolsos',
+    url: '/reviewer/reimbursements',
+    icon: IconReportMedical,
+    permissions: PERMISSIONS[RoleType.REVIEWER],
   },
 ]
 
