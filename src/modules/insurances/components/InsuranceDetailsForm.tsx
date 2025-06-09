@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useCoverages } from '../useCoverages'
 import { useBenefits } from '../useBenefits'
 import {
@@ -13,52 +13,89 @@ export const InsuranceDetailsForm: React.FC<{
   addCoverages: (coverages: InsuranceCoverageRelationDto[]) => void
   addBenefits: (benefits: InsuranceBenefitRelationDto[]) => void
 }> = ({ coverages, benefits, addCoverages, addBenefits }) => {
-  const [selectedCoverages, setSelectedCoverages] =
-    useState<InsuranceCoverageRelationDto[]>(coverages)
-  const [selectedBenefits, setSelectedBenefits] = useState<InsuranceBenefitRelationDto[]>(benefits)
+  const [selectedCoverages, setSelectedCoverages] = useState<InsuranceCoverageRelationDto[]>([])
+  const [selectedBenefits, setSelectedBenefits] = useState<InsuranceBenefitRelationDto[]>([])
+  const initialCoveragesRef = useRef<InsuranceCoverageRelationDto[]>([])
+  const initialBenefitsRef = useRef<InsuranceBenefitRelationDto[]>([])
 
   const { coverages: availableCoverages } = useCoverages()
   const { benefits: availableBenefits } = useBenefits()
 
-  const handleCoverageChange = useCallback((newCoverages: InsuranceCoverageRelationDto[]) => {
-    setSelectedCoverages(newCoverages)
-    addCoverages(newCoverages)
-  }, [])
+  useEffect(() => {
+    setSelectedCoverages(coverages)
+    setSelectedBenefits(benefits)
+    initialCoveragesRef.current = coverages
+    initialBenefitsRef.current = benefits
+  }, [coverages, benefits])
 
-  const handleBenefitChange = useCallback((newBenefits: InsuranceBenefitRelationDto[]) => {
-    setSelectedBenefits(newBenefits)
-    addBenefits(newBenefits)
-  }, [])
+  const handleCoverageChange = useCallback(
+    (coverage: InsuranceCoverageRelationDto) => {
+      setSelectedCoverages((prev) => {
+        const exists = prev.some((c) => c.id === coverage.id)
+        if (exists) {
+          return prev.map((c) => (c.id === coverage.id ? coverage : c))
+        }
+        return [...prev, coverage]
+      })
 
-  const handleCoverageDelete = useCallback((coverage: InsuranceCoverageRelationDto) => {
-    console.log('coverage', coverage)
+      const initialCoverage = initialCoveragesRef.current.find((c) => c.id === coverage.id)
+      if (!initialCoverage) {
+        addCoverages([coverage])
+        return
+      }
 
-    if (selectedCoverages.some((c) => c.id === coverage.id)) {
-      addCoverages([
-        ...selectedCoverages.filter((c) => c.id !== coverage.id),
-        {
-          ...coverage,
-          delete: true,
-        },
-      ])
-    }
+      const hasChanged =
+        initialCoverage.coverageAmount !== coverage.coverageAmount ||
+        initialCoverage.additionalCost !== coverage.additionalCost
 
-    setSelectedCoverages(selectedCoverages.filter((c) => c.id !== coverage.id))
-  }, [])
+      if (hasChanged) {
+        addCoverages([coverage])
+      }
+    },
+    [addCoverages]
+  )
 
-  const handleBenefitDelete = useCallback((benefit: InsuranceBenefitRelationDto) => {
-    if (selectedBenefits.some((b) => b.id === benefit.id)) {
-      addBenefits([
-        ...selectedBenefits.filter((b) => b.id !== benefit.id),
-        {
-          ...benefit,
-          delete: true,
-        },
-      ])
-    }
+  const handleBenefitChange = useCallback(
+    (benefit: InsuranceBenefitRelationDto) => {
+      setSelectedBenefits((prev) => {
+        const exists = prev.some((b) => b.id === benefit.id)
+        if (exists) {
+          return prev.map((b) => (b.id === benefit.id ? benefit : b))
+        }
+        return [...prev, benefit]
+      })
 
-    setSelectedBenefits(selectedBenefits.filter((b) => b.id !== benefit.id))
-  }, [])
+      const initialBenefit = initialBenefitsRef.current.find((b) => b.id === benefit.id)
+      if (!initialBenefit) {
+        addBenefits([benefit])
+        return
+      }
+
+      const hasChanged = initialBenefit.additionalCost !== benefit.additionalCost
+      if (hasChanged) {
+        addBenefits([benefit])
+      }
+    },
+    [addBenefits]
+  )
+
+  const handleCoverageDelete = useCallback(
+    (coverage: InsuranceCoverageRelationDto) => {
+      setSelectedCoverages((prev) => prev.filter((c) => c.id !== coverage.id))
+      const coverageToDelete = { ...coverage, delete: true }
+      addCoverages([coverageToDelete])
+    },
+    [addCoverages]
+  )
+
+  const handleBenefitDelete = useCallback(
+    (benefit: InsuranceBenefitRelationDto) => {
+      setSelectedBenefits((prev) => prev.filter((b) => b.id !== benefit.id))
+      const benefitToDelete = { ...benefit, delete: true }
+      addBenefits([benefitToDelete])
+    },
+    [addBenefits]
+  )
 
   return (
     <div className="max-h-[calc(100vh-200px)] overflow-y-auto pr-4">

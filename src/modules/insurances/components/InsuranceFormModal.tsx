@@ -65,11 +65,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 interface InsuranceFormModalProps {
-  insurance?: IInsurance
   isOpen: boolean
   onClose: () => void
-  onSave: (data: UpdateInsuranceDto) => void
-  mode: 'create' | 'edit'
+  insurance?: IInsurance | null
+  mode?: 'create' | 'edit'
 }
 
 export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
@@ -81,7 +80,6 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
   const { createInsurance, updateInsurance, isCreating, isUpdating } = useInsurances()
   const isProcessing = isCreating || isUpdating
 
-  // Form state
   const [formData, setFormData] = useState<FormValues>({
     name: '',
     description: '',
@@ -94,13 +92,11 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     benefits: [],
   })
 
-  // New requirement input state
   const [newRequirement, setNewRequirement] = useState('')
-
-  // Form errors
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [modifiedCoverages, setModifiedCoverages] = useState<InsuranceCoverageRelationDto[]>([])
+  const [modifiedBenefits, setModifiedBenefits] = useState<InsuranceBenefitRelationDto[]>([])
 
-  // Reset form when modal closes
   const resetForm = useCallback(() => {
     if (mode === 'edit' && insurance) {
       setFormData({
@@ -138,6 +134,8 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     }
     setNewRequirement('')
     setErrors({})
+    setModifiedCoverages([])
+    setModifiedBenefits([])
   }, [mode, insurance])
 
   useEffect(() => {
@@ -211,26 +209,14 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
     })
   }
 
-  // Add requirement
-  const addRequirement = () => {
-    if (newRequirement.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        requirements: [...(prev.requirements || []), newRequirement.trim()],
-      }))
-      setNewRequirement('')
-    }
-  }
-
-  // Remove requirement
-  const removeRequirement = (index: number) => {
+  const handleOrderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.min(Math.max(1, Number(e.target.value)), 10)
     setFormData((prev) => ({
       ...prev,
-      requirements: prev.requirements?.filter((_, i) => i !== index) || [],
+      order: value,
     }))
   }
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -267,21 +253,23 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         const freqChanged =
           JSON.stringify(formData.availablePaymentFrequencies) !==
           JSON.stringify(insurance.prices.map((price) => price.frequency) || [])
-        const coveragesChanged =
-          JSON.stringify(formData.coverages) !== JSON.stringify(insurance.coverages || [])
-        const benefitsChanged =
-          JSON.stringify(formData.benefits) !== JSON.stringify(insurance.benefits || [])
 
         if (reqChanged) updateDto.requirements = formData.requirements
         if (freqChanged)
           updateDto.availablePaymentFrequencies = formData.availablePaymentFrequencies
-        if (coveragesChanged) updateDto.coverages = formData.coverages
-        if (benefitsChanged) updateDto.benefits = formData.benefits
+
+        if (modifiedCoverages.length > 0) {
+          updateDto.coverages = modifiedCoverages
+        }
+
+        if (modifiedBenefits.length > 0) {
+          updateDto.benefits = modifiedBenefits
+        }
 
         const hasChanges = Object.keys(updateDto).length > 0
 
         if (!hasChanges) {
-          toast.info('No se detectaron cambios')
+          toast.info('No hay cambios para guardar')
           onClose()
           return
         }
@@ -293,29 +281,17 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
           },
         })
       }
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {}
-        err.errors.forEach((error) => {
-          if (error.path.length > 0) {
-            fieldErrors[error.path[0].toString()] = error.message
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {}
+        error.errors.forEach((err) => {
+          if (err.path) {
+            newErrors[err.path[0]] = err.message
           }
         })
-        setErrors(fieldErrors)
-        toast.error('Por favor, corrija los errores en el formulario')
-      } else {
-        console.error('Error inesperado:', err)
-        toast.error('Ha ocurrido un error inesperado')
+        setErrors(newErrors)
       }
     }
-  }
-
-  const handleOrderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.min(Math.max(1, Number(e.target.value)), 10)
-    setFormData((prev) => ({
-      ...prev,
-      order: value,
-    }))
   }
 
   const addCoverages = (coverages: InsuranceCoverageRelationDto[]) => {
@@ -334,6 +310,18 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         coverages: updatedCoverages,
       }
     })
+    setModifiedCoverages((prev) => {
+      const updatedCoverages = [...prev]
+      coverages.forEach((newCoverage) => {
+        const existingIndex = updatedCoverages.findIndex((c) => c.id === newCoverage.id)
+        if (existingIndex !== -1) {
+          updatedCoverages[existingIndex] = newCoverage
+        } else {
+          updatedCoverages.push(newCoverage)
+        }
+      })
+      return updatedCoverages
+    })
   }
 
   const addBenefits = (benefits: InsuranceBenefitRelationDto[]) => {
@@ -351,6 +339,19 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
         ...prev,
         benefits: updatedBenefits,
       }
+    })
+    setModifiedBenefits((prev) => {
+      const updatedBenefits = [...prev]
+      benefits.forEach((newBenefit) => {
+        const existingIndex = updatedBenefits.findIndex((b) => b.id === newBenefit.id)
+        if (existingIndex !== -1) {
+          updatedBenefits[existingIndex] = newBenefit
+        } else {
+          updatedBenefits.push(newBenefit)
+        }
+      })
+
+      return updatedBenefits
     })
   }
 
@@ -377,51 +378,41 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-          }}
-          className="space-y-6"
-        >
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-6">
-              <div className="grid gap-3">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-6">
+            <div className="grid gap-4">
+              <div className="grid gap-2">
                 <Label htmlFor="name">Nombre del Plan</Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Seguro de Vida Premium"
-                  className={errors.name ? 'border-red-500' : ''}
+                  placeholder="Ingrese el nombre del plan"
                 />
-                {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
+                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-2">
                 <Label htmlFor="description">Descripción</Label>
                 <Textarea
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Plan de seguro que ofrece cobertura completa..."
-                  className={errors.description ? 'border-red-500' : ''}
-                  rows={3}
+                  placeholder="Ingrese la descripción del plan"
                 />
-                {errors.description && (
-                  <p className="text-destructive text-sm">{errors.description}</p>
-                )}
+                {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-2">
                 <Label htmlFor="type">Tipo de Seguro</Label>
                 <Select
                   value={formData.type}
                   onValueChange={(value) => handleSelectChange('type', value)}
                 >
-                  <SelectTrigger id="type" className={errors.type ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Seleccione un tipo de seguro" />
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione el tipo de seguro" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.values(InsuranceType).map((type) => (
@@ -431,58 +422,69 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.type && <p className="text-destructive text-sm">{errors.type}</p>}
+                {errors.type && <p className="text-sm text-red-500">{errors.type}</p>}
               </div>
 
-              <div className="grid gap-3">
-                <Label htmlFor="basePrice">Precio Prima Mensual (USD)</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="basePrice">Precio Base</Label>
                 <Input
                   id="basePrice"
                   name="basePrice"
                   type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.basePrice || ''}
+                  value={formData.basePrice}
                   onChange={handleChange}
-                  placeholder="299.99"
-                  className={errors.basePrice ? 'border-red-500' : ''}
+                  placeholder="Ingrese el precio base"
                 />
-                {errors.basePrice && <p className="text-destructive text-sm">{errors.basePrice}</p>}
+                {errors.basePrice && <p className="text-sm text-red-500">{errors.basePrice}</p>}
               </div>
-            </div>
 
-            <div className="space-y-6">
               <div className="grid gap-3">
                 <Label>Requisitos</Label>
                 <div className="flex gap-2">
                   <Input
                     value={newRequirement}
                     onChange={(e) => setNewRequirement(e.target.value)}
-                    placeholder="Agregar requisito"
+                    placeholder="Ingrese un requisito"
                   />
-                  <Button type="button" onClick={addRequirement}>
-                    Agregar
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (newRequirement.trim()) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          requirements: [...prev.requirements, newRequirement.trim()],
+                        }))
+                        setNewRequirement('')
+                      }
+                    }}
+                  >
+                    Añadir
                   </Button>
                 </div>
-                {formData.requirements && formData.requirements.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.requirements.map((req, index) => (
-                      <div
-                        key={index}
-                        className="bg-secondary px-3 py-1 rounded-full flex items-center gap-1"
+                <div className="flex flex-wrap gap-2">
+                  {formData.requirements.map((req, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                    >
+                      <span className="text-sm">{req}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            requirements: prev.requirements.filter((_, i) => i !== index),
+                          }))
+                        }}
                       >
-                        <span className="text-sm">{req}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeRequirement(index)}
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="grid gap-3">
@@ -536,13 +538,8 @@ export const InsuranceFormModal: React.FC<InsuranceFormModalProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-
-            <Button type="submit" disabled={isProcessing} onClick={handleSubmit}>
-              {isProcessing
-                ? 'Guardando...'
-                : mode === 'create'
-                  ? 'Guardar Plan'
-                  : 'Guardar Cambios'}
+            <Button type="submit" disabled={isProcessing}>
+              {isProcessing ? 'Guardando...' : mode === 'create' ? 'Crear' : 'Guardar Cambios'}
             </Button>
           </DialogFooter>
         </form>

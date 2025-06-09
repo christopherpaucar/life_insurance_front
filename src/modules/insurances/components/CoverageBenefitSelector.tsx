@@ -23,8 +23,8 @@ interface CoverageBenefitSelectorProps {
   availableBenefits: IBenefit[]
   selectedCoverages: InsuranceCoverageRelationDto[]
   selectedBenefits: InsuranceBenefitRelationDto[]
-  onCoverageChange: (coverages: InsuranceCoverageRelationDto[]) => void
-  onBenefitChange: (benefits: InsuranceBenefitRelationDto[]) => void
+  onCoverageChange: (coverage: InsuranceCoverageRelationDto) => void
+  onBenefitChange: (benefit: InsuranceBenefitRelationDto) => void
   onCoverageDelete: (coverage: InsuranceCoverageRelationDto) => void
   onBenefitDelete: (benefit: InsuranceBenefitRelationDto) => void
 }
@@ -53,7 +53,7 @@ export const CoverageBenefitSelector: React.FC<CoverageBenefitSelectorProps> = (
         additionalCost: 0,
       }
 
-      onCoverageChange([...selectedCoverages, newCoverage])
+      onCoverageChange(newCoverage)
     },
     [availableCoverages, selectedCoverages, onCoverageChange]
   )
@@ -71,37 +71,37 @@ export const CoverageBenefitSelector: React.FC<CoverageBenefitSelectorProps> = (
         additionalCost: 0,
       }
 
-      onBenefitChange([...selectedBenefits, newBenefit])
+      onBenefitChange(newBenefit)
     },
     [availableBenefits, selectedBenefits, onBenefitChange]
   )
 
   const handleCoverageAmountChange = useCallback(
     (coverageId: string, amount: number) => {
-      const updatedCoverages = selectedCoverages.map((coverage) =>
-        coverage.id === coverageId ? { ...coverage, coverageAmount: amount } : coverage
-      )
-      onCoverageChange(updatedCoverages)
+      const coverage = selectedCoverages.find((c) => c.id === coverageId)
+      if (!coverage) return
+
+      onCoverageChange({ ...coverage, coverageAmount: amount })
     },
     [selectedCoverages, onCoverageChange]
   )
 
   const handleCoverageCostChange = useCallback(
     (coverageId: string, cost: number) => {
-      const updatedCoverages = selectedCoverages.map((coverage) =>
-        coverage.id === coverageId ? { ...coverage, additionalCost: cost } : coverage
-      )
-      onCoverageChange(updatedCoverages)
+      const coverage = selectedCoverages.find((c) => c.id === coverageId)
+      if (!coverage) return
+
+      onCoverageChange({ ...coverage, additionalCost: cost })
     },
     [selectedCoverages, onCoverageChange]
   )
 
   const handleBenefitCostChange = useCallback(
     (benefitId: string, cost: number) => {
-      const updatedBenefits = selectedBenefits.map((benefit) =>
-        benefit.id === benefitId ? { ...benefit, additionalCost: cost } : benefit
-      )
-      onBenefitChange(updatedBenefits)
+      const benefit = selectedBenefits.find((b) => b.id === benefitId)
+      if (!benefit) return
+
+      onBenefitChange({ ...benefit, additionalCost: cost })
     },
     [selectedBenefits, onBenefitChange]
   )
@@ -135,23 +135,26 @@ export const CoverageBenefitSelector: React.FC<CoverageBenefitSelectorProps> = (
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Coberturas</CardTitle>
-          <Select onValueChange={handleCoverageSelect}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Seleccionar cobertura" />
-            </SelectTrigger>
-            <SelectContent>
-              {getAvailableCoverages().map((coverage) => (
-                <SelectItem key={coverage.id} value={coverage.id}>
-                  {coverage.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Select onValueChange={handleCoverageSelect}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccionar cobertura" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableCoverages().map((coverage) => (
+                    <SelectItem key={coverage.id} value={coverage.id}>
+                      {coverage.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {selectedCoverages.map((selectedCoverage) => {
               const coverage = availableCoverages.find((c) => c.id === selectedCoverage.id)
               if (!coverage) return null
@@ -211,23 +214,26 @@ export const CoverageBenefitSelector: React.FC<CoverageBenefitSelectorProps> = (
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Beneficios</CardTitle>
-          <Select onValueChange={handleBenefitSelect}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Seleccionar beneficio" />
-            </SelectTrigger>
-            <SelectContent>
-              {getAvailableBenefits().map((benefit) => (
-                <SelectItem key={benefit.id} value={benefit.id}>
-                  {benefit.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Select onValueChange={handleBenefitSelect}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccionar beneficio" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableBenefits().map((benefit) => (
+                    <SelectItem key={benefit.id} value={benefit.id}>
+                      {benefit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {selectedBenefits.map((selectedBenefit) => {
               const benefit = availableBenefits.find((b) => b.id === selectedBenefit.id)
               if (!benefit) return null
