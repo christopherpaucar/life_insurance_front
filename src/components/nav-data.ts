@@ -2,7 +2,6 @@ import {
   IconDashboard,
   IconReport,
   IconUsers,
-  IconKey,
   IconShieldCheck,
   IconHeartHandshake,
   IconWallet,
@@ -17,11 +16,6 @@ export const adminNavItems: NavItem[] = [
     title: 'Dashboard',
     url: '/admin/dashboard',
     icon: IconDashboard,
-  },
-  {
-    title: 'Gestión de Roles',
-    url: '/admin/roles',
-    icon: IconKey,
   },
   {
     title: 'Gestión de Seguros',
@@ -42,21 +36,6 @@ export const adminNavItems: NavItem[] = [
     title: 'Gestión de Usuarios',
     url: '/admin/users',
     icon: IconUsers,
-  },
-  {
-    title: 'Contratación de Seguros',
-    url: '/admin/contracts',
-    icon: IconHeartHandshake,
-  },
-  {
-    title: 'Historial de Pagos',
-    url: '/admin/payments',
-    icon: IconWallet,
-  },
-  {
-    title: 'Solicitud de Reembolsos',
-    url: '/admin/reimbursements',
-    icon: IconReportMedical,
   },
   {
     title: 'Reportes',
