@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { useCoverages } from '../useCoverages'
-import { ICoverage } from '../insurances.interfaces'
+import { ICoverage } from '../interfaces/insurance.interfaces'
 import {
   Table,
   TableHeader,
@@ -49,6 +48,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { CoverageFormModal } from './CoverageFormModal'
 import { format } from 'date-fns'
+import { useCoverages } from '../useCoverages'
 
 export function CoveragesTable() {
   const [sorting, setSorting] = useState<SortingState>([])
