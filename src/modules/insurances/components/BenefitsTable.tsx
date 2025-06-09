@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useBenefits } from '../useBenefits'
-import { IBenefit } from '../insurances.interfaces'
+import { IBenefit } from '../interfaces/insurance.interfaces'
 import {
   Table,
   TableHeader,

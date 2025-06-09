@@ -15,7 +15,7 @@ import {
   IBenefit,
   InsuranceCoverageRelationDto,
   InsuranceBenefitRelationDto,
-} from '../insurances.interfaces'
+} from '../interfaces/insurance.interfaces'
 import { Trash2 } from 'lucide-react'
 
 interface CoverageBenefitSelectorProps {

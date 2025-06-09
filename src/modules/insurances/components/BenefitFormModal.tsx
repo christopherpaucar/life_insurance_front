@@ -15,7 +15,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useBenefits } from '../useBenefits'
-import { IBenefit, CreateBenefitDto, UpdateBenefitDto } from '../insurances.interfaces'
+import { IBenefit } from '../interfaces/insurance.interfaces'
+import { CreateBenefitDto, UpdateBenefitDto } from '../dtos/insurance.dtos'
 
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),

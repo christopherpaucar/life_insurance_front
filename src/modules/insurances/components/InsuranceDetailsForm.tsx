@@ -1,7 +1,10 @@
 import { useState, useCallback } from 'react'
 import { useCoverages } from '../useCoverages'
 import { useBenefits } from '../useBenefits'
-import { InsuranceCoverageRelationDto, InsuranceBenefitRelationDto } from '../insurances.interfaces'
+import {
+  InsuranceCoverageRelationDto,
+  InsuranceBenefitRelationDto,
+} from '../interfaces/insurance.interfaces'
 import { CoverageBenefitSelector } from './CoverageBenefitSelector'
 
 export const InsuranceDetailsForm: React.FC<{
