@@ -24,7 +24,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Select,
   SelectContent,
@@ -42,6 +42,13 @@ import { ContractDetails } from './ContractDetails'
 import { useContract } from '../hooks/useContract'
 import { getEnumLabel } from '../../../lib/utils/enum.utils'
 import { statusColors, statusLabels } from '../constants/contractStatus'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
 
 interface Contract {
   id: string
@@ -67,71 +74,119 @@ export function ContractList() {
 
   const { contracts, isLoading } = useContract()
 
-  const columns: ColumnDef<Contract>[] = [
-    {
-      accessorFn: (row) => row.insurance.name,
-      id: 'insuranceName',
-      header: 'Seguro',
-      cell: ({ row }) => <div>{row.getValue('insuranceName')}</div>,
-    },
-    {
-      accessorKey: 'contractNumber',
-      header: 'Número de contrato',
-      cell: ({ row }) => <div>{row.getValue('contractNumber')}</div>,
-    },
-    {
-      accessorFn: (row) => new Date(row.startDate),
-      id: 'startDate',
-      header: 'Fecha de inicio',
-      cell: ({ row }) => <div>{format(row.getValue('startDate'), 'PPP', { locale: es })}</div>,
-    },
-    {
-      accessorFn: (row) => new Date(row.endDate),
-      id: 'endDate',
-      header: 'Fecha de fin',
-      cell: ({ row }) => <div>{format(row.getValue('endDate'), 'PPP', { locale: es })}</div>,
-    },
-    {
-      accessorKey: 'paymentFrequency',
-      header: 'Frecuencia de pago',
-      cell: ({ row }) => (
-        <div className="capitalize">{getEnumLabel(row.getValue('paymentFrequency'))}</div>
-      ),
-    },
-    {
-      accessorKey: 'status',
-      header: 'Estado',
-      cell: ({ row }) => {
-        const status = row.getValue('status')
-        return (
-          <Badge className={statusColors[status as keyof typeof statusColors]}>
-            {statusLabels[status as keyof typeof statusLabels]}
-          </Badge>
-        )
-      },
-    },
-    {
-      id: 'actions',
-      cell: ({ row }) => {
-        const contract = row.original
+  const handleEdit = (contract: Contract) => {
+    setSelectedContractId(contract.id)
+  }
 
-        return (
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setSelectedContractId(contract.id)}>
-              <FileText className="h-4 w-4 mr-2" />
-              Ver detalles
-            </Button>
-            {contract.signatureUrl && (
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Descargar
-              </Button>
-            )}
-          </div>
-        )
+  const handleDelete = (contract: Contract) => {
+    setSelectedContractId(contract.id)
+  }
+
+  const columns = useMemo<ColumnDef<Contract>[]>(
+    () => [
+      {
+        accessorKey: 'insurance',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Seguro
+            {column.getIsSorted() === 'asc' ? ' ↑' : column.getIsSorted() === 'desc' ? ' ↓' : ''}
+          </Button>
+        ),
+        cell: ({ row }) => row.original.insurance.name,
       },
-    },
-  ]
+      {
+        accessorKey: 'contractNumber',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Número de contrato
+            {column.getIsSorted() === 'asc' ? ' ↑' : column.getIsSorted() === 'desc' ? ' ↓' : ''}
+          </Button>
+        ),
+        cell: ({ row }) => row.original.contractNumber,
+      },
+      {
+        accessorKey: 'startDate',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Fecha de inicio
+            {column.getIsSorted() === 'asc' ? ' ↑' : column.getIsSorted() === 'desc' ? ' ↓' : ''}
+          </Button>
+        ),
+        cell: ({ row }) => format(new Date(row.original.startDate), 'dd/MM/yyyy'),
+      },
+      {
+        accessorKey: 'endDate',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Fecha de fin
+            {column.getIsSorted() === 'asc' ? ' ↑' : column.getIsSorted() === 'desc' ? ' ↓' : ''}
+          </Button>
+        ),
+        cell: ({ row }) => format(new Date(row.original.endDate), 'dd/MM/yyyy'),
+      },
+      {
+        accessorKey: 'status',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Estado
+            {column.getIsSorted() === 'asc' ? ' ↑' : column.getIsSorted() === 'desc' ? ' ↓' : ''}
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <Badge className={statusColors[row.original.status as keyof typeof statusColors]}>
+            {statusLabels[row.original.status as keyof typeof statusLabels]}
+          </Badge>
+        ),
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir menú</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setSelectedContractId(row.original.id)}>
+                Ver detalles
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.open(row.original.signatureUrl, '_blank')}>
+                Descargar
+              </DropdownMenuItem>
+              {row.original.status === 'draft' && (
+                <DropdownMenuItem onClick={() => handleEdit(row.original)}>
+                  Editar
+                </DropdownMenuItem>
+              )}
+              {row.original.status === 'draft' && (
+                <DropdownMenuItem onClick={() => handleDelete(row.original)}>
+                  Eliminar
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ],
+    [handleEdit, handleDelete]
+  )
 
   const table = useReactTable({
     data: contracts || [],
@@ -145,9 +200,9 @@ export function ContractList() {
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   })
 
   if (isLoading) {

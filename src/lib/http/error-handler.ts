@@ -19,8 +19,8 @@ export const handleHttpError = (error: unknown): HttpError => {
     message: 'An unexpected error occurred',
   }
 
-  if (error instanceof Error) {
-    httpError.message = error.message
+  if (error instanceof Error || (typeof error === 'object' && error !== null && 'message' in error)) {
+    httpError.message = (error as Error).message
   }
 
   if (typeof error === 'object' && error !== null) {
@@ -35,6 +35,8 @@ export const handleHttpError = (error: unknown): HttpError => {
         httpError.message = 'No tienes permisos para realizar esta acción'
       } else if (httpError.status === 404) {
         httpError.message = 'No se encontró el recurso'
+      } else if (httpError.status === 500 && responseError.response.data.message) {
+        httpError.message = responseError.response.data.message
       }
     }
   }
