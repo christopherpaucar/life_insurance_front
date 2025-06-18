@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar'
 import { useAuthService } from '../modules/auth/useAuth'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import {
   adminNavItems,
   agentNavItems,
@@ -29,6 +29,13 @@ import { RoleType } from '@/modules/auth/auth.interfaces'
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { logout, user } = useAuthService()
   const router = useRouter()
+  const pathname = usePathname()
+
+  React.useEffect(() => {
+    if (!user && pathname?.startsWith('/admin')) {
+      router.push('/login')
+    }
+  }, [user, pathname, router])
 
   const handleLogout = () => {
     logout(void 0, {
