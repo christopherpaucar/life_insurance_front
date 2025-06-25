@@ -99,8 +99,8 @@ export function ContractDetails({ contractId }: ContractDetailsProps) {
     return <div>No se encontró el contrato</div>
   }
 
-  const isClient = user?.role.name === RoleType.CLIENT
-  const isAgent = user?.role.name === RoleType.AGENT
+  const isClient = user?.role?.name === RoleType.CLIENT
+  const isAgent = user?.role?.name === RoleType.AGENT
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

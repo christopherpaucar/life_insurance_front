@@ -369,7 +369,6 @@ export default function AdminInsurancePage() {
         onClose={handleCloseModal}
         insurance={selectedInsurance ?? undefined}
         mode={modalMode}
-        onSave={() => {}}
       />
 
       {/* Delete Confirmation Modal */}

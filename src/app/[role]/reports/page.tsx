@@ -3,15 +3,9 @@
 import React from 'react'
 import { ReportCard } from '@/components/reports/ReportCard'
 
-interface ReportsPageProps {
-  params: {
-    role: string
-  }
-}
-
-export default function ReportsPage({ params }: ReportsPageProps) {
-  const unwrappedParams = params instanceof Promise ? React.use(params) : params
-  const role = unwrappedParams.role
+// @ts-ignore
+export default function ReportsPage({ params }) {
+  const role = params?.role || 'default'
 
   const reports = [
     {

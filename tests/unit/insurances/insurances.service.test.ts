@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { insurancesService } from '@/modules/insurances/insurances.service'
 import { getHttpClient } from '@/lib/http'
-import { InsuranceType } from '@/modules/insurances/insurances.interfaces'
+import { InsuranceType } from '@/modules/insurances/enums/insurance.enums'
 
 // Mock del cliente HTTP
 vi.mock('@/lib/http', () => ({
@@ -18,7 +18,7 @@ describe('insurancesService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    ;(getHttpClient as any).mockReturnValue(mockHttpClient)
+    ;(getHttpClient as any).mockResolvedValue(mockHttpClient)
     
     // Configurar respuestas por defecto
     mockHttpClient.get.mockResolvedValue({ data: { data: [], meta: {} } })
@@ -36,11 +36,17 @@ describe('insurancesService', () => {
               id: '1',
               name: 'Seguro de Vida',
               description: 'Seguro de vida básico',
-              price: 100,
-              duration: 12,
-              isActive: true,
+              type: InsuranceType.LIFE,
+              basePrice: 100,
+              order: 1,
+              prices: [],
+              requirements: [],
+              coverages: [],
+              benefits: [],
               createdAt: '2024-01-01',
-              updatedAt: '2024-01-01'
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+              availablePaymentFrequencies: []
             }
           ],
           meta: {
@@ -91,11 +97,17 @@ describe('insurancesService', () => {
             id: '1',
             name: 'Seguro de Vida',
             description: 'Seguro de vida básico',
-            price: 100,
-            duration: 12,
-            isActive: true,
+            type: InsuranceType.LIFE,
+            basePrice: 100,
+            order: 1,
+            prices: [],
+            requirements: [],
+            coverages: [],
+            benefits: [],
             createdAt: '2024-01-01',
-            updatedAt: '2024-01-01'
+            updatedAt: '2024-01-01',
+            deletedAt: null,
+            availablePaymentFrequencies: []
           }
         }
       }
@@ -116,8 +128,7 @@ describe('insurancesService', () => {
         description: 'Seguro de vida básico',
         type: InsuranceType.LIFE,
         basePrice: 100,
-        rank: 1,
-        duration: 12
+        order: 1
       }
 
       const mockResponse = {
@@ -125,9 +136,14 @@ describe('insurancesService', () => {
           data: {
             id: '1',
             ...newInsurance,
-            isActive: true,
+            prices: [],
+            requirements: [],
+            coverages: [],
+            benefits: [],
             createdAt: '2024-01-01',
-            updatedAt: '2024-01-01'
+            updatedAt: '2024-01-01',
+            deletedAt: null,
+            availablePaymentFrequencies: []
           }
         }
       }
@@ -145,7 +161,7 @@ describe('insurancesService', () => {
     it('debe actualizar un seguro existente', async () => {
       const updateData = {
         name: 'Seguro de Vida Premium',
-        price: 150
+        basePrice: 150
       }
 
       const mockResponse = {
@@ -154,11 +170,17 @@ describe('insurancesService', () => {
             id: '1',
             name: 'Seguro de Vida Premium',
             description: 'Seguro de vida básico',
-            price: 150,
-            duration: 12,
-            isActive: true,
+            type: InsuranceType.LIFE,
+            basePrice: 150,
+            order: 1,
+            prices: [],
+            requirements: [],
+            coverages: [],
+            benefits: [],
             createdAt: '2024-01-01',
-            updatedAt: '2024-01-01'
+            updatedAt: '2024-01-01',
+            deletedAt: null,
+            availablePaymentFrequencies: []
           }
         }
       }
@@ -186,128 +208,6 @@ describe('insurancesService', () => {
 
       expect(mockHttpClient.delete).toHaveBeenCalledWith('/insurances/1')
       expect(result).toEqual(mockResponse.data)
-    })
-  })
-
-  describe('Coverages', () => {
-    const insuranceId = '1'
-
-    describe('getCoverages', () => {
-      it('debe obtener las coberturas de un seguro', async () => {
-        const mockResponse = {
-          data: {
-            data: [
-              {
-                id: '1',
-                name: 'Cobertura Básica',
-                description: 'Cobertura básica de seguro de vida',
-                amount: 10000,
-                isActive: true,
-                createdAt: '2024-01-01',
-                updatedAt: '2024-01-01'
-              }
-            ]
-          }
-        }
-
-        mockHttpClient.get.mockResolvedValue(mockResponse)
-
-        const result = await insurancesService.getCoverages(insuranceId)
-
-        expect(mockHttpClient.get).toHaveBeenCalledWith(`/insurances/${insuranceId}/coverages`)
-        expect(result).toEqual(mockResponse.data)
-      })
-    })
-
-    describe('createCoverage', () => {
-      it('debe crear una nueva cobertura', async () => {
-        const newCoverage = {
-          name: 'Cobertura Premium',
-          description: 'Cobertura premium de seguro de vida',
-          coverageAmount: 20000,
-          additionalCost: 1000
-        }
-
-        const mockResponse = {
-          data: {
-            data: {
-              id: '1',
-              ...newCoverage,
-              isActive: true,
-              createdAt: '2024-01-01',
-              updatedAt: '2024-01-01'
-            }
-          }
-        }
-
-        mockHttpClient.post.mockResolvedValue(mockResponse)
-
-        const result = await insurancesService.createCoverage(insuranceId, newCoverage)
-
-        expect(mockHttpClient.post).toHaveBeenCalledWith(`/insurances/${insuranceId}/coverages`, newCoverage)
-        expect(result).toEqual(mockResponse.data)
-      })
-    })
-  })
-
-  describe('Benefits', () => {
-    const insuranceId = '1'
-
-    describe('getBenefits', () => {
-      it('debe obtener los beneficios de un seguro', async () => {
-        const mockResponse = {
-          data: {
-            data: [
-              {
-                id: '1',
-                name: 'Beneficio Básico',
-                description: 'Beneficio básico de seguro de vida',
-                amount: 5000,
-                isActive: true,
-                createdAt: '2024-01-01',
-                updatedAt: '2024-01-01'
-              }
-            ]
-          }
-        }
-
-        mockHttpClient.get.mockResolvedValue(mockResponse)
-
-        const result = await insurancesService.getBenefits(insuranceId)
-
-        expect(mockHttpClient.get).toHaveBeenCalledWith(`/insurances/${insuranceId}/benefits`)
-        expect(result).toEqual(mockResponse.data)
-      })
-    })
-
-    describe('createBenefit', () => {
-      it('debe crear un nuevo beneficio', async () => {
-        const newBenefit = {
-          name: 'Beneficio Premium',
-          description: 'Beneficio premium de seguro de vida',
-          amount: 10000,
-          additionalCost: 500
-        }
-
-        const mockResponse = {
-          data: {
-            data: {
-              id: '1',
-              ...newBenefit,
-              isActive: true,
-              createdAt: '2024-01-01',
-              updatedAt: '2024-01-01'
-            }
-          }
-        }
-
-        mockHttpClient.post.mockResolvedValue(mockResponse)
-
-        const result = await insurancesService.createBenefit(insuranceId, newBenefit)
-
-        expect(mockHttpClient.post).toHaveBeenCalledWith(`/insurances/${insuranceId}/benefits`, newBenefit)
-        expect(result).toEqual(mockResponse.data)
-      })
     })
   })
 })

@@ -73,12 +73,12 @@ export default function LifestyleInfoStep({
     onNext(formData)
   }
 
-  const handleSelectChange = (key: string, value: string) => {
+  const handleSelectChange = (key: string, value: string | boolean) => {
     setFormData({
       ...formData,
       lifestyle: {
         ...formData.lifestyle,
-        [key]: value,
+        [key]: key === 'smoking' ? Boolean(value) : value,
       },
     })
   }
@@ -169,8 +169,8 @@ export default function LifestyleInfoStep({
             <input
               type="checkbox"
               id="smoking"
-              checked={formData.lifestyle.smoking}
-              onChange={(e) => handleSelectChange('smoking', e.target.checked.toString())}
+              checked={!!formData.lifestyle.smoking}
+              onChange={(e) => handleSelectChange('smoking', e.target.checked)}
               className="h-4 w-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500"
             />
             <Label htmlFor="smoking" className="text-blue-700 font-medium">

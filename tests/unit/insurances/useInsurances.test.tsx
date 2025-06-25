@@ -3,7 +3,7 @@ import { renderHook, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useInsurances } from '../../../src/modules/insurances/useInsurances'
 import { insurancesService } from '../../../src/modules/insurances/insurances.service'
-import { InsuranceType, PaymentFrequency } from '../../../src/modules/insurances/insurances.interfaces'
+import { InsuranceType, PaymentFrequency } from '../../../src/modules/insurances/enums/insurance.enums'
 import React from 'react'
 
 // Mock del servicio de seguros
@@ -122,7 +122,8 @@ describe('useInsurances', () => {
         basePrice: 100,
         rank: 1,
         duration: 12,
-        availablePaymentFrequencies: [PaymentFrequency.MONTHLY]
+        availablePaymentFrequencies: [PaymentFrequency.MONTHLY],
+        order: 1
       }
 
       const mockResponse = {
@@ -162,7 +163,8 @@ describe('useInsurances', () => {
         basePrice: 100,
         rank: 1,
         duration: 12,
-        availablePaymentFrequencies: [PaymentFrequency.MONTHLY]
+        availablePaymentFrequencies: [PaymentFrequency.MONTHLY],
+        order: 1
       }
 
       const error = new Error('Error al crear seguro')
@@ -187,7 +189,8 @@ describe('useInsurances', () => {
     it('debe actualizar un seguro existente', async () => {
       const updateData = {
         name: 'Seguro de Vida Premium',
-        basePrice: 150
+        basePrice: 150,
+        order: 1
       }
 
       const mockResponse = {
@@ -222,7 +225,8 @@ describe('useInsurances', () => {
     it('debe manejar errores al actualizar un seguro', async () => {
       const updateData = {
         name: 'Seguro de Vida Premium',
-        basePrice: 150
+        basePrice: 150,
+        order: 1
       }
 
       const error = new Error('Error al actualizar seguro')

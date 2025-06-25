@@ -91,7 +91,7 @@ export default function ProfilePage() {
     )
   }
 
-  const isClient = (user.role.name as RoleType) === RoleType.CLIENT
+  const isClient = (user.role?.name as RoleType) === RoleType.CLIENT
 
   return (
     <AuthenticatedLayout>
@@ -137,7 +137,7 @@ export default function ProfilePage() {
                   <CardTitle className="text-2xl">{user.name}</CardTitle>
                   <p className="text-muted-foreground">{user.email}</p>
                   <Badge variant="secondary" className="mt-2 text-sm px-4 py-1">
-                    {user.role.name}
+                    {user.role?.name}
                   </Badge>
                 </div>
               </CardHeader>
@@ -392,14 +392,14 @@ export default function ProfilePage() {
 
                     <div className="grid gap-2">
                       <Label htmlFor="role">Rol</Label>
-                      <Input id="role" value={user.role.name} disabled className="bg-card" />
+                      <Input id="role" value={user.role?.name} disabled className="bg-card" />
                     </div>
 
-                    {user.role.permissions.length > 0 && (
+                    {user.role?.permissions.length > 0 && (
                       <div className="grid gap-2">
                         <Label>Permisos</Label>
                         <div className="flex flex-wrap gap-2">
-                          {user.role.permissions.map((permission, index) => (
+                          {user.role?.permissions.map((permission, index) => (
                             <Badge key={index} variant="secondary" className="bg-primary/10">
                               {permission}
                             </Badge>

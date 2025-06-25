@@ -18,7 +18,7 @@ export const useUsers = (params?: ClientQueryParams) => {
   const getUsersQuery = useQuery({
     queryKey: USER_QUERY_KEYS.list(params),
     queryFn: () => usersService.getUsers(params),
-    enabled: user?.role.name !== RoleType.CLIENT,
+    enabled: user?.role?.name !== RoleType.CLIENT,
   })
 
   const createUserMutation = useMutation({

@@ -17,7 +17,7 @@ describe('NavMain Component', () => {
     renderWithSidebar(<NavMain items={adminNavItems} />)
     // Verificar que los elementos de navegación principales estén presentes
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.getByText('Gestión de Roles')).toBeInTheDocument()
+    expect(screen.getByText('Gestión de Usuarios')).toBeInTheDocument()
     expect(screen.getByText('Gestión de Seguros')).toBeInTheDocument()
   })
 

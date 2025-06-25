@@ -24,7 +24,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       { email, password },
       {
         onSuccess: () => {
-          if (!user?.onboardingCompleted && user?.role.name === RoleType.CLIENT) {
+          if (!user?.onboardingCompleted && user?.role?.name === RoleType.CLIENT) {
             router.push('/onboarding')
           } else {
             router.push('/dashboard')

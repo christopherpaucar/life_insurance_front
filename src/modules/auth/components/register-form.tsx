@@ -31,7 +31,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
       },
       {
         onSuccess: () => {
-          if (!user?.onboardingCompleted && user?.role.name === 'CLIENTE') {
+          if (!user?.onboardingCompleted && user?.role?.name === 'CLIENTE') {
             router.push('/onboarding')
           } else {
             router.push('/dashboard')

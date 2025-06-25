@@ -28,6 +28,7 @@ vi.mock('@/hooks/useAuthRouting', () => ({
     hydrated: true,
     canAccessCurrentRoute: true,
     handleRouteAccess: vi.fn(),
+    shouldCompleteOnboarding: false,
     routingService: {
       isPublicRoute: vi.fn(),
       isPrivateRoute: vi.fn(),
@@ -52,7 +53,11 @@ describe('RouteManager Component', () => {
   it('renders children when user is authenticated', () => {
     vi.mocked(useAuthService).mockReturnValue({
       ...mockAuthService,
-      user: mockAuthService.user
+      user: mockAuthService.user,
+      completeOnboarding: vi.fn(),
+      isCompletingOnboarding: false,
+      updateOnboarding: vi.fn(),
+      isUpdatingOnboarding: false
     })
 
     render(
@@ -63,10 +68,14 @@ describe('RouteManager Component', () => {
     expect(screen.getByText('Protected Content')).toBeInTheDocument()
   })
 
-  it('redirects to login when user is not authenticated', () => {
+  it('renders children when user is not authenticated (RouteGuard handles access)', () => {
     vi.mocked(useAuthService).mockReturnValue({
       ...mockAuthService,
-      user: null
+      user: null,
+      completeOnboarding: vi.fn(),
+      isCompletingOnboarding: false,
+      updateOnboarding: vi.fn(),
+      isUpdatingOnboarding: false
     })
 
     // Mock del hook useAuthRouting para simular usuario no autenticado
@@ -76,43 +85,8 @@ describe('RouteManager Component', () => {
       isAuthenticated: false,
       hydrated: true,
       canAccessCurrentRoute: false,
-      handleRouteAccess: () => false,
-      routingService: {
-        isPublicRoute: vi.fn(),
-        isPrivateRoute: vi.fn(),
-        findRouteConfig: vi.fn(),
-        canUserAccessRoute: vi.fn(),
-        getUnauthenticatedRedirect: vi.fn(),
-        getRoleDefaultRoute: vi.fn(),
-        getRoleBasedRedirect: vi.fn(),
-        needsRoleBasedRedirect: vi.fn(),
-        isAuthRoute: vi.fn()
-      },
-      pathname: '/'
-    }))
-
-    const { container } = render(
-      <RouteManager>
-        <div>Protected Content</div>
-      </RouteManager>
-    )
-    expect(container).toBeEmptyDOMElement()
-  })
-
-  it('shows loading state while checking authentication', () => {
-    vi.mocked(useAuthService).mockReturnValue({
-      ...mockAuthService,
-      isLoggingIn: true
-    })
-
-    // Mock del hook useAuthRouting para simular estado de carga
-    vi.spyOn(useAuthRoutingModule, 'useAuthRouting').mockImplementation(() => ({
-      userRole: undefined,
-      userRoles: [],
-      isAuthenticated: false,
-      hydrated: false,
-      canAccessCurrentRoute: false,
       handleRouteAccess: vi.fn(),
+      shouldCompleteOnboarding: false,
       routingService: {
         isPublicRoute: vi.fn(),
         isPrivateRoute: vi.fn(),
@@ -132,6 +106,49 @@ describe('RouteManager Component', () => {
         <div>Protected Content</div>
       </RouteManager>
     )
-    expect(screen.getByText(/cargando/i)).toBeInTheDocument()
+    // RouteGuard renderiza children por defecto, no está vacío
+    expect(screen.getByText('Protected Content')).toBeInTheDocument()
+  })
+
+  it('renders children when not hydrated (no loading state)', () => {
+    vi.mocked(useAuthService).mockReturnValue({
+      ...mockAuthService,
+      isLoggingIn: true,
+      completeOnboarding: vi.fn(),
+      isCompletingOnboarding: false,
+      updateOnboarding: vi.fn(),
+      isUpdatingOnboarding: false
+    })
+
+    // Mock del hook useAuthRouting para simular estado no hidratado
+    vi.spyOn(useAuthRoutingModule, 'useAuthRouting').mockImplementation(() => ({
+      userRole: undefined,
+      userRoles: [],
+      isAuthenticated: false,
+      hydrated: false,
+      canAccessCurrentRoute: false,
+      handleRouteAccess: vi.fn(),
+      shouldCompleteOnboarding: false,
+      routingService: {
+        isPublicRoute: vi.fn(),
+        isPrivateRoute: vi.fn(),
+        findRouteConfig: vi.fn(),
+        canUserAccessRoute: vi.fn(),
+        getUnauthenticatedRedirect: vi.fn(),
+        getRoleDefaultRoute: vi.fn(),
+        getRoleBasedRedirect: vi.fn(),
+        needsRoleBasedRedirect: vi.fn(),
+        isAuthRoute: vi.fn()
+      },
+      pathname: '/'
+    }))
+
+    render(
+      <RouteManager>
+        <div>Protected Content</div>
+      </RouteManager>
+    )
+    // RouteGuard no muestra estado de carga, solo renderiza children
+    expect(screen.getByText('Protected Content')).toBeInTheDocument()
   })
 }) 

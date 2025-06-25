@@ -1,0 +1,21 @@
+# Dependencias
+node_modules
+
+# Build de Next.js
+.next
+
+# Archivos de Docker
+Dockerfile
+.dockerignore
+
+# Archivos de entorno local
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git
+.git 

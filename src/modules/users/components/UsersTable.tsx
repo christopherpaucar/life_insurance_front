@@ -109,7 +109,7 @@ export function UsersTable() {
     {
       accessorKey: 'role',
       header: 'Rol',
-      cell: ({ row }) => <Badge variant="outline">{row.original.role.name}</Badge>,
+      cell: ({ row }) => <Badge variant="outline">{row.original.role?.name}</Badge>,
     },
     {
       accessorKey: 'deletedAt',

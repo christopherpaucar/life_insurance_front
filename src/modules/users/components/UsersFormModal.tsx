@@ -70,7 +70,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         name: user.name,
         email: user.email,
         password: '',
-        role: user.role.name,
+        role: user.role?.name,
       })
     }
   }, [user, open, mode])
@@ -81,7 +81,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ open, onClose,
         name: user.name,
         email: user.email,
         password: '',
-        role: user.role.name,
+        role: user.role?.name,
       })
     } else {
       setFormData({
