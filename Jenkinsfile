@@ -27,7 +27,7 @@ pipeline {
             }
         }
         stage('Docker Build') {
-            agent { label 'master' } // o simplemente agent any
+            agent any
             steps {
                 sh 'docker build -t life_insurance_front .'
             }
