@@ -1,30 +1,36 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18' // Usa la versión de Node que prefieras
-        }
-    }
+    agent none
+
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
+        stage('Build & Test') {
+            agent {
+                docker {
+                    image 'node:18'
+                }
             }
-        }
-        stage('Install dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'npm run build'
+            stages {
+                stage('Checkout') {
+                    steps {
+                        checkout scm
+                    }
+                }
+                stage('Install dependencies') {
+                    steps {
+                        sh 'npm install'
+                    }
+                }
+                stage('Build') {
+                    steps {
+                        sh 'npm run build'
+                    }
+                }
             }
         }
         stage('Docker Build') {
+            agent { label 'master' } // o simplemente agent any
             steps {
                 sh 'docker build -t life_insurance_front .'
             }
         }
-        // Puedes agregar más stages para test, deploy, etc.
     }
 } 
