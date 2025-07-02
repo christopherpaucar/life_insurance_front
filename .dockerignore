@@ -18,4 +18,31 @@ yarn-debug.log*
 yarn-error.log*
 
 # Git
-.git 
+.git
+
+# Test
+test
+
+# Coverage
+coverage
+
+# Dist
+dist
+
+# Uploads
+uploads
+
+# Gitignore
+.gitignore
+
+# Docker Compose
+docker-compose.yml
+
+# README
+README.md
+
+# Logs
+*.log
+
+# Environment variables
+.env 
